@@ -5,6 +5,7 @@ signal upgrade_applied(upgrade_type: UpgradeType, value: float)
 const e: float = 2.71828182845904523536028747135266249775724709369995
 
 
+
 func _ready() -> void:
 	#GlobalSignals.connect("reset_upgrades", reset_upgrades)
 	pass
@@ -20,6 +21,7 @@ enum UpgradeType {
 	DAMAGE_UPGRADE,
 	SPEED_UPGRADE,
 	MASS_UPGRADE,
+	DENSITY_UPGRADE,
 }
 
 var upgrades_data: Dictionary = {
@@ -46,6 +48,16 @@ var upgrades_data: Dictionary = {
 		"level": 0,
 		"base_power": 900,
 		"current_power": 900,
+	
+	},
+		UpgradeType.DENSITY_UPGRADE: {
+		"name": "Density",
+		"description": "Increases density.",
+		"icon": "",
+		"level": 0,
+		"base_power": 900,
+		"current_power": 900,
+	
 	}
 }
 
@@ -72,6 +84,11 @@ func apply_upgrade(upgrade_type: UpgradeType):
 			power = upgrade_data["level"] + pow(upgrade_data["level"], 1.5)
 		UpgradeType.SPEED_UPGRADE:
 			power = upgrade_data["current_power"] + upgrade_data["level"] * 100
+		UpgradeType.DENSITY_UPGRADE:
+			power = upgrade_data["current_power"] + upgrade_data["level"] * 100
+		UpgradeType.MASS_UPGRADE:
+			power = upgrade_data["current_power"] + upgrade_data["level"] * 100
+			print("Potenziato")
 
 
 	upgrade_data["current_power"] = power
