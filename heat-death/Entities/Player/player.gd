@@ -6,6 +6,7 @@ var acceleration: float = 350.0
 var damage: float = 50.0
 @onready var audio_stream_player_2d: AudioStreamPlayer2D = $AudioStreamPlayer2D
 
+
 func _process(_delta: float) -> void:
 	var mouse_pos = get_global_mouse_position()
 	var dir = mouse_pos - global_position
@@ -17,6 +18,7 @@ func _physics_process(delta) -> void:
 	velocity.x = move_toward(velocity.x, new_velocity.x, acceleration * delta)
 	velocity.y = move_toward(velocity.y, new_velocity.y, acceleration * delta)
 	move_and_collide(velocity * delta)
+
 
 
 func get_input() -> Vector2:

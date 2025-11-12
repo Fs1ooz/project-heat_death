@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://dpgfvx5muvsrp"]
 
-[ext_resource type="Script" uid="uid://cyde42fcl34vy" path="res://Entities/World/debug_spawner.gd" id="1_i2yxs"]
+[ext_resource type="Script" uid="uid://cyde42fcl34vy" path="res://Stages/World/debug_spawner.gd" id="1_i2yxs"]
 
 [node name="DebugSpawner" type="Node"]
 script = ExtResource("1_i2yxs")

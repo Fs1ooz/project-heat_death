@@ -7,7 +7,6 @@ var celestial_bodies: Array[PackedScene] = [
 ]
 
 func _on_timer_timeout() -> void:
-	printerr("Spawnato")
 
 	# Scegli casualmente una scena dall'array
 	var scene_to_spawn = celestial_bodies[randi() % celestial_bodies.size()]

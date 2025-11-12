@@ -1,9 +1,9 @@
 [gd_scene load_steps=5 format=3 uid="uid://6r1e66kx2qgb"]
 
 [ext_resource type="PackedScene" uid="uid://470x1obeipdg" path="res://Entities/Player/player.tscn" id="1_0co0n"]
-[ext_resource type="PackedScene" uid="uid://dooqkflafelol" path="res://Entities/Enemies/SBs/asteroids.tscn" id="2_1r4cm"]
-[ext_resource type="PackedScene" uid="uid://dpgfvx5muvsrp" path="res://Entities/World/debug_spawner.tscn" id="2_wipa0"]
-[ext_resource type="Texture2D" uid="uid://cihjjxg26os6y" path="res://Entities/World/1000283196.png" id="4_c7b66"]
+[ext_resource type="PackedScene" uid="uid://dpgfvx5muvsrp" path="res://Stages/World/debug_spawner.tscn" id="2_wipa0"]
+[ext_resource type="Texture2D" uid="uid://cihjjxg26os6y" path="res://Stages/World/1000283196.png" id="4_c7b66"]
+[ext_resource type="PackedScene" uid="uid://dr5pxtobflhyw" path="res://Stages/UpgradeUI/upgrade_ui.tscn" id="5_qmwgx"]
 
 [node name="World" type="Node2D"]
 
@@ -25,6 +25,6 @@ zoom = Vector2(0.5, 0.5)
 position_smoothing_enabled = true
 position_smoothing_speed = 10.0
 
-[node name="RigidBody2D" parent="." instance=ExtResource("2_1r4cm")]
-position = Vector2(296, -88)
-max_health = 500
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="UpgradeUI" parent="CanvasLayer" instance=ExtResource("5_qmwgx")]

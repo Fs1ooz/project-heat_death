@@ -15,13 +15,17 @@ run/main_scene="uid://6r1e66kx2qgb"
 config/features=PackedStringArray("4.5", "Forward Plus")
 config/icon="res://icon.svg"
 
-[display]
+[autoload]
 
-window/size/mode=3
+UpgradeManager="*res://Commons/upgrade_manager.tscn"
 
 [editor_plugins]
 
 enabled=PackedStringArray("res://addons/gdfxr/plugin.cfg", "res://addons/trail_2d/plugin.cfg")
+
+[global_group]
+
+player=""
 
 [input]
 
