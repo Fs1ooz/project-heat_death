@@ -1,0 +1,23 @@
+[gd_scene load_steps=4 format=3 uid="uid://cujli0mqfmjq6"]
+
+[ext_resource type="Script" uid="uid://bu7e82rkqldem" path="res://rocky_planet.gd" id="1_y3cbi"]
+[ext_resource type="Texture2D" uid="uid://dtrrcyl2vn3nj" path="res://Entities/Enemies/1000283199.png" id="2_i1cvl"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_rcd2s"]
+radius = 738.1958
+
+[node name="RockyPlanet" type="RigidBody2D" node_paths=PackedStringArray("collision")]
+gravity_scale = 0.0
+script = ExtResource("1_y3cbi")
+collision = NodePath("Collision")
+metadata/_custom_type_script = "uid://bu7e82rkqldem"
+
+[node name="Collision" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_rcd2s")
+
+[node name="Icon" type="Sprite2D" parent="Collision"]
+position = Vector2(-40.999985, -7.0000134)
+scale = Vector2(1.007, 1.0125173)
+texture = ExtResource("2_i1cvl")
+
+[connection signal="body_entered" from="." to="." method="_on_body_entered"]
