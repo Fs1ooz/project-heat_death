@@ -1,4 +1,4 @@
-class_name Player
+#class_name Player
 extends CharacterBody2D
 ## Il codice del giocatore
 ## Insomma un test per vedere come funzionano i commenti
@@ -10,21 +10,37 @@ var damage: float = 50.0 ## Danno del giocatore
 @onready var audio_stream_player_2d: AudioStreamPlayer2D = $AudioStreamPlayer2D
 
 
-func _process(_delta: float) -> void:
+func _process(delta: float) -> void:
 	var mouse_pos = get_global_mouse_position()
 	var dir = mouse_pos - global_position
-	rotation = dir.angle()
+	if rotation != dir.angle():
+		rotation = rotate_toward(rotation, dir.angle(), acceleration/100 * delta )
 
 
-func _physics_process(delta) -> void:
-	var new_velocity = get_input() * speed
-	velocity.x = move_toward(velocity.x, new_velocity.x, acceleration * delta)
-	velocity.y = move_toward(velocity.y, new_velocity.y, acceleration * delta)
+func _physics_process(delta: float) -> void:
+	var input_dir: Vector2 = get_input()
+
+	var target_velocity: Vector2 = input_dir * speed
+
+	var movement_angle: float = input_dir.angle()
+	var alignment: float = cos(rotation - movement_angle)
+
+	var safe_zone: float = 0.8
+	if alignment > safe_zone:
+		alignment = 1.0
+
+	var speed_factor: float = remap(alignment, -1.0, 1.0, 0.5, 1.0)
+	target_velocity *= speed_factor
+
+	velocity = velocity.move_toward(target_velocity, acceleration * delta)
 	move_and_collide(velocity * delta)
+
 
 ## Restituisce un vettore normalized (modulo = 1) che rappresenta la direzione dell’input (in questo caso WASD).
 func get_input() -> Vector2:
 	return Input.get_vector("left", "right", "up", "down")
+
+
 
 ## Riproduce il suono di hit.
 func play_hit_sound() -> void:

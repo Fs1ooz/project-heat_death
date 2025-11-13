@@ -90,7 +90,7 @@ func apply_upgrade(upgrade_type: UpgradeType):
 		UpgradeType.DENSITY:
 			power = upgrade_data["current_power"] + upgrade_data["level"] * 100
 		UpgradeType.MASS:
-			power = upgrade_data["current_power"] + upgrade_data["level"] * 100
+			power = upgrade_data["current_power"] + upgrade_data["level"] * 2
 			print("Potenziato")
 
 
@@ -104,6 +104,9 @@ func apply_upgrade(upgrade_type: UpgradeType):
 				player.damage = power
 			UpgradeType.SPEED:
 				player.speed = power
+			UpgradeType.MASS:
+				player.mass = power
+
 
 
 #func get_stat(upgrade_type: UpgradeType):

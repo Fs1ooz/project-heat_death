@@ -25,8 +25,8 @@ curve = SubResource("Curve_gepmy")
 [sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_uqslx"]
 direction = Vector3(0, 0, 0)
 spread = 180.0
-initial_velocity_min = 300.0
-initial_velocity_max = 300.0
+initial_velocity_min = 1000.0
+initial_velocity_max = 1000.0
 gravity = Vector3(0, 0, 0)
 linear_accel_curve = SubResource("CurveTexture_ibsrq")
 scale_min = 10.0

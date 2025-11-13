@@ -16,13 +16,13 @@ layout_mode = 0
 offset_right = 40.0
 offset_bottom = 40.0
 
-[node name="Button" type="Button" parent="VBoxContainer"]
+[node name="Speed" type="Button" parent="VBoxContainer"]
 layout_mode = 2
 text = "Upgrade Speed"
 
-[node name="Button2" type="Button" parent="VBoxContainer"]
+[node name="Mass" type="Button" parent="VBoxContainer"]
 layout_mode = 2
 text = "Upgrade Mass"
 
-[connection signal="pressed" from="VBoxContainer/Button" to="." method="_on_speed_upgrade_pressed"]
-[connection signal="pressed" from="VBoxContainer/Button2" to="." method="_on_mass_upgrade_pressed"]
+[connection signal="pressed" from="VBoxContainer/Speed" to="." method="_on_speed_upgrade_pressed"]
+[connection signal="pressed" from="VBoxContainer/Mass" to="." method="_on_mass_upgrade_pressed"]
