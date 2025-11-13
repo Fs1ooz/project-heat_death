@@ -49,5 +49,4 @@ func play_sound_once(sound: AudioStream):
 	get_tree().get_root().add_child(player)
 	player.play()
 
-	# elimina il nodo quando finisce
 	player.connect("finished", Callable(player, "queue_free"))

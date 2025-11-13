@@ -1,4 +1,6 @@
 extends Node
+## L'UpgradeManager, gestisce tutti i potenziamenti, modulare e carino
+## Per aggiungere un nuovo Upgrade bisogna prima definirlo in upgrade type e poi inserirlo nel dizionario con i determinati valori
 
 signal upgrade_applied(upgrade_type: UpgradeType, value: float)
 
@@ -17,31 +19,32 @@ func reset_upgrades() -> void:
 		if "base_power" in upgrade:
 			upgrade["current_power"] = upgrade["base_power"]
 
+
 enum UpgradeType {
-	DAMAGE_UPGRADE,
-	SPEED_UPGRADE,
-	MASS_UPGRADE,
-	DENSITY_UPGRADE,
+	DAMAGE,
+	SPEED,
+	MASS,
+	DENSITY,
 }
 
 var upgrades_data: Dictionary = {
-	UpgradeType.DAMAGE_UPGRADE: {
+	UpgradeType.DAMAGE: {
 		"name": "Damage",
-		"description": "Increases the ball's power.",
+		"description": "Increases power.",
 		"icon": "",
 		"level": 0,
 		"base_power": 1,
 		"current_power": 1,
 	},
-	UpgradeType.SPEED_UPGRADE: {
+	UpgradeType.SPEED: {
 		"name": "Speed",
-		"description": "Increases the ball's speed.",
+		"description": "Increases speed.",
 		"icon": "",
 		"level": 0,
 		"base_power": 900,
 		"current_power": 900,
 	},
-		UpgradeType.MASS_UPGRADE: {
+		UpgradeType.MASS: {
 		"name": "Mass",
 		"description": "Increases mass.",
 		"icon": "",
@@ -50,7 +53,7 @@ var upgrades_data: Dictionary = {
 		"current_power": 900,
 
 	},
-		UpgradeType.DENSITY_UPGRADE: {
+		UpgradeType.DENSITY: {
 		"name": "Density",
 		"description": "Increases density.",
 		"icon": "",
@@ -80,13 +83,13 @@ func apply_upgrade(upgrade_type: UpgradeType):
 
 	var power: float
 	match upgrade_type:
-		UpgradeType.DAMAGE_UPGRADE:
+		UpgradeType.DAMAGE:
 			power = upgrade_data["level"] + pow(upgrade_data["level"], 1.5)
-		UpgradeType.SPEED_UPGRADE:
+		UpgradeType.SPEED:
 			power = upgrade_data["current_power"] + upgrade_data["level"] * 100
-		UpgradeType.DENSITY_UPGRADE:
+		UpgradeType.DENSITY:
 			power = upgrade_data["current_power"] + upgrade_data["level"] * 100
-		UpgradeType.MASS_UPGRADE:
+		UpgradeType.MASS:
 			power = upgrade_data["current_power"] + upgrade_data["level"] * 100
 			print("Potenziato")
 
@@ -97,20 +100,20 @@ func apply_upgrade(upgrade_type: UpgradeType):
 
 	for player in get_tree().get_nodes_in_group("player"):
 		match upgrade_type:
-			UpgradeType.DAMAGE_UPGRADE:
+			UpgradeType.DAMAGE:
 				player.damage = power
-			UpgradeType.SPEED_UPGRADE:
+			UpgradeType.SPEED:
 				player.speed = power
 
 
-func get_stat(upgrade_type: UpgradeType):
-	var value = upgrades_data[upgrade_type]["current_power"]
-	return value
-
-func reset_timer(_upgrade_data: Dictionary):
-	pass
-	#print("Timer reset. Level: ", upgrade_data["level"])
-	#GlobalSignals.emit_signal("reset_max_timer", 30)
-
-func activate_special(upgrade_data: Dictionary):
-	print("Special ability activated. Level: ", upgrade_data["level"])
+#func get_stat(upgrade_type: UpgradeType):
+	#var value = upgrades_data[upgrade_type]["current_power"]
+	#return value
+#
+#func reset_timer(_upgrade_data: Dictionary):
+	#pass
+	##print("Timer reset. Level: ", upgrade_data["level"])
+	##GlobalSignals.emit_signal("reset_max_timer", 30)
+#
+#func activate_special(upgrade_data: Dictionary):
+	#print("Special ability activated. Level: ", upgrade_data["level"])
