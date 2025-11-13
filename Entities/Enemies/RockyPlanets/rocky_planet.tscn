@@ -1,6 +1,6 @@
 [gd_scene load_steps=4 format=3 uid="uid://cujli0mqfmjq6"]
 
-[ext_resource type="Script" uid="uid://bu7e82rkqldem" path="res://rocky_planet.gd" id="1_y3cbi"]
+[ext_resource type="Script" uid="uid://bu7e82rkqldem" path="res://Entities/Enemies/RockyPlanets/rocky_planet.gd" id="1_y3cbi"]
 [ext_resource type="Texture2D" uid="uid://dtrrcyl2vn3nj" path="res://Entities/Enemies/1000283199.png" id="2_i1cvl"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_rcd2s"]

@@ -1,10 +1,10 @@
 extends RigidBody2D
 class_name RockyPlanet
 
-@export var max_health: int = 500
+@export var internal_energy: int = 2
 
 @export var collision: CollisionShape2D
-var health: int
+var health: float
 
 var explosion_red_scene = preload("uid://dvg5n5eu3oyde")
 
@@ -19,22 +19,24 @@ func _ready() -> void:
 	max_contacts_reported = 5
 	continuous_cd = RigidBody2D.CCD_MODE_CAST_RAY
 
+
 	var scale_rand: float = randf_range(0.2, 2)
-	var health_rand: int = randi_range(100, max_health)
 	collision.scale = Vector2(scale_rand, scale_rand)
-	health = health_rand
+
 
 	# Massa proporzionale al volume (area^1.5 simula volume 3D)
 	mass = 50000 * pow(scale_rand, 1.5)
 
+	health = mass * internal_energy
+	print(health)
 	# Rendi praticamente immobile
 	lock_rotation = true
 
 func _on_body_entered(body: Node) -> void:
 	if body is Player:
-		print("danno")
 		body.play_hit_sound()
-		take_damage(body.damage)
+		take_damage(body.get_damage())
+		print("danno:", body.get_damage())
 
 func take_damage(damage) -> void:
 	health -= damage

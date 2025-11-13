@@ -49,8 +49,8 @@ var upgrades_data: Dictionary = {
 		"description": "Increases mass.",
 		"icon": "",
 		"level": 0,
-		"base_power": 900,
-		"current_power": 900,
+		"base_power": 1.0,
+		"current_power": 1.0,
 
 	},
 		UpgradeType.DENSITY: {
@@ -58,8 +58,8 @@ var upgrades_data: Dictionary = {
 		"description": "Increases density.",
 		"icon": "",
 		"level": 0,
-		"base_power": 900,
-		"current_power": 900,
+		"base_power": 1.0,
+		"current_power": 1.0,
 
 	}
 }
@@ -90,7 +90,7 @@ func apply_upgrade(upgrade_type: UpgradeType):
 		UpgradeType.DENSITY:
 			power = upgrade_data["current_power"] + upgrade_data["level"] * 100
 		UpgradeType.MASS:
-			power = upgrade_data["current_power"] + upgrade_data["level"] * 2
+			power = upgrade_data["current_power"] + upgrade_data["level"] * 1.1
 			print("Potenziato")
 
 
@@ -105,6 +105,7 @@ func apply_upgrade(upgrade_type: UpgradeType):
 			UpgradeType.SPEED:
 				player.speed = power
 			UpgradeType.MASS:
+				player.change_size(1.05)
 				player.mass = power
 
 

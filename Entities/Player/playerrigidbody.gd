@@ -1,7 +1,6 @@
 class_name Player
 extends RigidBody2D
-## Il codice del giocatore convertito per RigidBody2D
-## Configurazione richiesta nell'editor:
+## Il codice del giocatore per RigidBody2D, per simulare meglio la fisica forse tocca usare questo
 ## - Mode: Character
 ## - Gravity Scale: 0 (per top-down)
 ## - Mass: 1 (regolare a piacere)
@@ -9,20 +8,20 @@ extends RigidBody2D
 
 ## Configurazione movimento
 var speed: float = 700.0 ## Velocità massima (pixel/sec)
-var acceleration: float = 350.0 ## Accelerazione lineare (pixel/sec²)
-var rotation_responsiveness: float = 10.0 ## Responsività della rotazione verso il mouse
-var damage: float = 50.0 ## Danno del giocatore
-
+var acceleration: float = 500.0 ## Accelerazione lineare (pixel/sec²)
+var rotation_responsiveness: float = 10.0 ## Responsività della rotazione verso il mousewwwwwwwwwwwwws
 
 ## Safe zone per allineamento completo
 @export var alignment_safe_zone: float = 0.8
+@export var collision_shape: CollisionShape2D
+@onready var trail_2d: Line2D = $Trail2D
 
 @onready var audio_stream_player_2d: AudioStreamPlayer2D = $AudioStreamPlayer2D
 
 
+
 func _integrate_forces(state: PhysicsDirectBodyState2D) -> void:
 	## Questa funzione è chiamata ad ogni step della fisica
-	## Usiamola per controllare velocità e rotazione in modo preciso
 
 	# Rotazione verso il mouse
 	_handle_rotation(state)
@@ -50,33 +49,23 @@ func _handle_rotation(state: PhysicsDirectBodyState2D) -> void:
 func _handle_movement(state: PhysicsDirectBodyState2D) -> void:
 	var input_dir: Vector2 = get_input()
 
-	# Se non c'è input, la fisica manterrà l'inerzia
-	# Per fermarsi automaticamente, scommenta:
-	# if input_dir.length_squared() < 0.01:
-	# 	state.linear_velocity = state.linear_velocity * 0.85
-	# 	return
-
 	# Calcola velocità target
 	var target_velocity: Vector2 = input_dir * speed
 
-	if input_dir.length_squared() > 0.01:
-		var movement_angle: float = input_dir.angle()
-		var alignment: float = cos(rotation - movement_angle)
+	var movement_angle: float = input_dir.angle()
+	var alignment: float = cos(rotation - movement_angle)
 
-		# Applica safe zone
-		if alignment > alignment_safe_zone:
-			alignment = 1.0
+	# Applica safe zone
+	if alignment > alignment_safe_zone:
+		alignment = 1.0
 
-		# Fattore velocità basato su allineamento
-		var speed_factor: float = remap(alignment, -1.0, 1.0, 0.5, 1.0)
-		target_velocity *= speed_factor
+	# Fattore velocità basato su allineamento
+	var speed_factor: float = remap(alignment, -1.0, 1.0, 0.5, 1.0)
+	target_velocity *= speed_factor
 
 	# Interpola verso la velocità target
 	var current_velocity: Vector2 = state.linear_velocity
-	var new_velocity: Vector2 = current_velocity.move_toward(
-		target_velocity,
-		acceleration * state.step
-	)
+	var new_velocity: Vector2 = current_velocity.move_toward(target_velocity, acceleration * state.step)
 	state.linear_velocity = new_velocity
 
 
@@ -84,6 +73,20 @@ func _handle_movement(state: PhysicsDirectBodyState2D) -> void:
 func get_input() -> Vector2:
 	return Input.get_vector("left", "right", "up", "down")
 
+
+## Calcola e restituisce il danno del giocatore usando la legge dell'energia cinetica (E = 1/2 mv^2)
+func get_damage() -> float:
+	var velocity = linear_velocity.length_squared() * 0.01
+	print("massa: ", mass)
+	print("velocità: ",velocity)
+	return 0.5 * mass * velocity
+
+
+func change_size(amount: float) -> void:
+	print(collision_shape.scale)
+	var point = trail_2d.width_curve.get_point_position(0).y
+	trail_2d.width_curve.set_point_value(0, point * amount)
+	collision_shape.scale = collision_shape.scale * amount
 
 ## Riproduce il suono di hit.
 func play_hit_sound() -> void:
