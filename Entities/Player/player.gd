@@ -1,5 +1,11 @@
-extends CharacterBody2D
 class_name Player
+extends CharacterBody2D
+## Hierarchical State machine for the player.
+##
+## Initializes states and delegates engine callbacks ([method Node._physics_process],
+## [method Node._unhandled_input]) to the state.
+
+
 
 var speed: float = 700.0
 var acceleration: float = 350.0
@@ -19,11 +25,11 @@ func _physics_process(delta) -> void:
 	velocity.y = move_toward(velocity.y, new_velocity.y, acceleration * delta)
 	move_and_collide(velocity * delta)
 
-
-
+## Restituisce un vettore che rappresenta la direzione dell’input (WASD o frecce).
+## Il vettore è normalized, quindi sarà di lunghezza ≤ 1.
 func get_input() -> Vector2:
-	var input_dir = Input.get_vector("left", "right", "up", "down")
-	return input_dir
+	return Input.get_vector("left", "right", "up", "down")
+
 
 func play_hit_sound():
 	audio_stream_player_2d.play()

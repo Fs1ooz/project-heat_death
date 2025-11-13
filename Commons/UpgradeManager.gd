@@ -48,7 +48,7 @@ var upgrades_data: Dictionary = {
 		"level": 0,
 		"base_power": 900,
 		"current_power": 900,
-	
+
 	},
 		UpgradeType.DENSITY_UPGRADE: {
 		"name": "Density",
@@ -57,7 +57,7 @@ var upgrades_data: Dictionary = {
 		"level": 0,
 		"base_power": 900,
 		"current_power": 900,
-	
+
 	}
 }
 
