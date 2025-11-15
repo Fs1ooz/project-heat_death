@@ -19,6 +19,13 @@ config/icon="res://Assets/icon.svg"
 
 UpgradeManager="*res://Commons/upgrade_manager.tscn"
 
+[display]
+
+window/size/viewport_width=640
+window/size/viewport_height=360
+window/stretch/mode="viewport"
+window/stretch/scale_mode="integer"
+
 [editor_plugins]
 
 enabled=PackedStringArray("res://addons/gdfxr/plugin.cfg", "res://addons/trail_2d/plugin.cfg")
@@ -52,4 +59,5 @@ left={
 
 [rendering]
 
+textures/canvas_textures/default_texture_filter=0
 textures/default_filters/use_nearest_mipmap_filter=true

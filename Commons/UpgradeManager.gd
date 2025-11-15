@@ -21,28 +21,19 @@ func reset_upgrades() -> void:
 
 
 enum UpgradeType {
-	DAMAGE,
 	SPEED,
 	MASS,
 	DENSITY,
 }
 
 var upgrades_data: Dictionary = {
-	UpgradeType.DAMAGE: {
-		"name": "Damage",
-		"description": "Increases power.",
-		"icon": "",
-		"level": 0,
-		"base_power": 1,
-		"current_power": 1,
-	},
 	UpgradeType.SPEED: {
 		"name": "Speed",
 		"description": "Increases speed.",
 		"icon": "",
 		"level": 0,
-		"base_power": 900,
-		"current_power": 900,
+		"base_power": 700.0,
+		"current_power": 700.0,
 	},
 		UpgradeType.MASS: {
 		"name": "Mass",
@@ -83,15 +74,14 @@ func apply_upgrade(upgrade_type: UpgradeType):
 
 	var power: float
 	match upgrade_type:
-		UpgradeType.DAMAGE:
-			power = upgrade_data["level"] + pow(upgrade_data["level"], 1.5)
+		#UpgradeType.DAMAGE:
+			#power = upgrade_data["level"] + pow(upgrade_data["level"], 1.5)
 		UpgradeType.SPEED:
 			power = upgrade_data["current_power"] + upgrade_data["level"] * 100
 		UpgradeType.DENSITY:
 			power = upgrade_data["current_power"] + upgrade_data["level"] * 100
 		UpgradeType.MASS:
 			power = upgrade_data["current_power"] + upgrade_data["level"] * 1.1
-			print("Potenziato")
 
 
 	upgrade_data["current_power"] = power
@@ -100,8 +90,6 @@ func apply_upgrade(upgrade_type: UpgradeType):
 
 	for player in get_tree().get_nodes_in_group("player"):
 		match upgrade_type:
-			UpgradeType.DAMAGE:
-				player.damage = power
 			UpgradeType.SPEED:
 				player.speed = power
 			UpgradeType.MASS:

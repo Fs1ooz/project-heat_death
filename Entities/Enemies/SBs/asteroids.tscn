@@ -8,7 +8,7 @@ radius = 500.2889
 
 [node name="Asteroid" type="RigidBody2D" node_paths=PackedStringArray("collision")]
 z_index = 1
-mass = 1000.0
+mass = 95000.0
 gravity_scale = 0.0
 continuous_cd = 1
 contact_monitor = true
@@ -17,6 +17,7 @@ linear_damp = 20.0
 angular_damp = 50.0
 script = ExtResource("1_5csnh")
 collision = NodePath("Collision")
+max_size = 5.0
 metadata/_custom_type_script = "uid://bu7e82rkqldem"
 
 [node name="Collision" type="CollisionShape2D" parent="."]

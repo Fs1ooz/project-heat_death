@@ -1,18 +1,20 @@
-[gd_scene load_steps=6 format=3 uid="uid://6r1e66kx2qgb"]
+[gd_scene load_steps=7 format=3 uid="uid://6r1e66kx2qgb"]
 
 [ext_resource type="PackedScene" uid="uid://470x1obeipdg" path="res://Entities/Player/player.tscn" id="1_0co0n"]
+[ext_resource type="Script" uid="uid://siuls68q6og5" path="res://Stages/World/world.gd" id="1_mt616"]
 [ext_resource type="PackedScene" uid="uid://dpgfvx5muvsrp" path="res://Stages/World/debug_spawner.tscn" id="2_wipa0"]
 [ext_resource type="Texture2D" uid="uid://cihjjxg26os6y" path="res://Stages/World/1000283196.png" id="4_c7b66"]
 [ext_resource type="Script" uid="uid://cnf8kwhvre5kg" path="res://Entities/Player/camera_2d.gd" id="4_qmwgx"]
 [ext_resource type="PackedScene" uid="uid://dr5pxtobflhyw" path="res://Stages/UpgradeUI/upgrade_ui.tscn" id="5_qmwgx"]
 
 [node name="World" type="Node2D"]
+script = ExtResource("1_mt616")
 
 [node name="Parallax2D" type="Parallax2D" parent="."]
-scale = Vector2(2, 2)
-scroll_scale = Vector2(0.1, 0.1)
+scale = Vector2(3, 3)
+scroll_scale = Vector2(0.01, 0.01)
 repeat_size = Vector2(2000, 1438)
-repeat_times = 5
+repeat_times = 10
 
 [node name="1000283196" type="Sprite2D" parent="Parallax2D"]
 texture = ExtResource("4_c7b66")
@@ -23,6 +25,7 @@ texture = ExtResource("4_c7b66")
 
 [node name="Camera2D" type="Camera2D" parent="Player"]
 zoom = Vector2(0.5, 0.5)
+limit_enabled = false
 position_smoothing_enabled = true
 position_smoothing_speed = 10.0
 script = ExtResource("4_qmwgx")

@@ -1,0 +1,7 @@
+[gd_resource type="Theme" load_steps=2 format=3 uid="uid://brvjefc4224hi"]
+
+[ext_resource type="FontFile" uid="uid://cyihsnt10pf04" path="res://Assets/Fonts/EnterCommand.ttf" id="1_doery"]
+
+[resource]
+Button/font_sizes/font_size = 32
+Button/fonts/font = ExtResource("1_doery")

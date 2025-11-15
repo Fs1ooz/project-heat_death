@@ -48,9 +48,13 @@ func _handle_rotation(state: PhysicsDirectBodyState2D) -> void:
 
 func _handle_movement(state: PhysicsDirectBodyState2D) -> void:
 	var input_dir: Vector2 = get_input()
-
+	var mouse_dir = _handle_mouse_input()
 	# Calcola velocità target
-	var target_velocity: Vector2 = input_dir * speed
+	var target_velocity: Vector2
+	if mouse_dir:
+		target_velocity = mouse_dir  * speed
+	else:
+		target_velocity = input_dir * speed
 
 	var movement_angle: float = input_dir.angle()
 	var alignment: float = cos(rotation - movement_angle)
@@ -76,10 +80,20 @@ func get_input() -> Vector2:
 
 ## Calcola e restituisce il danno del giocatore usando la legge dell'energia cinetica (E = 1/2 mv^2)
 func get_damage() -> float:
-	var velocity = linear_velocity.length_squared() * 0.01
+	var velocity = linear_velocity.length_squared()
 	print("massa: ", mass)
 	print("velocità: ",velocity)
-	return 0.5 * mass * velocity
+	var kinetic_energy = 0.5 * mass * velocity
+
+	var damage_scaling = 100.0
+	var scaled_damage = kinetic_energy / damage_scaling
+
+	var round_base = 50
+	print("Danno originale: ", scaled_damage)
+	# Arrotonda al multiplo più vicino
+	var damage = round(scaled_damage / round_base) * round_base
+	print("Danno finale: ", damage)
+	return damage
 
 
 func change_size(amount: float) -> void:
@@ -91,3 +105,15 @@ func change_size(amount: float) -> void:
 ## Riproduce il suono di hit.
 func play_hit_sound() -> void:
 	audio_stream_player_2d.play()
+
+
+func _handle_mouse_input() -> Vector2:
+	# Se non sto premendo il tasto sinistro, nessun movimento
+	if not Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
+		return Vector2.ZERO
+
+	# Direzione dal player verso il mouse
+	var mouse_dir: Vector2 = (get_global_mouse_position() - global_position).normalized()
+
+	# Ritorna la direzione * speed
+	return mouse_dir
