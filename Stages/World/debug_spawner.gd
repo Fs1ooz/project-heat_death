@@ -2,15 +2,13 @@ extends Node2D
 
 ## Array di scene da spawnare (ordinate per probabilità decrescente)
 var celestial_bodies: Array[PackedScene] = [
-	preload("res://Entities/Enemies/RockyPlanets/rocky_planet.tscn"),  # Alta probabilità
-	preload("res://Entities/Enemies/SBs/asteroids.tscn")                # Bassa probabilità
+	preload("res://Entities/Enemies/SmallBodies/asteroids.tscn"),
+	preload("res://Entities/Enemies/RockyPlanets/rocky_planet.tscn"),
 ]
 
 ## Pesi per ogni scena (più alto = più probabilità)
-## Esempio: [70, 30] significa 70% prima scena, 30% seconda scena
-var spawn_weights: Array[int] = [80, 20]
+var spawn_weights: Array[int] = [99, 1]
 
-var last_scene_spawned
 
 func _ready() -> void:
 	# Verifica che ci siano tanti pesi quante scene
@@ -19,13 +17,11 @@ func _ready() -> void:
 func _on_timer_timeout() -> void:
 	var scene_to_spawn = get_weighted_random_scene()
 	var new_object = scene_to_spawn.instantiate()
-	var spawn_pos = Vector2.ZERO
-	spawn_pos = Vector2(randf_range(-5200, 5200), randf_range(-3400, 3200))
+	var spawn_pos = Vector2(randf_range(-3200, 3200), randf_range(-2400, 2200))
+	new_object.global_position = spawn_pos
 
-	if new_object != last_scene_spawned:
-		new_object.global_position = spawn_pos
-		get_tree().get_root().add_child(new_object)
-		last_scene_spawned = scene_to_spawn
+	get_tree().get_root().add_child(new_object)
+
 
 ## Seleziona una scena basandosi sui pesi
 func get_weighted_random_scene() -> PackedScene:

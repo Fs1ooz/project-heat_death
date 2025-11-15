@@ -1,0 +1,48 @@
+[gd_scene load_steps=6 format=3 uid="uid://dooqkflafelol"]
+
+[ext_resource type="Script" uid="uid://b76ax10rq762s" path="res://Entities/Enemies/SmallBodies/small_body.gd" id="1_gvk46"]
+[ext_resource type="Script" uid="uid://dbkcdpcrycl4e" path="res://addons/trail_2d/trail_2d.gd" id="2_8ij5w"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_y0ama"]
+radius = 37.336308
+
+[sub_resource type="Curve" id="Curve_8ij5w"]
+_limits = [0.0, 5.0, 0.0, 1.0]
+_data = [Vector2(0, 5), 0.0, -10.210764, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="Gradient" id="Gradient_8ij5w"]
+colors = PackedColorArray(0.5854947, 0.91667545, 1, 1, 0.83540225, 0.96548116, 1, 1)
+
+[node name="Asteroid" type="RigidBody2D" node_paths=PackedStringArray("collision")]
+z_index = 1
+gravity_scale = 0.0
+continuous_cd = 2
+contact_monitor = true
+max_contacts_reported = 4
+script = ExtResource("1_gvk46")
+game_energy = 20
+collision = NodePath("Collision")
+max_size = 5.0
+round_base = 1
+
+[node name="Collision" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_y0ama")
+
+[node name="Polygon2D" type="Polygon2D" parent="Collision"]
+position = Vector2(64.999985, -383)
+scale = Vector2(0.3301486, 1)
+color = Color(0.43890208, 0.43890208, 0.43890208, 1)
+polygon = PackedVector2Array(-202.93887, 347, -302.89386, 358, -291, 414, -136.30222, 417, -93.89707, 389, -118.128586, 357)
+
+[node name="Trail2D" type="Line2D" parent="."]
+visible = false
+points = PackedVector2Array(0, 0)
+width_curve = SubResource("Curve_8ij5w")
+gradient = SubResource("Gradient_8ij5w")
+joint_mode = 1
+script = ExtResource("2_8ij5w")
+length = 200
+metadata/_custom_type_script = "uid://dbkcdpcrycl4e"
+
+[connection signal="body_entered" from="." to="." method="_on_body_entered"]

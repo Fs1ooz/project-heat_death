@@ -9,10 +9,11 @@ radius = 738.1958
 [node name="RockyPlanet" type="RigidBody2D" node_paths=PackedStringArray("collision")]
 mass = 1000.0
 gravity_scale = 0.0
+lock_rotation = true
 script = ExtResource("1_y3cbi")
-internal_energy = 3
+internal_energy = 100
+game_energy = 50
 collision = NodePath("Collision")
-max_size = null
 metadata/_custom_type_script = "uid://bu7e82rkqldem"
 
 [node name="Collision" type="CollisionShape2D" parent="."]

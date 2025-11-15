@@ -26,7 +26,6 @@ size_flags_vertical = 3
 color = Color(0, 0, 0, 1)
 
 [node name="1000283196" type="Sprite2D" parent="Parallax2D"]
-visible = false
 modulate = Color(0.35555172, 0.35555172, 0.35555172, 1)
 texture = ExtResource("4_c7b66")
 

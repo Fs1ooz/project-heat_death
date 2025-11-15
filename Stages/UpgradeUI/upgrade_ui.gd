@@ -3,6 +3,7 @@ extends Control
 @onready var upgrades_v_box_container: VBoxContainer = %UpgradesVBoxContainer
 
 @onready var cj_label: Label = $ExpHboxContainer/CJLabel
+@onready var energy_label: Label = $ExpHboxContainer/EnergyLabel
 
 func _ready() -> void:
 	UpgradeManager.connect("energy_changed",_on_energy_changed)
@@ -27,4 +28,6 @@ func _on_upgrade_pressed(upgrade_type: int, upgrade_button: Button, upgrade_data
 	upgrade_button.text = "%s \n Energy: %d" % [upgrade_data["name"], UpgradeManager.get_upgrade_data(upgrade_type)["current_cost"]]
 
 func _on_energy_changed(new_energy: int) -> void:
+	if not energy_label.visible:
+		energy_label.show()
 	cj_label.text = str(new_energy)
