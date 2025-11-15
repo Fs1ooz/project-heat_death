@@ -12,6 +12,7 @@ gravity_scale = 0.0
 script = ExtResource("1_y3cbi")
 internal_energy = 3
 collision = NodePath("Collision")
+max_size = null
 metadata/_custom_type_script = "uid://bu7e82rkqldem"
 
 [node name="Collision" type="CollisionShape2D" parent="."]

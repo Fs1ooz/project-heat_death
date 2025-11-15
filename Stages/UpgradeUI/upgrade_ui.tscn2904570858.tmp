@@ -44,3 +44,6 @@ text = "Energy:"
 
 [node name="CJLabel" type="Label" parent="ExpHboxContainer"]
 layout_mode = 2
+
+[connection signal="pressed" from="UpgradesVBoxContainer/Speed" to="." method="_on_speed_upgrade_pressed"]
+[connection signal="pressed" from="UpgradesVBoxContainer/Mass" to="." method="_on_mass_upgrade_pressed"]

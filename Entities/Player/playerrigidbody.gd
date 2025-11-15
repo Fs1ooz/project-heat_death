@@ -51,12 +51,15 @@ func _handle_movement(state: PhysicsDirectBodyState2D) -> void:
 	var mouse_dir = _handle_mouse_input()
 	# Calcola velocità target
 	var target_velocity: Vector2
+	var movement_angle: float = input_dir.angle()
 	if mouse_dir:
+		movement_angle = mouse_dir.angle()
 		target_velocity = mouse_dir  * speed
 	else:
+		movement_angle = input_dir.angle()
 		target_velocity = input_dir * speed
 
-	var movement_angle: float = input_dir.angle()
+
 	var alignment: float = cos(rotation - movement_angle)
 
 	# Applica safe zone

@@ -3,6 +3,8 @@ class_name RockyPlanet
 
 @export var internal_energy: int = 2
 
+var game_energy: int = 10
+
 @export var collision: CollisionShape2D
 var health: float
 
@@ -46,6 +48,7 @@ func take_damage(damage) -> void:
 		die()
 
 func die() -> void:
+	UpgradeManager.gain_energy(game_energy)
 	var explosion_red = explosion_red_scene.instantiate()
 	explosion_red.global_position = global_position
 	get_tree().get_root().add_child(explosion_red)
