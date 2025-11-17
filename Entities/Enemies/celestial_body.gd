@@ -23,7 +23,7 @@ func _setup_physics() -> void:
 	z_index = 1
 	gravity_scale = 0.0
 	collision_layer = 2
-	collision_mask = 1
+	collision_mask = 2
 	contact_monitor = true
 	max_contacts_reported = 50
 	continuous_cd = RigidBody2D.CCD_MODE_CAST_RAY
@@ -45,7 +45,13 @@ func _on_ready_custom() -> void:
 # Gestione collisioni
 func _on_body_entered(body: Node) -> void:
 	if body is Player:
+
 		body.play_hit_sound()
+		var rel_vel = (linear_velocity - body.linear_velocity).length()
+		var impact_force = mass * rel_vel
+		var damage = impact_force * 0.002
+		body.take_damage(damage)
+
 		take_damage(body.get_damage())
 
 # Gestione danno

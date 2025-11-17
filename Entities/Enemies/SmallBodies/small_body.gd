@@ -12,6 +12,7 @@ func _ready() -> void:
 
 
 func _kick() -> void:
+	rotation = randf_range(0.0, TAU)
 	var direction := Vector2.RIGHT.rotated(randf_range(0.0, TAU))
 	var speed     := randf_range(min_speed, max_speed)
 	apply_impulse(direction * speed * mass)

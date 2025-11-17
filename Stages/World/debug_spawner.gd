@@ -17,10 +17,12 @@ func _ready() -> void:
 func _on_timer_timeout() -> void:
 	var scene_to_spawn = get_weighted_random_scene()
 	var new_object = scene_to_spawn.instantiate()
+
 	var spawn_pos = Vector2(randf_range(-3200, 3200), randf_range(-2400, 2200))
 	new_object.global_position = spawn_pos
+	await get_tree().create_timer(0.5).timeout
 
-	get_tree().get_root().add_child(new_object)
+	get_parent().add_child(new_object)
 
 
 ## Seleziona una scena basandosi sui pesi

@@ -12,13 +12,13 @@ signal energy_changed(new_energy: int)
 
 func gain_energy(amount: int) -> void:
 	energy += amount
-	print("Energia attuale: ", energy)
+	#print("Energia attuale: ", energy)
 	emit_signal("energy_changed", energy)
 
 
 func lose_energy(amount: int) -> void:
 	energy -= amount
-	print("Energia attuale: ", energy)
+	#print("Energia attuale: ", energy)
 	emit_signal("energy_changed", energy)
 
 #func reset_upgrades() -> void:

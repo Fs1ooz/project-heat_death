@@ -18,6 +18,7 @@ config/icon="uid://cutmcskxym36k"
 [autoload]
 
 UpgradeManager="*res://Commons/upgrade_manager.tscn"
+GlobalSignals="*res://Commons/global_signals.tscn"
 
 [display]
 

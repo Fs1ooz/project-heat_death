@@ -29,7 +29,6 @@ func _physics_process(_delta: float) -> void:
 
 func _resize_trail():
 	if parent is not Player:
-		print(parent.collision.scale)
 		var col = parent.collision
 		if width_curve.get_point_count() > 0:
 			var p := width_curve.get_point_position(0)

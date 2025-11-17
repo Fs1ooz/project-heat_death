@@ -5,20 +5,24 @@ extends RigidBody2D
 ## - Gravity Scale: 0 (per top-down)
 ## - Mass: 1 (regolare a piacere)
 
-
+@export var life_bar: ProgressBar
+@export var alignment_safe_zone: float = 0.8
+@export var collision_shape: CollisionShape2D
 ## Configurazione movimento
+var hp: int = 100
 var speed: float = 700.0 ## Velocità massima (pixel/sec)
 var acceleration: float = 500.0 ## Accelerazione lineare (pixel/sec²)
 var rotation_responsiveness: float = 10.0 ## Responsività della rotazione verso il mousewwwwwwwwwwwwws
 
 ## Safe zone per allineamento completo
-@export var alignment_safe_zone: float = 0.8
-@export var collision_shape: CollisionShape2D
+
 @onready var trail_2d: Line2D = $Trail2D
 
 @onready var audio_stream_player_2d: AudioStreamPlayer2D = $AudioStreamPlayer2D
 
 
+func _ready() -> void:
+	life_bar.value = hp
 
 func _integrate_forces(state: PhysicsDirectBodyState2D) -> void:
 	## Questa funzione è chiamata ad ogni step della fisica
@@ -84,18 +88,18 @@ func get_input() -> Vector2:
 ## Calcola e restituisce il danno del giocatore usando la legge dell'energia cinetica (E = 1/2 mv^2)
 func get_damage() -> float:
 	var velocity = linear_velocity.length_squared()
-	print("massa: ", mass)
-	print("velocità: ",velocity)
+	#print("massa: ", mass)
+	#print("velocità: ",velocity)
 	var kinetic_energy = 0.5 * mass * velocity
 
 	var damage_scaling = 100.0
 	var scaled_damage = kinetic_energy / damage_scaling
 
 	var round_base = 50
-	print("Danno originale: ", scaled_damage)
+	#print("Danno originale: ", scaled_damage)
 	# Arrotonda al multiplo più vicino
 	var damage = round(scaled_damage / round_base) * round_base
-	print("Danno finale: ", damage)
+	#print("Danno finale: ", damage)
 	return damage
 
 
@@ -120,3 +124,16 @@ func _handle_mouse_input() -> Vector2:
 
 	# Ritorna la direzione * speed
 	return mouse_dir
+
+
+func take_damage(amount: int) -> void:
+	hp -= amount
+	life_bar.value = hp
+	life_bar.start_fade()
+	print(hp)
+	if hp <= 0:
+		game_over()
+
+func game_over() -> void:
+	GlobalSignals.emit_signal("game_over")
+	queue_free()

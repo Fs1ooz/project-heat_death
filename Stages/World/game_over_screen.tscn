@@ -1,0 +1,37 @@
+[gd_scene load_steps=3 format=3 uid="uid://dyd3uoe8y1asi"]
+
+[ext_resource type="Script" uid="uid://dme2yavclvita" path="res://Stages/World/game_over_screen.gd" id="1_0sqq5"]
+[ext_resource type="Theme" uid="uid://brvjefc4224hi" path="res://Assets/Themes/upgrade_ui.tres" id="1_yd1lp"]
+
+[node name="GameOverScreen" type="Control"]
+layout_mode = 3
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("1_yd1lp")
+script = ExtResource("1_0sqq5")
+
+[node name="PanelContainer" type="PanelContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="PanelContainer/VBoxContainer"]
+layout_mode = 2
+text = "GAME OVER"
+
+[node name="RetryButton" type="Button" parent="PanelContainer/VBoxContainer"]
+layout_mode = 2
+text = "RETRY"
+
+[connection signal="pressed" from="PanelContainer/VBoxContainer/RetryButton" to="." method="_on_retry_button_pressed"]

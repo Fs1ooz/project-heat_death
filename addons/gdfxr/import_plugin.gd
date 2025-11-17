@@ -72,13 +72,13 @@ func _import(source_file, save_path, options, platform_variants, gen_files):
 	if err != OK:
 		printerr("Failed to open %s: %d" % [source_file, err])
 		return err
-	
+
 	var stream := SFXRGenerator.new().generate_audio_stream(
 		config, options.bit_depth, options.sample_rate
 	)
 	if options.loop:
 		stream.loop_mode = AudioStreamWAV.LOOP_FORWARD
 		stream.loop_end = stream.data.size()
-	
+
 	var filename = save_path + "." + _get_save_extension()
 	return ResourceSaver.save(stream, filename)

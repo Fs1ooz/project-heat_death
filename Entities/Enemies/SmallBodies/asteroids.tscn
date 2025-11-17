@@ -12,7 +12,7 @@ _data = [Vector2(0, 5), 0.0, -10.210764, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
 point_count = 2
 
 [sub_resource type="Gradient" id="Gradient_8ij5w"]
-colors = PackedColorArray(0.5854947, 0.91667545, 1, 1, 0.83540225, 0.96548116, 1, 1)
+colors = PackedColorArray(0.64104044, 0.7887038, 0.8258557, 1, 0.36074692, 0.5516501, 0.60209715, 0.4)
 
 [node name="Asteroid" type="RigidBody2D" node_paths=PackedStringArray("collision")]
 z_index = 1
@@ -30,14 +30,60 @@ round_base = 1
 shape = SubResource("CircleShape2D_y0ama")
 
 [node name="Polygon2D" type="Polygon2D" parent="Collision"]
-position = Vector2(64.999985, -383)
+position = Vector2(65, -383)
 scale = Vector2(0.3301486, 1)
 color = Color(0.43890208, 0.43890208, 0.43890208, 1)
-polygon = PackedVector2Array(-202.93887, 347, -302.89386, 358, -291, 414, -136.30222, 417, -93.89707, 389, -118.128586, 357)
+polygon = PackedVector2Array(-202.93887, 346, -290.7781, 361, -308.95172, 383, -275.63342, 409, -227.17038, 419, -139.33115, 415, -84.81026, 388, -118.128586, 357)
+
+[node name="Polygon2D2" type="Polygon2D" parent="Collision/Polygon2D"]
+position = Vector2(3.0289907, -731)
+scale = Vector2(0.10899811, 1)
+color = Color(0.26239687, 0.26239687, 0.26239687, 1)
+polygon = PackedVector2Array(-1487.944, 1135, -1778.4905, 1141, -1626.8884, 1134, -1432.3661, 1129)
+
+[node name="Polygon2D6" type="Polygon2D" parent="Collision/Polygon2D"]
+position = Vector2(-93.897064, -756)
+scale = Vector2(0.10899811, 1)
+color = Color(0.26239687, 0.26239687, 0.26239687, 1)
+polygon = PackedVector2Array(-1487.944, 1135, -1515.7329, 1142, -1626.8884, 1134, -1432.3661, 1129)
+
+[node name="Polygon2D7" type="Polygon2D" parent="Collision/Polygon2D"]
+position = Vector2(3.0289917, -776)
+scale = Vector2(0.10899811, 1)
+color = Color(0.26239687, 0.26239687, 0.26239687, 1)
+polygon = PackedVector2Array(-1487.944, 1135, -1515.7329, 1142, -1626.8884, 1134, -1432.3661, 1129, -1460.155, 1141)
+
+[node name="Polygon2D8" type="Polygon2D" parent="Collision/Polygon2D"]
+position = Vector2(-39.37616, -744)
+scale = Vector2(0.10899811, 1)
+color = Color(0.26239687, 0.26239687, 0.26239687, 1)
+polygon = PackedVector2Array(-1487.944, 1135, -1515.7329, 1142, -1626.8884, 1134, -1333.8679, 1131)
+
+[node name="Polygon2D" type="Polygon2D" parent="Collision/Polygon2D"]
+position = Vector2(260.4888, -361)
+scale = Vector2(0.3301486, 1)
+color = Color(0.15377831, 0.15377831, 0.15377831, 1)
+polygon = PackedVector2Array(-1229.3792, 750, -1187.7239, 760, -1151.026, 758, -1132.677, 754)
+
+[node name="Polygon2D3" type="Polygon2D" parent="Collision/Polygon2D"]
+position = Vector2(142.36018, -392)
+scale = Vector2(0.3301486, 1)
+color = Color(0.15377831, 0.15377831, 0.15377831, 1)
+polygon = PackedVector2Array(-1196.8983, 751, -1187.7239, 760, -1151.026, 758, -1132.677, 754)
+
+[node name="Polygon2D4" type="Polygon2D" parent="Collision/Polygon2D"]
+position = Vector2(230.19942, -383)
+scale = Vector2(0.3301486, 1)
+color = Color(0.15377831, 0.15377831, 0.15377831, 1)
+polygon = PackedVector2Array(-1196.8983, 751, -1187.7239, 760, -1151.026, 758, -1132.677, 754)
+
+[node name="Polygon2D5" type="Polygon2D" parent="Collision/Polygon2D"]
+position = Vector2(127.215485, -361)
+scale = Vector2(0.3301486, 1)
+color = Color(0.15377831, 0.15377831, 0.15377831, 1)
+polygon = PackedVector2Array(-1196.8983, 751, -1187.7239, 760, -1151.026, 758, -1132.677, 754)
 
 [node name="Trail2D" type="Line2D" parent="."]
-visible = false
-points = PackedVector2Array(0, 0)
 width_curve = SubResource("Curve_8ij5w")
 gradient = SubResource("Gradient_8ij5w")
 joint_mode = 1
