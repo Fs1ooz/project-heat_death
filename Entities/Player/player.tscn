@@ -9,7 +9,7 @@
 bounce = 2.0
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_3uyv8"]
-radius = 34.0
+radius = 33.0
 height = 100.0
 
 [node name="Player" type="RigidBody2D" node_paths=PackedStringArray("collision_shape") groups=["player"]]
@@ -34,3 +34,7 @@ stream = ExtResource("3_lu8i8")
 
 [node name="Trail2D" parent="." instance=ExtResource("4_tekja")]
 visible = true
+
+[node name="RegenTimer" type="Timer" parent="."]
+
+[connection signal="timeout" from="RegenTimer" to="." method="_on_regen_timer_timeout"]

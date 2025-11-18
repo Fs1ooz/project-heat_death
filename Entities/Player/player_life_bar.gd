@@ -9,4 +9,4 @@ func start_fade():
 		modulate.a = 1.0
 	await get_tree().create_timer(2).timeout
 	var tween = create_tween()
-	tween.tween_property(self, "modulate:a", 0.0, 0.5).set_trans(Tween.TRANS_QUINT)
+	tween.tween_property(self, "modulate:a", 0.0, 0.2).set_trans(Tween.TRANS_QUINT)

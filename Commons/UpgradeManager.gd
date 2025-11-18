@@ -30,16 +30,36 @@ func lose_energy(amount: int) -> void:
 #
 
 enum UpgradeType {
+	MAX_HEALTH,
+	REGENERATION,
 	SPEED,
 	MASS,
-	DENSITY,
+	#DENSITY,
 }
 
 var upgrades_data: Dictionary = {
+	UpgradeType.MAX_HEALTH: {
+		"name": "Max Health",
+		"description": "Increases health.",
+		"level": 1,
+		"base_power": 100,
+		"current_power": 100,
+		"base_cost": 20,
+		"current_cost": 20,
+	},
+	UpgradeType.REGENERATION: {
+		"name": "Regeneration",
+		"description": "Start regenerating health.",
+		"level": 1,
+		"base_power": 2.0,
+		"current_power": 2.0,
+		"base_cost": 50,
+		"current_cost": 50,
+	},
 	UpgradeType.SPEED: {
 		"name": "Speed",
 		"description": "Increases speed.",
-		"level": 0,
+		"level": 1,
 		"base_power": 700.0,
 		"current_power": 700.0,
 		"base_cost": 10,
@@ -48,21 +68,22 @@ var upgrades_data: Dictionary = {
 	UpgradeType.MASS: {
 		"name": "Mass",
 		"description": "Increases mass.",
-		"level": 0,
+		"level": 1,
 		"base_power": 1.0,
 		"current_power": 1.0,
-		"base_cost": 50,
-		"current_cost": 50,
+		"base_cost": 30,
+		"current_cost": 30,
 	},
-	UpgradeType.DENSITY: {
-		"name": "Density",
-		"description": "Increases density.",
-		"level": 0,
-		"base_power": 1.0,
-		"current_power": 1.0,
-		"base_cost": 100,
-		"current_cost": 100,
-	}
+
+	#UpgradeType.DENSITY: {
+		#"name": "Density",
+		#"description": "Increases density.",
+		#"level": 0,
+		#"base_power": 1.0,
+		#"current_power": 1.0,
+		#"base_cost": 100,
+		#"current_cost": 100,
+	#}
 }
 
 
@@ -92,12 +113,16 @@ func apply_upgrade(upgrade_type: UpgradeType):
 	upgrade_data["level"] += 1
 	var power: float
 	match upgrade_type:
+		UpgradeType.MAX_HEALTH:
+			power = upgrade_data["base_power"] + (upgrade_data["level"] * 50)
+		UpgradeType.REGENERATION:
+			power = max(0.2, upgrade_data["base_power"] - (upgrade_data["level"] * 0.15))
 		UpgradeType.SPEED:
-			power = upgrade_data["current_power"] + upgrade_data["level"] * 100
-		UpgradeType.DENSITY:
 			power = upgrade_data["current_power"] + upgrade_data["level"] * 100
 		UpgradeType.MASS:
 			power = upgrade_data["current_power"] + upgrade_data["level"] * 1.1
+		#UpgradeType.DENSITY:
+			#power = upgrade_data["current_power"] + upgrade_data["level"] * 1.1
 
 
 	upgrade_data["current_power"] = power
@@ -106,11 +131,21 @@ func apply_upgrade(upgrade_type: UpgradeType):
 
 	for player in get_tree().get_nodes_in_group("player"):
 		match upgrade_type:
+			UpgradeType.MAX_HEALTH:
+				player.life_bar.max_value = power
+				player._update_life_bar()
+				player.max_hp = power
+			UpgradeType.REGENERATION:
+				player.regen_tick = power
+				player.regen_timer.start(power)
 			UpgradeType.SPEED:
 				player.speed = power
 			UpgradeType.MASS:
-				player.change_size(1.05)
+				player.change_size(1.5)
 				player.mass = power
+			#UpgradeType.DENSITY:
+				#player.change_size(-1.05)
+
 
 	#upgrade_applied.emit(upgrade_type, power)
 

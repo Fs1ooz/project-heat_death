@@ -9,12 +9,14 @@ extends RigidBody2D
 @export var alignment_safe_zone: float = 0.8
 @export var collision_shape: CollisionShape2D
 ## Configurazione movimento
+var max_hp: int = 100
 var hp: int = 100
 var speed: float = 700.0 ## Velocità massima (pixel/sec)
 var acceleration: float = 500.0 ## Accelerazione lineare (pixel/sec²)
 var rotation_responsiveness: float = 10.0 ## Responsività della rotazione verso il mousewwwwwwwwwwwwws
-
+var regen_tick: float = 0.0
 ## Safe zone per allineamento completo
+@onready var regen_timer: Timer = $RegenTimer
 
 @onready var trail_2d: Line2D = $Trail2D
 
@@ -22,7 +24,7 @@ var rotation_responsiveness: float = 10.0 ## Responsività della rotazione verso
 
 
 func _ready() -> void:
-	life_bar.value = hp
+	life_bar.value = max_hp
 
 func _integrate_forces(state: PhysicsDirectBodyState2D) -> void:
 	## Questa funzione è chiamata ad ogni step della fisica
@@ -71,7 +73,7 @@ func _handle_movement(state: PhysicsDirectBodyState2D) -> void:
 		alignment = 1.0
 
 	# Fattore velocità basato su allineamento
-	var speed_factor: float = remap(alignment, -1.0, 1.0, 0.5, 1.0)
+	var speed_factor: float = remap(alignment, -1.0, 1.0, 0.2, 1.0)
 	target_velocity *= speed_factor
 
 	# Interpola verso la velocità target
@@ -107,7 +109,8 @@ func change_size(amount: float) -> void:
 	print(collision_shape.scale)
 	var point = trail_2d.width_curve.get_point_position(0).y
 	trail_2d.width_curve.set_point_value(0, point * amount)
-	collision_shape.scale = collision_shape.scale * amount
+	trail_2d.length *= amount
+	collision_shape.scale *= amount
 
 ## Riproduce il suono di hit.
 func play_hit_sound() -> void:
@@ -128,8 +131,8 @@ func _handle_mouse_input() -> Vector2:
 
 func take_damage(amount: int) -> void:
 	hp -= amount
-	life_bar.value = hp
-	life_bar.start_fade()
+	_update_life_bar()
+
 	print(hp)
 	if hp <= 0:
 		game_over()
@@ -137,3 +140,17 @@ func take_damage(amount: int) -> void:
 func game_over() -> void:
 	GlobalSignals.emit_signal("game_over")
 	queue_free()
+
+
+func _update_life_bar() -> void:
+	life_bar.value = hp
+	life_bar.start_fade()
+
+func _on_regen_timer_timeout() -> void:
+	hp += 1
+	hp = min(hp, max_hp)
+
+	_update_life_bar()
+
+	if hp < max_hp:
+		regen_timer.wait_time = regen_tick
