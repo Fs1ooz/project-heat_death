@@ -6,7 +6,7 @@
 [sub_resource type="CircleShape2D" id="CircleShape2D_rcd2s"]
 radius = 738.1958
 
-[node name="RockyPlanet" type="RigidBody2D" node_paths=PackedStringArray("collision")]
+[node name="RockyPlanet" type="RigidBody2D" node_paths=PackedStringArray("collision") groups=["celestial_bodies"]]
 mass = 1000.0
 gravity_scale = 0.0
 lock_rotation = true

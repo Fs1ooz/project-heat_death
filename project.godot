@@ -34,6 +34,7 @@ enabled=PackedStringArray("res://addons/gdfxr/plugin.cfg", "res://addons/trail_2
 [global_group]
 
 player=""
+celestial_bodies=""
 
 [input]
 

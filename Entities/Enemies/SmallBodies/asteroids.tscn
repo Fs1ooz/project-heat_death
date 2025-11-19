@@ -14,7 +14,7 @@ point_count = 2
 [sub_resource type="Gradient" id="Gradient_8ij5w"]
 colors = PackedColorArray(0.64104044, 0.7887038, 0.8258557, 1, 0.36074692, 0.5516501, 0.60209715, 0.4)
 
-[node name="Asteroid" type="RigidBody2D" node_paths=PackedStringArray("collision")]
+[node name="Asteroid" type="RigidBody2D" node_paths=PackedStringArray("collision") groups=["celestial_bodies"]]
 z_index = 1
 gravity_scale = 0.0
 continuous_cd = 2

@@ -1,0 +1,19 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+uid="uid://btl310t212txn"
+path="res://.godot/imported/BETA - Base.mp3-af62eb354fda31bea8fc6597943b745b.mp3str"
+
+[deps]
+
+source_file="res://Assets/Music/BETA - Base.mp3"
+dest_files=["res://.godot/imported/BETA - Base.mp3-af62eb354fda31bea8fc6597943b745b.mp3str"]
+
+[params]
+
+loop=false
+loop_offset=0.0
+bpm=65.0
+beat_count=0
+bar_beats=4

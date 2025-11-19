@@ -1,0 +1,19 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+uid="uid://cawomildbxiao"
+path="res://.godot/imported/BETA - Phase1.mp3-21996fd91cfd2de5357932329f6b1562.mp3str"
+
+[deps]
+
+source_file="res://Assets/Music/BETA - Phase1.mp3"
+dest_files=["res://.godot/imported/BETA - Phase1.mp3-21996fd91cfd2de5357932329f6b1562.mp3str"]
+
+[params]
+
+loop=false
+loop_offset=0.0
+bpm=65.0
+beat_count=0
+bar_beats=4

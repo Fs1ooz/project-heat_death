@@ -14,6 +14,7 @@ var health: float
 var explosion_red_scene = preload("uid://dvg5n5eu3oyde")
 
 func _ready() -> void:
+	add_to_group("celestialbodies", true)
 	_setup_physics()
 	_setup_scale()
 	_setup_health()
