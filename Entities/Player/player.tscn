@@ -1,9 +1,10 @@
-[gd_scene load_steps=7 format=3 uid="uid://470x1obeipdg"]
+[gd_scene load_steps=8 format=3 uid="uid://470x1obeipdg"]
 
 [ext_resource type="Script" uid="uid://bf2nvyuinsvhu" path="res://Entities/Player/playerrigidbody.gd" id="1_tekja"]
 [ext_resource type="Texture2D" uid="uid://rvlgh5t6qo4c" path="res://Entities/Player/1000283197.png" id="2_3uyv8"]
 [ext_resource type="AudioStream" uid="uid://1wfdu2dsudw4" path="res://Entities/Player/hit.sfxr" id="3_lu8i8"]
 [ext_resource type="PackedScene" uid="uid://cax8g23d402jc" path="res://Entities/Player/player_trail_2d.tscn" id="4_tekja"]
+[ext_resource type="Gradient" uid="uid://boco80vk10h62" path="res://Entities/Player/sciagay.tres" id="5_5c2io"]
 
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_tekja"]
 bounce = 2.0
@@ -34,6 +35,7 @@ stream = ExtResource("3_lu8i8")
 
 [node name="Trail2D" parent="." instance=ExtResource("4_tekja")]
 visible = true
+gradient = ExtResource("5_5c2io")
 
 [node name="RegenTimer" type="Timer" parent="."]
 
