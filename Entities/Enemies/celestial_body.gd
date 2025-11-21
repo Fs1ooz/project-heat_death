@@ -17,6 +17,7 @@ func _ready() -> void:
 	add_to_group("celestialbodies", true)
 	_setup_physics()
 	_setup_scale()
+	_setup_mass()
 	_setup_health()
 
 # Configurazione fisica comune
@@ -39,6 +40,11 @@ func _setup_health() -> void:
 	health = snapped(mass * internal_energy, round_base)
 	print(get_class(), " vita: ", health)
 
+func _setup_mass() -> void:
+	var size_x: float = collision.scale.x
+	mass = snappedf(size_x * internal_energy * round_base, round_base)
+	print(get_class(), " MASSA: ", mass)
+
 # Hook vuoto per le classi figlie
 func _on_ready_custom() -> void:
 	pass
@@ -50,7 +56,7 @@ func _on_body_entered(body: Node) -> void:
 		body.play_hit_sound()
 		var rel_vel = (linear_velocity - body.linear_velocity).length()
 		var impact_force = mass * rel_vel
-		var damage = impact_force * 0.002
+		var damage = impact_force * 0.005
 		body.take_damage(damage)
 
 		take_damage(body.get_damage())

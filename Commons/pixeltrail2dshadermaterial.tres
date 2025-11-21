@@ -1,0 +1,7 @@
+[gd_resource type="ShaderMaterial" load_steps=2 format=3 uid="uid://n3iqcxcturo3"]
+
+[ext_resource type="Shader" uid="uid://cbkoxa5ctkt57" path="res://Entities/Player/playertrail2d.gdshader" id="1_uykbp"]
+
+[resource]
+shader = ExtResource("1_uykbp")
+shader_parameter/pixel_scale = 10.0

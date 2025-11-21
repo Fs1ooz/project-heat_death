@@ -1,0 +1,14 @@
+[gd_resource type="ShaderMaterial" load_steps=2 format=3 uid="uid://x8fi8f66an5a"]
+
+[ext_resource type="Shader" uid="uid://q72xumyefkmk" path="res://Entities/Enemies/SmallBodies/comethalo.gdshader" id="1_1nfem"]
+
+[resource]
+shader = ExtResource("1_1nfem")
+shader_parameter/core_color = Color(0.46711743, 0.8692014, 1, 1)
+shader_parameter/outer_color = Color(0, 0, 0, 0)
+shader_parameter/glow_intensity = 1.5
+shader_parameter/core_size = 0.2
+shader_parameter/halo_radius = 0.1
+shader_parameter/tail_stretch = 1.0
+shader_parameter/tail_direction = Vector2(-1, 0)
+shader_parameter/pixelation = 70.0

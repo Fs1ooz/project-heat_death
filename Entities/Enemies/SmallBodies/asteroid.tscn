@@ -1,30 +1,26 @@
-[gd_scene load_steps=6 format=3 uid="uid://dooqkflafelol"]
+[gd_scene load_steps=3 format=3 uid="uid://dooqkflafelol"]
 
-[ext_resource type="Script" uid="uid://b76ax10rq762s" path="res://Entities/Enemies/SmallBodies/small_body.gd" id="1_gvk46"]
-[ext_resource type="Script" uid="uid://dbkcdpcrycl4e" path="res://addons/trail_2d/trail_2d.gd" id="2_8ij5w"]
+[ext_resource type="Script" uid="uid://b76ax10rq762s" path="res://Entities/Enemies/SmallBodies/asteroid.gd" id="1_tefsh"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_y0ama"]
-radius = 37.336308
-
-[sub_resource type="Curve" id="Curve_8ij5w"]
-_limits = [0.0, 5.0, 0.0, 1.0]
-_data = [Vector2(0, 5), 0.0, -10.210764, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
-point_count = 2
-
-[sub_resource type="Gradient" id="Gradient_8ij5w"]
-colors = PackedColorArray(0.64104044, 0.7887038, 0.8258557, 1, 0.36074692, 0.5516501, 0.60209715, 0.4)
+radius = 240.05208
 
 [node name="Asteroid" type="RigidBody2D" node_paths=PackedStringArray("collision") groups=["celestial_bodies"]]
 z_index = 1
+mass = 40.0
 gravity_scale = 0.0
 continuous_cd = 2
 contact_monitor = true
 max_contacts_reported = 4
-script = ExtResource("1_gvk46")
+script = ExtResource("1_tefsh")
+min_speed = 15.0
+max_speed = 90.0
+internal_energy = 5
 game_energy = 20
 collision = NodePath("Collision")
-max_size = 5.0
-round_base = 1
+min_size = 5.0
+max_size = 10.0
+round_base = 5
 
 [node name="Collision" type="CollisionShape2D" parent="."]
 shape = SubResource("CircleShape2D_y0ama")
@@ -33,62 +29,54 @@ shape = SubResource("CircleShape2D_y0ama")
 position = Vector2(65, -383)
 scale = Vector2(0.3301486, 1)
 color = Color(0.43890208, 0.43890208, 0.43890208, 1)
-polygon = PackedVector2Array(-202.93887, 346, -290.7781, 361, -308.95172, 383, -275.63342, 409, -227.17038, 419, -139.33115, 415, -84.81026, 388, -118.128586, 357)
+polygon = PackedVector2Array(-39.37622, 154, -563.3827, 178, -835.9872, 260, -908.6817, 434, -690.59814, 558, -308.95178, 619, 163.56271, 592, 411.93567, 512, 539.1511, 381, 330.15436, 219)
 
 [node name="Polygon2D2" type="Polygon2D" parent="Collision/Polygon2D"]
-position = Vector2(3.0289907, -731)
-scale = Vector2(0.10899811, 1)
+position = Vector2(1096.4758, -5093)
+scale = Vector2(0.6825788, 4.9166665)
 color = Color(0.26239687, 0.26239687, 0.26239687, 1)
 polygon = PackedVector2Array(-1487.944, 1135, -1778.4905, 1141, -1626.8884, 1134, -1432.3661, 1129)
 
 [node name="Polygon2D6" type="Polygon2D" parent="Collision/Polygon2D"]
-position = Vector2(-93.897064, -756)
-scale = Vector2(0.10899811, 1)
+position = Vector2(784.4951, -4597)
+scale = Vector2(0.87907785, 4.3846154)
 color = Color(0.26239687, 0.26239687, 0.26239687, 1)
-polygon = PackedVector2Array(-1487.944, 1135, -1515.7329, 1142, -1626.8884, 1134, -1432.3661, 1129)
+polygon = PackedVector2Array(-1487.944, 1135, -1515.7329, 1142, -1626.8884, 1134, -1833.6235, 1125.8071, -1432.3661, 1129)
 
 [node name="Polygon2D7" type="Polygon2D" parent="Collision/Polygon2D"]
-position = Vector2(3.0289917, -776)
-scale = Vector2(0.10899811, 1)
+position = Vector2(1438.746, -4870)
+scale = Vector2(0.9583195, 4.5384617)
 color = Color(0.26239687, 0.26239687, 0.26239687, 1)
 polygon = PackedVector2Array(-1487.944, 1135, -1515.7329, 1142, -1626.8884, 1134, -1432.3661, 1129, -1460.155, 1141)
 
 [node name="Polygon2D8" type="Polygon2D" parent="Collision/Polygon2D"]
-position = Vector2(-39.37616, -744)
-scale = Vector2(0.10899811, 1)
+position = Vector2(1238.7207, -5104.364)
+scale = Vector2(0.8946063, 4.818182)
 color = Color(0.26239687, 0.26239687, 0.26239687, 1)
 polygon = PackedVector2Array(-1487.944, 1135, -1515.7329, 1142, -1626.8884, 1134, -1333.8679, 1131)
 
 [node name="Polygon2D" type="Polygon2D" parent="Collision/Polygon2D"]
-position = Vector2(260.4888, -361)
-scale = Vector2(0.3301486, 1)
+position = Vector2(4461.628, -3585)
+scale = Vector2(3.60207, 5.3)
 color = Color(0.15377831, 0.15377831, 0.15377831, 1)
 polygon = PackedVector2Array(-1229.3792, 750, -1187.7239, 760, -1151.026, 758, -1132.677, 754)
 
 [node name="Polygon2D3" type="Polygon2D" parent="Collision/Polygon2D"]
-position = Vector2(142.36018, -392)
-scale = Vector2(0.3301486, 1)
+position = Vector2(2762.3923, -3246.0002)
+scale = Vector2(2.8081667, 4.6666665)
 color = Color(0.15377831, 0.15377831, 0.15377831, 1)
 polygon = PackedVector2Array(-1196.8983, 751, -1187.7239, 760, -1151.026, 758, -1132.677, 754)
 
 [node name="Polygon2D4" type="Polygon2D" parent="Collision/Polygon2D"]
-position = Vector2(230.19942, -383)
-scale = Vector2(0.3301486, 1)
+position = Vector2(1187.3442, -1098.0001)
+scale = Vector2(0.87063116, 1.8888888)
 color = Color(0.15377831, 0.15377831, 0.15377831, 1)
 polygon = PackedVector2Array(-1196.8983, 751, -1187.7239, 760, -1151.026, 758, -1132.677, 754)
 
 [node name="Polygon2D5" type="Polygon2D" parent="Collision/Polygon2D"]
-position = Vector2(127.215485, -361)
-scale = Vector2(0.3301486, 1)
+position = Vector2(3001.6785, -7416.0005)
+scale = Vector2(2.949659, 10.444445)
 color = Color(0.15377831, 0.15377831, 0.15377831, 1)
 polygon = PackedVector2Array(-1196.8983, 751, -1187.7239, 760, -1151.026, 758, -1132.677, 754)
-
-[node name="Trail2D" type="Line2D" parent="."]
-width_curve = SubResource("Curve_8ij5w")
-gradient = SubResource("Gradient_8ij5w")
-joint_mode = 1
-script = ExtResource("2_8ij5w")
-length = 200
-metadata/_custom_type_script = "uid://dbkcdpcrycl4e"
 
 [connection signal="body_entered" from="." to="." method="_on_body_entered"]

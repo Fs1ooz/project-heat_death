@@ -1,0 +1,22 @@
+[gd_scene load_steps=3 format=3 uid="uid://bpeudpxsbd3x2"]
+
+[ext_resource type="Script" uid="uid://bdmvnvgdm1aav" path="res://Entities/Enemies/SmallBodies/meteoroid.gd" id="1_otcpb"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_qufua"]
+radius = 50.159744
+
+[node name="Meteoroid" type="RigidBody2D" node_paths=PackedStringArray("collision") groups=["celestial_bodies"]]
+script = ExtResource("1_otcpb")
+collision = NodePath("Collision")
+round_base = 1
+metadata/_custom_type_script = "uid://be8uvibib1twp"
+
+[node name="Collision" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_qufua")
+
+[node name="Polygon2D" type="Polygon2D" parent="Collision"]
+position = Vector2(66.36001, -392.19998)
+color = Color(0.52036595, 0.52036595, 0.52036595, 1)
+polygon = PackedVector2Array(-65.36001, 342.19998, -103.36001, 358.19998, -119.36001, 394.19998, -101.36001, 430.19998, -67.36001, 440.19998, -30.360008, 427.19998, -15.360008, 391.19998, -33.36001, 356.19998)
+
+[connection signal="body_entered" from="." to="." method="_on_body_entered"]

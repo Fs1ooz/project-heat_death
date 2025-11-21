@@ -2,7 +2,6 @@
 
 [ext_resource type="PackedScene" uid="uid://470x1obeipdg" path="res://Entities/Player/player.tscn" id="1_0co0n"]
 [ext_resource type="Script" uid="uid://siuls68q6og5" path="res://Stages/World/world.gd" id="1_mt616"]
-[ext_resource type="Texture2D" uid="uid://b4s573j8s02mv" path="res://Assets/Images/IMG_2208.PNG" id="2_7vtma"]
 [ext_resource type="PackedScene" uid="uid://dpgfvx5muvsrp" path="res://Stages/World/debug_spawner.tscn" id="2_wipa0"]
 [ext_resource type="Texture2D" uid="uid://bb6ve2asoxg1c" path="res://Assets/Images/IMG_2207.PNG" id="3_5t5yv"]
 [ext_resource type="Script" uid="uid://cnf8kwhvre5kg" path="res://Entities/Player/camera_2d.gd" id="4_qmwgx"]
@@ -14,6 +13,14 @@
 [ext_resource type="AudioStream" uid="uid://cawomildbxiao" path="res://Assets/Music/BETA - Phase1.mp3" id="12_6du53"]
 [ext_resource type="AudioStream" uid="uid://wvogywji06eb" path="res://Assets/Music/BETA - Phase2.mp3" id="13_bv6ne"]
 [ext_resource type="Script" uid="uid://cvs60xrp5qjxm" path="res://Stages/World/music_audio_stream_player.gd" id="14_kuj1q"]
+
+[sub_resource type="Environment" id="Environment_728k4"]
+background_mode = 3
+glow_enabled = true
+glow_normalized = true
+glow_intensity = 8.0
+glow_blend_mode = 0
+glow_hdr_threshold = 0.8
 
 [sub_resource type="AudioStreamInteractive" id="AudioStreamInteractive_oj5fs"]
 clip_count = 3
@@ -28,9 +35,10 @@ clip_2/stream = ExtResource("13_bv6ne")
 clip_2/auto_advance = 0
 _transitions = {
 Vector2i(-1, -1): {
-"fade_beats": 0.2,
+"fade_beats": 0.3,
 "fade_mode": 3,
 "from_time": 0,
+"hold_previous": true,
 "to_time": 0
 }
 }
@@ -38,13 +46,17 @@ Vector2i(-1, -1): {
 [node name="World" type="Node2D"]
 script = ExtResource("1_mt616")
 
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_728k4")
+
+[node name="CanvasModulate" type="CanvasModulate" parent="."]
+scale = Vector2(2.515625, 2.390625)
+
 [node name="Parallax2D" type="Parallax2D" parent="."]
+z_index = -1
 scroll_scale = Vector2(0.01, 0.01)
 repeat_size = Vector2(2000, 1438)
 repeat_times = 195
-
-[node name="Img2208" type="Sprite2D" parent="Parallax2D"]
-texture = ExtResource("2_7vtma")
 
 [node name="Img2207" type="Sprite2D" parent="Parallax2D"]
 modulate = Color(1, 0.5592148, 0.5042543, 0.53800005)
@@ -54,7 +66,13 @@ texture = ExtResource("3_5t5yv")
 modulate = Color(1.1638972, 1.1638972, 1.1638972, 1)
 texture = ExtResource("4_syafc")
 
+[node name="ColorRect" type="ColorRect" parent="Parallax2D"]
+offset_right = 2000.0
+offset_bottom = 1438.0
+color = Color(0.01, 0.01, 0.01, 1)
+
 [node name="Parallax2D2" type="Parallax2D" parent="."]
+z_index = -1
 rotation = 3.1415927
 scale = Vector2(3, 3)
 scroll_scale = Vector2(0.1, 0.1)
@@ -64,10 +82,12 @@ repeat_times = 195
 
 [node name="Img2207" type="Sprite2D" parent="Parallax2D2"]
 modulate = Color(1, 1, 1, 0.326)
+light_mask = 3
 texture = ExtResource("3_5t5yv")
 
 [node name="Img2206" type="Sprite2D" parent="Parallax2D2"]
 modulate = Color(1.353256, 1.353256, 1.353256, 1)
+light_mask = 0
 texture = ExtResource("4_syafc")
 
 [node name="DebugSpawner" parent="." instance=ExtResource("2_wipa0")]
@@ -95,3 +115,5 @@ process_mode = 2
 stream = SubResource("AudioStreamInteractive_oj5fs")
 script = ExtResource("14_kuj1q")
 player = NodePath("../Player")
+
+[editable path="Player"]

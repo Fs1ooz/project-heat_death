@@ -2,12 +2,15 @@ extends Node2D
 
 ## Array di scene da spawnare (ordinate per probabilità decrescente)
 var celestial_bodies: Array[PackedScene] = [
-	preload("res://Entities/Enemies/SmallBodies/asteroids.tscn"),
+	preload("res://Entities/Enemies/SmallBodies/meteoroid.tscn"),
+	preload("res://Entities/Enemies/SmallBodies/comet.tscn"),
+	preload("res://Entities/Enemies/SmallBodies/asteroid.tscn"),
 	preload("res://Entities/Enemies/RockyPlanets/rocky_planet.tscn"),
+
 ]
 
 ## Pesi per ogni scena (più alto = più probabilità)
-var spawn_weights: Array[int] = [99, 1]
+var spawn_weights: Array[int] = [80, 15, 4, 1]
 
 
 func _ready() -> void:
@@ -18,7 +21,7 @@ func _on_timer_timeout() -> void:
 	var scene_to_spawn = get_weighted_random_scene()
 	var new_object = scene_to_spawn.instantiate()
 
-	var spawn_pos = Vector2(randf_range(-3200, 3200), randf_range(-2400, 2200))
+	var spawn_pos = Vector2(randf_range(-5200, 5200), randf_range(-4400, 4200))
 	new_object.global_position = spawn_pos
 	await get_tree().create_timer(0.5).timeout
 
