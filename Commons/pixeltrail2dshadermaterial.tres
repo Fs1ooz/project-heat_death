@@ -4,4 +4,4 @@
 
 [resource]
 shader = ExtResource("1_uykbp")
-shader_parameter/pixel_scale = 10.0
+shader_parameter/pixel_scale = 4.0

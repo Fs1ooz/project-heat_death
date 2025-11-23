@@ -1,6 +1,6 @@
 [gd_scene load_steps=11 format=3 uid="uid://470x1obeipdg"]
 
-[ext_resource type="Script" uid="uid://bf2nvyuinsvhu" path="res://Entities/Player/playerrigidbody.gd" id="1_tekja"]
+[ext_resource type="Script" uid="uid://bf2nvyuinsvhu" path="res://Entities/Player/player.gd" id="1_tekja"]
 [ext_resource type="Texture2D" uid="uid://rvlgh5t6qo4c" path="res://Entities/Player/1000283197.png" id="2_3uyv8"]
 [ext_resource type="AudioStream" uid="uid://1wfdu2dsudw4" path="res://Entities/Player/hit.sfxr" id="3_lu8i8"]
 [ext_resource type="PackedScene" uid="uid://cax8g23d402jc" path="res://Entities/Player/player_trail_2d.tscn" id="4_tekja"]
@@ -14,13 +14,13 @@ radius = 33.0
 height = 100.0
 
 [sub_resource type="Curve" id="Curve_5c2io"]
-_data = [Vector2(0, 1), 0.0, -2.076032, 0, 0, Vector2(1, 0), -0.00955437, 0.0, 0, 0]
+_data = [Vector2(0, 1), 0.0, -1.5483142, 0, 0, Vector2(1, 0), -0.40834725, 0.0, 0, 0]
 point_count = 2
 metadata/_snap_count = 8
 metadata/_snap_enabled = true
 
 [sub_resource type="Gradient" id="Gradient_tekja"]
-colors = PackedColorArray(1, 1, 1, 0.48900002, 1, 1, 1, 0.003)
+colors = PackedColorArray(0.8530103, 0.8530103, 0.8530103, 0.74509805, 1, 1, 1, 0.003921569)
 
 [sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_5c2io"]
 polygon = PackedVector2Array(-2.1855694e-06, -50, -14.000002, -45, -25.000002, -34, -31, -19.999998, -34, 1.4861872e-06, -29.999998, 23.000002, -22.999998, 36, -13.999998, 46, 2.1855694e-06, 50, 18.000002, 43, 28.000002, 26.999998, 34, -1.0000014, 31, -22.000002, 23.999998, -37, 14.999998, -46)
@@ -49,11 +49,13 @@ stream = ExtResource("3_lu8i8")
 [node name="Trail2D" parent="." instance=ExtResource("4_tekja")]
 visible = true
 material = ExtResource("5_5c2io")
-width = 50.0
+width = 60.0
 width_curve = SubResource("Curve_5c2io")
 gradient = SubResource("Gradient_tekja")
 
 [node name="RegenTimer" type="Timer" parent="."]
+wait_time = 5.0
+autostart = true
 
 [node name="LightOccluder2D" type="LightOccluder2D" parent="."]
 position = Vector2(-1, 0)

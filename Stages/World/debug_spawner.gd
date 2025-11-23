@@ -3,6 +3,7 @@ extends Node2D
 ## Array di scene da spawnare (ordinate per probabilità decrescente)
 var celestial_bodies: Array[PackedScene] = [
 	preload("res://Entities/Enemies/SmallBodies/meteoroid.tscn"),
+	preload("res://Entities/EnergyDrop/energy_drop.tscn"),
 	preload("res://Entities/Enemies/SmallBodies/comet.tscn"),
 	preload("res://Entities/Enemies/SmallBodies/asteroid.tscn"),
 	preload("res://Entities/Enemies/RockyPlanets/rocky_planet.tscn"),
@@ -10,7 +11,7 @@ var celestial_bodies: Array[PackedScene] = [
 ]
 
 ## Pesi per ogni scena (più alto = più probabilità)
-var spawn_weights: Array[int] = [80, 15, 4, 1]
+var spawn_weights: Array[float] = [85, 10, 3.8, 0.15, 0.05]
 
 
 func _ready() -> void:
@@ -21,7 +22,7 @@ func _on_timer_timeout() -> void:
 	var scene_to_spawn = get_weighted_random_scene()
 	var new_object = scene_to_spawn.instantiate()
 
-	var spawn_pos = Vector2(randf_range(-5200, 5200), randf_range(-4400, 4200))
+	var spawn_pos = Vector2(randf_range(-8200, 8200), randf_range(-6400, 6200))
 	new_object.global_position = spawn_pos
 	await get_tree().create_timer(0.5).timeout
 
@@ -36,7 +37,7 @@ func get_weighted_random_scene() -> PackedScene:
 		total_weight += weight
 
 	# Genera un numero casuale tra 0 e il peso totale
-	var random_value = randi() % total_weight
+	var random_value = randf() * total_weight
 
 	# Trova quale scena corrisponde a questo valore
 	var cumulative_weight = 0

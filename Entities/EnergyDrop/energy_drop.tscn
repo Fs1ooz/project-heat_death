@@ -1,0 +1,19 @@
+[gd_scene load_steps=3 format=3 uid="uid://ctismywjnvljg"]
+
+[ext_resource type="Script" uid="uid://xy3bkvisvinm" path="res://Entities/EnergyDrop/energy_drop.gd" id="1_nnvmk"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_rdhfw"]
+radius = 37.0
+
+[node name="EnergyDrop" type="Area2D"]
+script = ExtResource("1_nnvmk")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_rdhfw")
+
+[node name="Polygon2D" type="Polygon2D" parent="."]
+color = Color(0.28235292, 0.96862745, 0.66477877, 1)
+offset = Vector2(-1, -2)
+polygon = PackedVector2Array(-29, 2, 1, -28, 31, 2, 1, 32)
+
+[connection signal="body_entered" from="." to="." method="_on_body_entered"]

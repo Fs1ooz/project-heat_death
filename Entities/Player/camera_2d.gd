@@ -4,6 +4,9 @@ extends Camera2D
 @export var min_zoom: float = 0.05
 @export var max_zoom: float = 2.0
 
+func _ready() -> void:
+	make_current()
+
 func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton:
 		if event.button_index == MOUSE_BUTTON_WHEEL_DOWN:

@@ -1,5 +1,7 @@
 extends Control
 
+@onready var death_camera: Camera2D = $"../../DeathCamera"
+@onready var player: Player = $"../../Player"
 
 func _ready() -> void:
 	get_tree().paused = false
@@ -12,5 +14,7 @@ func _on_retry_button_pressed() -> void:
 
 
 func _on_game_over()  -> void:
-	get_tree().paused = true
+	death_camera.global_position = player.global_position
+	death_camera.make_current()
+
 	show()

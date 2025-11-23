@@ -34,8 +34,9 @@ enum UpgradeType {
 	REGENERATION,
 	SPEED,
 	MASS,
-	#DENSITY,
+	ACCELERATION,
 }
+
 
 var upgrades_data: Dictionary = {
 	UpgradeType.MAX_HEALTH: {
@@ -53,8 +54,8 @@ var upgrades_data: Dictionary = {
 		"level": 1,
 		"base_power": 2.0,
 		"current_power": 2.0,
-		"base_cost": 50,
-		"current_cost": 50,
+		"base_cost": 30,
+		"current_cost": 30,
 	},
 	UpgradeType.SPEED: {
 		"name": "Speed",
@@ -64,6 +65,15 @@ var upgrades_data: Dictionary = {
 		"current_power": 700.0,
 		"base_cost": 10,
 		"current_cost": 10,
+	},
+	UpgradeType.ACCELERATION: {
+		"name": "Accelaration",
+		"description": "Increases Acceleration.",
+		"level": 1,
+		"base_power": 500.0,
+		"current_power": 500.0,
+		"base_cost": 25,
+		"current_cost": 25,
 	},
 	UpgradeType.MASS: {
 		"name": "Mass",
@@ -119,8 +129,11 @@ func apply_upgrade(upgrade_type: UpgradeType):
 			power = max(0.2, upgrade_data["base_power"] - (upgrade_data["level"] * 0.15))
 		UpgradeType.SPEED:
 			power = upgrade_data["current_power"] + upgrade_data["level"] * 100
+		UpgradeType.ACCELERATION:
+			power = upgrade_data["current_power"] + upgrade_data["level"] * 500
 		UpgradeType.MASS:
 			power = upgrade_data["current_power"] + upgrade_data["level"] * 1.1
+
 		#UpgradeType.DENSITY:
 			#power = upgrade_data["current_power"] + upgrade_data["level"] * 1.1
 
@@ -137,7 +150,6 @@ func apply_upgrade(upgrade_type: UpgradeType):
 				player.max_hp = power
 			UpgradeType.REGENERATION:
 				player.regen_tick = power
-				player.regen_timer.start(power)
 			UpgradeType.SPEED:
 				player.speed = power
 			UpgradeType.MASS:

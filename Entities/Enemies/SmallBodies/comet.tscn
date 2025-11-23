@@ -17,13 +17,15 @@ point_count = 2
 colors = PackedColorArray(0.64104044, 0.7887038, 0.8258557, 1, 0.36074692, 0.5516501, 0.60209715, 0.4)
 
 [node name="Comet" type="RigidBody2D" node_paths=PackedStringArray("collision") groups=["celestial_bodies"]]
-mass = 20.0
+mass = 30.0
 script = ExtResource("1_2xb01")
-min_speed = 100.0
-max_speed = 210.0
+min_speed = 180.0
+max_speed = 260.0
 internal_energy = 3
+game_energy = 80
 collision = NodePath("Collision")
-max_size = 10.0
+min_size = 3.0
+max_size = 15.0
 round_base = 1
 metadata/_custom_type_script = "uid://be8uvibib1twp"
 
@@ -50,4 +52,9 @@ script = ExtResource("2_i3iov")
 length = 300
 metadata/_custom_type_script = "uid://dbkcdpcrycl4e"
 
+[node name="TrailTimer" type="Timer" parent="."]
+wait_time = 0.8
+autostart = true
+
 [connection signal="body_entered" from="." to="." method="_on_body_entered"]
+[connection signal="timeout" from="TrailTimer" to="." method="_on_trail_timer_timeout"]

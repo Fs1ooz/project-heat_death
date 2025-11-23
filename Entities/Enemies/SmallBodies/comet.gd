@@ -1,2 +1,46 @@
 extends SmallBody
 class_name Comet
+## SmallBody Setup: min_speed = 180.0 max_speed = 260.0
+## CelestialBody Setup: internal_energy = 3 game_energy = 80 min_size = 3.0 max_size = 15.0 round_base = 1
+
+@export var energy_per_drop: int = 2
+@onready var trail_timer: Timer = $TrailTimer
+var initial_scale: Vector2
+var initial_mass: float
+var initial_game_energy: int
+@onready var trail_2d: Line2D = $Trail2D
+
+func _ready() -> void:
+	super._ready()
+	initial_scale = collision.scale
+	initial_mass = mass
+	initial_game_energy = game_energy
+
+func _process(_delta: float) -> void:
+	if game_energy <= 0:
+		trail_timer.stop()
+		_die_empty()
+
+func _on_trail_timer_timeout() -> void:
+	_spawn_trail_drop()
+
+func _spawn_trail_drop() -> void:
+	if game_energy <= 0: return
+	var energy_drop = energy_drop_scene.instantiate()
+	energy_drop.energy = energy_per_drop
+	energy_drop.global_position = global_position + (-linear_velocity.normalized() * 20.0)
+	get_parent().call_deferred("add_child", energy_drop)
+	game_energy = max(0, game_energy - energy_per_drop)
+	var energy_ratio = float(game_energy) / float(initial_game_energy)
+	collision.scale = initial_scale * energy_ratio
+	trail_2d._resize_trail()
+	if mass != 0:
+		mass = initial_mass * energy_ratio
+
+func _die_empty() -> void:
+	queue_free()
+
+func die() -> void:
+	if game_energy > 0: _spawn_energy_drop()
+	_spawn_explosion()
+	queue_free()
