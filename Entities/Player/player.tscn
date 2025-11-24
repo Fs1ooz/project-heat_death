@@ -6,8 +6,9 @@
 [ext_resource type="PackedScene" uid="uid://cax8g23d402jc" path="res://Entities/Player/player_trail_2d.tscn" id="4_tekja"]
 [ext_resource type="Material" uid="uid://n3iqcxcturo3" path="res://Commons/pixeltrail2dshadermaterial.tres" id="5_5c2io"]
 
-[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_tekja"]
-bounce = 2.0
+[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_5c2io"]
+friction = 0.0
+bounce = 0.5
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_3uyv8"]
 radius = 33.0
@@ -27,8 +28,12 @@ polygon = PackedVector2Array(-2.1855694e-06, -50, -14.000002, -45, -25.000002, -
 
 [node name="Player" type="RigidBody2D" node_paths=PackedStringArray("collision_shape") groups=["player"]]
 collision_mask = 2
-physics_material_override = SubResource("PhysicsMaterial_tekja")
+physics_material_override = SubResource("PhysicsMaterial_5c2io")
 gravity_scale = 0.0
+custom_integrator = true
+continuous_cd = 1
+contact_monitor = true
+max_contacts_reported = 50
 script = ExtResource("1_tekja")
 collision_shape = NodePath("CollisionShape2D")
 

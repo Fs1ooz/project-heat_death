@@ -1,6 +1,6 @@
 extends SmallBody
 class_name Comet
-## SmallBody Setup: min_speed = 180.0 max_speed = 260.0
+## SmallBody Setup: min_speed = 150.0 max_speed = 210.0
 ## CelestialBody Setup: internal_energy = 3 game_energy = 80 min_size = 3.0 max_size = 15.0 round_base = 1
 
 @export var energy_per_drop: int = 2
@@ -34,7 +34,7 @@ func _spawn_trail_drop() -> void:
 	var energy_ratio = float(game_energy) / float(initial_game_energy)
 	collision.scale = initial_scale * energy_ratio
 	trail_2d._resize_trail()
-	if mass != 0:
+	if mass > 0:
 		mass = initial_mass * energy_ratio
 
 func _die_empty() -> void:

@@ -8,7 +8,6 @@ radius = 240.05208
 [node name="Asteroid" type="RigidBody2D" node_paths=PackedStringArray("collision") groups=["celestial_bodies"]]
 z_index = 1
 mass = 40.0
-gravity_scale = 0.0
 continuous_cd = 2
 contact_monitor = true
 max_contacts_reported = 4
@@ -20,7 +19,7 @@ game_energy = 120
 collision = NodePath("Collision")
 min_size = 5.0
 max_size = 15.0
-round_base = 1
+round_base = 10
 
 [node name="Collision" type="CollisionShape2D" parent="."]
 shape = SubResource("CircleShape2D_y0ama")

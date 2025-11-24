@@ -28,43 +28,45 @@ func _setup_physics() -> void:
 	collision_layer = 2
 	collision_mask = 2
 	contact_monitor = true
-	max_contacts_reported = 50
-	continuous_cd = RigidBody2D.CCD_MODE_CAST_RAY
+	max_contacts_reported = 100
+	continuous_cd = RigidBody2D.CCD_MODE_CAST_SHAPE
+	physics_material_override = PhysicsMaterial.new()
+	physics_material_override.bounce = 0.0
+	physics_material_override.friction = 0.0
 
-# Scala casuale
 func _setup_scale() -> void:
 	var scale_rand: float = randf_range(min_size, max_size)
 	collision.scale = Vector2(scale_rand, scale_rand)
 
-# Calcolo salute
-func _setup_health() -> void:
-	health = snapped(mass * internal_energy, round_base)
-	print(get_class(), " vita: ", health)
-
 func _setup_mass() -> void:
 	var size_x: float = collision.scale.x
-	mass = snappedf(size_x * internal_energy * round_base, round_base)
-	print(get_class(), " MASSA: ", mass)
+	var raw_mass = size_x * internal_energy
+	mass = max(round_base, snappedi(raw_mass, round_base))
+	#print(get_class(), " MASSA: ", mass)
 
-# Hook vuoto per le classi figlie
-func _on_ready_custom() -> void:
-	pass
+func _setup_health() -> void:
+	var raw_health = mass * internal_energy
+	health = max(round_base, snappedi(raw_health, round_base))
+	#print(get_class(), " VITA: ", health)
+
 
 # Gestione collisioni
 func _on_body_entered(body: Node) -> void:
 	if body is Player:
 
 		body.play_hit_sound()
-		var rel_vel = (linear_velocity - body.linear_velocity).length()
-		var impact_force = mass * rel_vel
-		var damage = impact_force * 0.005
-		body.take_damage(damage)
+		var rel_vel = (linear_velocity - body._last_velocity).length()
+		var mass_ratio = mass / body.mass  # >1 se il nemico è più pesante
+		var damage_to_player = rel_vel * max(1.0, mass_ratio) * 0.005
+		body.take_damage(int(damage_to_player))
 
 		take_damage(body.get_damage())
 
 # Gestione danno
 func take_damage(damage: float) -> void:
 	health -= damage
+	#print("Danno: ", damage)
+	print("Vita attuale: ", health)
 	if health <= 0:
 		die()
 

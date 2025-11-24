@@ -10,6 +10,10 @@ var energy: int = 0
 
 signal energy_changed(new_energy: int)
 
+
+func _ready() -> void:
+	GlobalSignals.connect("game_over", reset_upgrades)
+
 func gain_energy(amount: int) -> void:
 	energy += amount
 	#print("Energia attuale: ", energy)
@@ -21,13 +25,15 @@ func lose_energy(amount: int) -> void:
 	#print("Energia attuale: ", energy)
 	emit_signal("energy_changed", energy)
 
-#func reset_upgrades() -> void:
-	#for key in upgrades_data.keys():
-		#var upgrade = upgrades_data[key]
-		#upgrade["level"] = 0
-		#if "base_power" in upgrade:
-			#upgrade["current_power"] = upgrade["base_power"]
-#
+func reset_upgrades() -> void:
+	for key in upgrades_data.keys():
+		var upgrade = upgrades_data[key]
+		upgrade["level"] = 0
+		if "base_power" in upgrade:
+			upgrade["current_power"] = upgrade["base_power"]
+		if "current_cost" in upgrade:
+			upgrade["current_cost"] = upgrade["base_cost"]
+
 
 enum UpgradeType {
 	MAX_HEALTH,
@@ -130,16 +136,16 @@ func apply_upgrade(upgrade_type: UpgradeType):
 		UpgradeType.SPEED:
 			power = upgrade_data["current_power"] + upgrade_data["level"] * 100
 		UpgradeType.ACCELERATION:
-			power = upgrade_data["current_power"] + upgrade_data["level"] * 500
+			power = upgrade_data["current_power"] + pow(upgrade_data["current_power"], upgrade_data["level"] / 2)
 		UpgradeType.MASS:
-			power = upgrade_data["current_power"] + upgrade_data["level"] * 1.1
+			power = upgrade_data["current_power"] + upgrade_data["level"] * 2
 
 		#UpgradeType.DENSITY:
 			#power = upgrade_data["current_power"] + upgrade_data["level"] * 1.1
 
 
 	upgrade_data["current_power"] = power
-	upgrade_data["current_cost"]  = calculate_next_cost(upgrade_data)
+	upgrade_data["current_cost"] = calculate_next_cost(upgrade_data)
 
 
 	for player in get_tree().get_nodes_in_group("player"):
@@ -164,5 +170,5 @@ func apply_upgrade(upgrade_type: UpgradeType):
 func calculate_next_cost(upgrade_data: Dictionary) -> int:
 	var base_cost = upgrade_data.get("base_cost", 10)
 	var level = upgrade_data["level"]
-	var growth_factor = 1.5
+	var growth_factor = 1.3
 	return int(base_cost * pow(growth_factor, level))

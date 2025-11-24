@@ -16,6 +16,9 @@
 
 [sub_resource type="Environment" id="Environment_728k4"]
 background_mode = 3
+tonemap_mode = 2
+tonemap_exposure = 1.05
+tonemap_white = 2.0
 glow_enabled = true
 glow_levels/1 = 2.0
 glow_levels/2 = 2.0
@@ -36,7 +39,7 @@ volumetric_fog_gi_inject = 7.8
 volumetric_fog_length = 1024.0
 volumetric_fog_ambient_inject = 13.45
 adjustment_enabled = true
-adjustment_saturation = 1.1
+adjustment_saturation = 2.0
 
 [sub_resource type="AudioStreamInteractive" id="AudioStreamInteractive_oj5fs"]
 clip_count = 3
@@ -62,6 +65,9 @@ Vector2i(-1, -1): {
 [node name="World" type="Node2D"]
 script = ExtResource("1_mt616")
 
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_728k4")
+
 [node name="DeathCamera" type="Camera2D" parent="."]
 zoom = Vector2(0.05, 0.05)
 
@@ -80,7 +86,7 @@ offset_bottom = 1438.0
 color = Color(0.01, 0.01, 0.01, 1)
 
 [node name="Img2207" type="Sprite2D" parent="BackgroundLayer/Parallax2D"]
-modulate = Color(1, 0.55833334, 0.5, 0.50980395)
+modulate = Color(0.84, 0.23519997, 0.23519997, 0.7764706)
 texture = ExtResource("3_5t5yv")
 
 [node name="Img2206" type="Sprite2D" parent="BackgroundLayer/Parallax2D"]
@@ -105,9 +111,6 @@ modulate = Color(1.353256, 1.353256, 1.353256, 1)
 light_mask = 0
 texture = ExtResource("4_syafc")
 
-[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
-environment = SubResource("Environment_728k4")
-
 [node name="CanvasModulate" type="CanvasModulate" parent="."]
 scale = Vector2(2.515625, 2.390625)
 
@@ -116,8 +119,11 @@ scale = Vector2(2.515625, 2.390625)
 [node name="Player" parent="." node_paths=PackedStringArray("life_bar") instance=ExtResource("1_0co0n")]
 life_bar = NodePath("../CanvasLayer/PlayerLifeBar")
 
+[node name="AudioStreamPlayer2D" parent="Player" index="1"]
+bus = &"Sound"
+
 [node name="Camera2D" type="Camera2D" parent="Player"]
-zoom = Vector2(0.5, 0.5)
+zoom = Vector2(0.2, 0.2)
 limit_enabled = false
 position_smoothing_enabled = true
 position_smoothing_speed = 10.0
@@ -134,6 +140,7 @@ focus_behavior_recursive = 1
 
 [node name="MusicAudioStreamPlayer" type="AudioStreamPlayer" parent="." node_paths=PackedStringArray("player")]
 stream = SubResource("AudioStreamInteractive_oj5fs")
+bus = &"Music"
 script = ExtResource("14_kuj1q")
 player = NodePath("../Player")
 
