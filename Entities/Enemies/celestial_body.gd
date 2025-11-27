@@ -15,6 +15,9 @@ var explosion_red_scene = preload("uid://dvg5n5eu3oyde")
 var energy_drop_scene = preload("uid://ctismywjnvljg")
 
 func _ready() -> void:
+	for child in get_children():
+		if child is AnimatedSprite2D:
+			child.play()
 	add_to_group("celestialbodies", true)
 	_setup_physics()
 	_setup_scale()

@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="Heat Death"
-run/main_scene="uid://6r1e66kx2qgb"
+run/main_scene="uid://b82imh4wvcljk"
 config/features=PackedStringArray("4.5", "Forward Plus")
 config/icon="uid://cutmcskxym36k"
 

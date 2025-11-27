@@ -1,0 +1,10 @@
+[gd_scene load_steps=2 format=3 uid="uid://dx2d22mg58g5e"]
+
+[ext_resource type="Texture2D" uid="uid://dtrrcyl2vn3nj" path="res://Entities/Enemies/1000283199.png" id="2_5mq6v"]
+
+[node name="PlaceholderPlanet" type="Node2D"]
+
+[node name="1000283199" type="Sprite2D" parent="."]
+position = Vector2(-3.999999, -1)
+scale = Vector2(0.08914257, 0.0909249)
+texture = ExtResource("2_5mq6v")

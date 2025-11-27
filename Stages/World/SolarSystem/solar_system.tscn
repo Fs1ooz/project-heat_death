@@ -1,0 +1,97 @@
+[gd_scene load_steps=9 format=3 uid="uid://b82imh4wvcljk"]
+
+[ext_resource type="Script" uid="uid://cx41k1qt88o8g" path="res://Stages/World/SolarSystem/solar_system.gd" id="1_56jnl"]
+[ext_resource type="PackedScene" uid="uid://b7jr8qqiuv4mj" path="res://Entities/Enemies/Stars/Sun/sun.tscn" id="1_h54ps"]
+[ext_resource type="AudioStream" uid="uid://btl310t212txn" path="res://Assets/Music/BETA - Base.mp3" id="4_00fk0"]
+[ext_resource type="AudioStream" uid="uid://cawomildbxiao" path="res://Assets/Music/BETA - Phase1.mp3" id="5_3u0hu"]
+[ext_resource type="AudioStream" uid="uid://wvogywji06eb" path="res://Assets/Music/BETA - Phase2.mp3" id="6_niy7f"]
+[ext_resource type="Script" uid="uid://cvs60xrp5qjxm" path="res://Stages/World/music_audio_stream_player.gd" id="7_l0eld"]
+
+[sub_resource type="Environment" id="Environment_qs46f"]
+background_mode = 3
+tonemap_mode = 2
+tonemap_exposure = 1.05
+tonemap_white = 2.0
+glow_enabled = true
+glow_levels/1 = 2.0
+glow_levels/2 = 2.0
+glow_levels/4 = 2.0
+glow_normalized = true
+glow_intensity = 8.0
+glow_strength = 1.15
+glow_blend_mode = 0
+glow_hdr_scale = 1.0
+glow_hdr_luminance_cap = 64.0
+fog_light_energy = 8.4
+fog_sun_scatter = 0.6
+fog_density = 0.5975
+fog_height = 384.0
+volumetric_fog_density = 1.0
+volumetric_fog_emission_energy = 1024.0
+volumetric_fog_gi_inject = 7.8
+volumetric_fog_length = 1024.0
+volumetric_fog_ambient_inject = 13.45
+adjustment_enabled = true
+adjustment_saturation = 2.0
+
+[sub_resource type="AudioStreamInteractive" id="AudioStreamInteractive_bfis2"]
+clip_count = 3
+clip_0/name = &"Base"
+clip_0/stream = ExtResource("4_00fk0")
+clip_0/auto_advance = 0
+clip_1/name = &"Phase 1"
+clip_1/stream = ExtResource("5_3u0hu")
+clip_1/auto_advance = 0
+clip_2/name = &"Phase 2"
+clip_2/stream = ExtResource("6_niy7f")
+clip_2/auto_advance = 0
+_transitions = {
+Vector2i(-1, -1): {
+"fade_beats": 0.5,
+"fade_mode": 3,
+"from_time": 0,
+"hold_previous": true,
+"to_time": 0
+}
+}
+
+[node name="SolarSystem" type="Node2D"]
+script = ExtResource("1_56jnl")
+
+[node name="Camera2D" type="Camera2D" parent="."]
+zoom = Vector2(0.001, 0.001)
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_qs46f")
+
+[node name="Sun" parent="." instance=ExtResource("1_h54ps")]
+
+[node name="AnimatedSprite2D" parent="Sun/Collision" index="0"]
+autoplay = "new_animation"
+frame_progress = 0.1467409
+
+[node name="BackgroundLayer" type="CanvasLayer" parent="."]
+layer = -3
+follow_viewport_enabled = true
+
+[node name="Parallax2D" type="Parallax2D" parent="BackgroundLayer"]
+scroll_scale = Vector2(0.01, 0.01)
+repeat_size = Vector2(2000, 1438)
+repeat_times = 195
+
+[node name="ColorRect" type="ColorRect" parent="BackgroundLayer/Parallax2D"]
+offset_right = 2000.0
+offset_bottom = 1438.0
+color = Color(0.01, 0.01, 0.01, 1)
+
+[node name="CanvasModulate" type="CanvasModulate" parent="."]
+scale = Vector2(2.515625, 2.390625)
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="MusicAudioStreamPlayer" type="AudioStreamPlayer" parent="."]
+stream = SubResource("AudioStreamInteractive_bfis2")
+bus = &"Music"
+script = ExtResource("7_l0eld")
+
+[editable path="Sun"]
