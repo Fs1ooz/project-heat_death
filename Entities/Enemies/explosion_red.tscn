@@ -1,11 +1,19 @@
-[gd_scene load_steps=8 format=3 uid="uid://dvg5n5eu3oyde"]
+[gd_scene load_steps=10 format=3 uid="uid://dvg5n5eu3oyde"]
 
 [sub_resource type="Gradient" id="Gradient_s6sgx"]
-offsets = PackedFloat32Array(0, 0.1414791, 0.34083602, 0.6237942, 0.8231511, 1)
+offsets = PackedFloat32Array(0, 0.094339624, 0.13207547, 0.16037735, 0.1981132, 0.3207547)
 colors = PackedColorArray(1, 0.97584915, 0.83540225, 1, 0.9998087, 1, 0.37504625, 1, 0.98199487, 0.84449315, 0.18746659, 1, 1, 0.71975076, 0.19090384, 1, 0.83647054, 0.3383444, 0.089741126, 1, 0.6914041, 0, 0, 1)
 
 [sub_resource type="GradientTexture1D" id="GradientTexture1D_pwbyw"]
 gradient = SubResource("Gradient_s6sgx")
+
+[sub_resource type="Curve" id="Curve_ibsrq"]
+_limits = [0.0, 100.0, 0.0, 1.0]
+_data = [Vector2(0, 0), 0.0, 140.0, 0, 0, Vector2(1, 100), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_hnfga"]
+curve = SubResource("Curve_ibsrq")
 
 [sub_resource type="Curve" id="Curve_wutgg"]
 _limits = [-200.0, 200.0, 0.0, 1.0]
@@ -29,6 +37,9 @@ initial_velocity_min = 1000.0
 initial_velocity_max = 1000.0
 gravity = Vector3(0, 0, 0)
 linear_accel_curve = SubResource("CurveTexture_ibsrq")
+damping_min = 10.0
+damping_max = 100.00001
+damping_curve = SubResource("CurveTexture_hnfga")
 scale_min = 10.0
 scale_max = 10.0
 scale_curve = SubResource("CurveTexture_2celf")
@@ -38,10 +49,11 @@ hue_variation_max = 0.079999976
 
 [node name="ExplosionRed" type="GPUParticles2D"]
 emitting = false
-amount = 150
+amount = 100
 lifetime = 10.0
 one_shot = true
 preprocess = 0.5
+speed_scale = 1.5
 explosiveness = 1.0
 visibility_rect = Rect2(-2997.0437, -2982.3027, 5996.4077, 5899.4453)
 trail_enabled = true
