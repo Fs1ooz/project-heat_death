@@ -1,9 +1,15 @@
-[gd_scene load_steps=3 format=3 uid="uid://ctismywjnvljg"]
+[gd_scene load_steps=5 format=3 uid="uid://ctismywjnvljg"]
 
 [ext_resource type="Script" uid="uid://xy3bkvisvinm" path="res://Entities/EnergyDrop/energy_drop.gd" id="1_nnvmk"]
+[ext_resource type="AudioStream" uid="uid://dp1e7mdwgi743" path="res://Assets/Sounds/coin.sfxr" id="2_psw32"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_rdhfw"]
 radius = 37.0
+
+[sub_resource type="AudioStreamRandomizer" id="AudioStreamRandomizer_psw32"]
+random_pitch = 2.0
+streams_count = 1
+stream_0/stream = ExtResource("2_psw32")
 
 [node name="EnergyDrop" type="Area2D"]
 script = ExtResource("1_nnvmk")
@@ -15,5 +21,11 @@ shape = SubResource("CircleShape2D_rdhfw")
 color = Color(0.28235292, 0.96862745, 0.66477877, 1)
 offset = Vector2(-1, -2)
 polygon = PackedVector2Array(-29, 2, 1, -28, 31, 2, 1, 32)
+
+[node name="EnergyAudioStreamPlayer" type="AudioStreamPlayer" parent="."]
+stream = SubResource("AudioStreamRandomizer_psw32")
+volume_db = -5.0
+max_polyphony = 6
+bus = &"Sound"
 
 [connection signal="body_entered" from="." to="." method="_on_body_entered"]

@@ -17,15 +17,15 @@ point_count = 2
 colors = PackedColorArray(0.64104044, 0.7887038, 0.8258557, 1, 0.36074692, 0.5516501, 0.60209715, 0.4)
 
 [node name="Comet" type="RigidBody2D" node_paths=PackedStringArray("collision") groups=["celestial_bodies"]]
-mass = 30.0
+mass = 60.0
 script = ExtResource("1_2xb01")
-min_speed = 150.0
+min_speed = 100.0
 max_speed = 210.0
 internal_energy = 3
 game_energy = 80
 collision = NodePath("Collision")
-min_size = 3.0
-max_size = 15.0
+min_size = 15.0
+max_size = 40.0
 round_base = 10
 metadata/_custom_type_script = "uid://be8uvibib1twp"
 

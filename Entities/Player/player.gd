@@ -22,7 +22,7 @@ var _last_velocity: Vector2 = Vector2.ZERO
 
 @onready var trail_2d: Line2D = $Trail2D
 
-@onready var audio_stream_player_2d: AudioStreamPlayer2D = $AudioStreamPlayer2D
+@onready var hit_audio_stream_player: AudioStreamPlayer = $HitAudioStreamPlayer
 
 
 func _ready() -> void:
@@ -31,6 +31,7 @@ func _ready() -> void:
 func _physics_process(_delta: float) -> void:
 	# Salva la velocità PRIMA che la fisica modifichi tutto
 	_last_velocity = linear_velocity
+
 
 func _integrate_forces(state: PhysicsDirectBodyState2D) -> void:
 
@@ -118,7 +119,7 @@ func get_input() -> Vector2:
 	return Input.get_vector("left", "right", "up", "down")
 
 
-## Calcola e restituisce il danno del giocatore usando la legge dell'energia cinetica (E = 1/2 mv^2)
+## Calcola e restituisce il danno del giocatore usando la legge dell'energia cinetica (E = 1/2 mv^2), scherzo, usando la quantità di moto (p = m * v)
 func get_damage() -> float:
 	var velocity = linear_velocity.length()
 	#var velocity_squared = linear_velocity.length_squared()
@@ -127,18 +128,16 @@ func get_damage() -> float:
 	print("velocità: ",velocity)
 
 	#var kinetic_energy = 0.5 * mass * velocity_squared
-	var momentum = mass * velocity
 
 	#var damage_scaling = 1000.0
 	#var scaled_damage = kinetic_energy / damage_scaling
-	var scaled_damage = momentum / 50
+	var scaled_damage = mass * (velocity * 0.005)
 
 	var round_base = 5
 	print("Danno originale: ", scaled_damage)
 
-	var damage = snappedi(scaled_damage, round_base)
-	if damage <= 5:
-		damage = 5
+	var damage = maxi(snappedi(scaled_damage, round_base), 1)
+
 	print("Danno finale: ", damage)
 
 	return damage
@@ -146,14 +145,17 @@ func get_damage() -> float:
 
 func change_size(amount: float) -> void:
 	print(collision_shape.scale)
+	var tween = create_tween()
 	var point = trail_2d.width_curve.get_point_position(0).y
 	trail_2d.width_curve.set_point_value(0, point * amount)
-	trail_2d.length *= amount
-	collision_shape.scale *= amount
+	trail_2d.length *= amount / 2
+	var scale_change = collision_shape.scale * amount
+	tween.tween_property(collision_shape,"scale",scale_change, 0.1)
 
 ## Riproduce il suono di hit.
 func play_hit_sound() -> void:
-	audio_stream_player_2d.play()
+	print("Muori fra")
+	hit_audio_stream_player.play()
 
 
 func _handle_mouse_input() -> Vector2:
@@ -187,7 +189,7 @@ func game_over() -> void:
 
 func _update_life_bar() -> void:
 	life_bar.value = hp
-	life_bar.start_fade()
+	#life_bar.start_fade()
 
 func _on_regen_timer_timeout() -> void:
 	if hp == max_hp:

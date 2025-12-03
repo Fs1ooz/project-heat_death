@@ -26,6 +26,7 @@ func lose_energy(amount: int) -> void:
 	emit_signal("energy_changed", energy)
 
 func reset_upgrades() -> void:
+	energy = 0
 	for key in upgrades_data.keys():
 		var upgrade = upgrades_data[key]
 		upgrade["level"] = 0
@@ -136,7 +137,7 @@ func apply_upgrade(upgrade_type: UpgradeType):
 		UpgradeType.SPEED:
 			power = upgrade_data["current_power"] + upgrade_data["level"] * 100
 		UpgradeType.ACCELERATION:
-			power = upgrade_data["current_power"] + pow(upgrade_data["current_power"], upgrade_data["level"] / 2)
+			power = upgrade_data["current_power"] + pow(upgrade_data["current_power"], upgrade_data["level"] / 4)
 		UpgradeType.MASS:
 			power = upgrade_data["current_power"] + upgrade_data["level"] * 2
 
@@ -158,6 +159,8 @@ func apply_upgrade(upgrade_type: UpgradeType):
 				player.regen_tick = power
 			UpgradeType.SPEED:
 				player.speed = power
+			UpgradeType.ACCELERATION:
+				player.acceleration = power
 			UpgradeType.MASS:
 				player.change_size(1.5)
 				player.mass = power

@@ -19,13 +19,13 @@ func _create_upgrade_buttons() -> void:
 	for upgrade_type in UpgradeManager.get_all_upgrades().keys():
 		var upgrade_data = UpgradeManager.get_upgrade_data(upgrade_type)
 		var upgrade_button = Button.new()
-		upgrade_button.text = "%s \n Energy: %d" % [upgrade_data["name"], upgrade_data["current_cost"]]
+		upgrade_button.text = "%s \n Energy: %d \n lvl: %d" % [upgrade_data["name"], upgrade_data["current_cost"], upgrade_data["level"],]
 		upgrade_button.pressed.connect(_on_upgrade_pressed.bind(upgrade_type, upgrade_button, upgrade_data))
 		upgrades_v_box_container.add_child(upgrade_button)
 
 func _on_upgrade_pressed(upgrade_type: int, upgrade_button: Button, upgrade_data) -> void:
 	UpgradeManager.apply_upgrade(upgrade_type)
-	upgrade_button.text = "%s \n Energy: %d" % [upgrade_data["name"], UpgradeManager.get_upgrade_data(upgrade_type)["current_cost"]]
+	upgrade_button.text = "%s \n Energy: %d \n lvl: %d" % [upgrade_data["name"], UpgradeManager.get_upgrade_data(upgrade_type)["current_cost"],  UpgradeManager.get_upgrade_data(upgrade_type)["level"],]
 
 func _on_energy_changed(new_energy: int) -> void:
 	if not energy_label.visible:

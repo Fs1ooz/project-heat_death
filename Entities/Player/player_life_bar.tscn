@@ -8,15 +8,18 @@ corner_radius_top_left = 3
 corner_radius_top_right = 3
 corner_radius_bottom_right = 3
 corner_radius_bottom_left = 3
+anti_aliasing = false
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_u0tjt"]
 bg_color = Color(0.6154072, 0, 0.0703321, 1)
 border_color = Color(0, 0, 0, 1)
-corner_radius_top_left = 3
-corner_radius_top_right = 3
-corner_radius_bottom_right = 3
-corner_radius_bottom_left = 3
-corner_detail = 2
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
+corner_detail = 5
+anti_aliasing = false
+anti_aliasing_size = 0.913
 
 [node name="PlayerLifeBar" type="ProgressBar"]
 anchors_preset = 5
@@ -24,7 +27,7 @@ anchor_left = 0.5
 anchor_right = 0.5
 offset_left = -109.0
 offset_right = 108.0
-offset_bottom = 20.0
+offset_bottom = 13.0
 grow_horizontal = 2
 theme_override_styles/background = SubResource("StyleBoxFlat_dv5b2")
 theme_override_styles/fill = SubResource("StyleBoxFlat_u0tjt")

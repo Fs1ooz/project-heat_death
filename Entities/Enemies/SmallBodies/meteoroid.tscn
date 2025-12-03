@@ -8,7 +8,7 @@ radius = 50.159744
 [node name="Meteoroid" type="RigidBody2D" node_paths=PackedStringArray("collision") groups=["celestial_bodies"]]
 script = ExtResource("1_otcpb")
 collision = NodePath("Collision")
-max_size = 3.0
+max_size = 5.0
 round_base = 5
 metadata/_custom_type_script = "uid://be8uvibib1twp"
 

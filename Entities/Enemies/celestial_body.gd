@@ -58,10 +58,13 @@ func _on_body_entered(body: Node) -> void:
 	if body is Player:
 
 		body.play_hit_sound()
-		var rel_vel = (linear_velocity - body._last_velocity).length()
-		var mass_ratio = mass / body.mass  # >1 se il nemico è più pesante
-		var damage_to_player = rel_vel * max(1.0, mass_ratio) * 0.005
+		var rel_vel = (linear_velocity - body._last_velocity).length() * 0.005
+		var mass_ratio =  mass / body.mass
+		var damage_to_player = rel_vel * snappedf(mass_ratio, 0.005)
 		body.take_damage(int(damage_to_player))
+		print("rel_vel: ", rel_vel)
+		print("ratio: ", mass_ratio)
+		print("damage_to_player: ", damage_to_player)
 
 		take_damage(body.get_damage())
 

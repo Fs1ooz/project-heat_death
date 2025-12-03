@@ -7,18 +7,18 @@ radius = 240.05208
 
 [node name="Asteroid" type="RigidBody2D" node_paths=PackedStringArray("collision") groups=["celestial_bodies"]]
 z_index = 1
-mass = 40.0
+mass = 100.0
 continuous_cd = 2
 contact_monitor = true
 max_contacts_reported = 4
 script = ExtResource("1_tefsh")
 min_speed = 15.0
-max_speed = 80.0
+max_speed = 30.0
 internal_energy = 5
 game_energy = 120
 collision = NodePath("Collision")
-min_size = 5.0
-max_size = 15.0
+min_size = 20.0
+max_size = 50.0
 round_base = 10
 
 [node name="Collision" type="CollisionShape2D" parent="."]

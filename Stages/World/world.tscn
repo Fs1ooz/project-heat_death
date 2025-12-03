@@ -20,12 +20,15 @@ tonemap_mode = 2
 tonemap_exposure = 1.05
 tonemap_white = 2.0
 glow_enabled = true
-glow_levels/1 = 2.0
-glow_levels/2 = 2.0
-glow_levels/4 = 2.0
+glow_levels/1 = 10.0
+glow_levels/2 = 2.5
+glow_levels/4 = 3.0
+glow_levels/5 = 5.0
+glow_levels/6 = 3.0
+glow_levels/7 = 2.0
 glow_normalized = true
 glow_intensity = 8.0
-glow_strength = 1.2
+glow_strength = 1.18
 glow_blend_mode = 0
 glow_hdr_scale = 1.0
 glow_hdr_luminance_cap = 64.0
@@ -39,7 +42,7 @@ volumetric_fog_gi_inject = 7.8
 volumetric_fog_length = 1024.0
 volumetric_fog_ambient_inject = 13.45
 adjustment_enabled = true
-adjustment_saturation = 2.0
+adjustment_saturation = 1.5
 
 [sub_resource type="AudioStreamInteractive" id="AudioStreamInteractive_oj5fs"]
 clip_count = 3
@@ -69,20 +72,26 @@ script = ExtResource("1_mt616")
 environment = SubResource("Environment_728k4")
 
 [node name="DeathCamera" type="Camera2D" parent="."]
-zoom = Vector2(0.05, 0.05)
+z_index = 2
+limit_enabled = false
 
 [node name="BackgroundLayer" type="CanvasLayer" parent="."]
 layer = -3
 follow_viewport_enabled = true
+follow_viewport_scale = 0.5
 
 [node name="Parallax2D" type="Parallax2D" parent="BackgroundLayer"]
-scroll_scale = Vector2(0.01, 0.01)
+scale = Vector2(5, 5)
+scroll_scale = Vector2(0.001, 0.001)
 repeat_size = Vector2(2000, 1438)
-repeat_times = 195
+autoscroll = Vector2(0.001, 0.002)
+repeat_times = 200
 
 [node name="ColorRect" type="ColorRect" parent="BackgroundLayer/Parallax2D"]
-offset_right = 2000.0
-offset_bottom = 1438.0
+offset_left = -1038.0
+offset_top = -634.0
+offset_right = 1038.0
+offset_bottom = 828.0
 color = Color(0.01, 0.01, 0.01, 1)
 
 [node name="Img2207" type="Sprite2D" parent="BackgroundLayer/Parallax2D"]
@@ -95,11 +104,11 @@ texture = ExtResource("4_syafc")
 
 [node name="Parallax2D2" type="Parallax2D" parent="BackgroundLayer"]
 rotation = -3.1415925
-scale = Vector2(3, 3)
-scroll_scale = Vector2(0.2, 0.2)
+scale = Vector2(15, 15)
+scroll_scale = Vector2(0.02, 0.02)
 repeat_size = Vector2(2000, 1438)
 autoscroll = Vector2(1, 0.5)
-repeat_times = 195
+repeat_times = 200
 
 [node name="Img2207" type="Sprite2D" parent="BackgroundLayer/Parallax2D2"]
 modulate = Color(0.726468, 0.4546326, 0.7511804, 0.50980395)
@@ -119,11 +128,7 @@ scale = Vector2(2.515625, 2.390625)
 [node name="Player" parent="." node_paths=PackedStringArray("life_bar") instance=ExtResource("1_0co0n")]
 life_bar = NodePath("../CanvasLayer/PlayerLifeBar")
 
-[node name="AudioStreamPlayer2D" parent="Player" index="1"]
-bus = &"Sound"
-
 [node name="Camera2D" type="Camera2D" parent="Player"]
-zoom = Vector2(0.2, 0.2)
 limit_enabled = false
 position_smoothing_enabled = true
 position_smoothing_speed = 10.0
@@ -140,6 +145,7 @@ focus_behavior_recursive = 1
 
 [node name="MusicAudioStreamPlayer" type="AudioStreamPlayer" parent="." node_paths=PackedStringArray("player")]
 stream = SubResource("AudioStreamInteractive_oj5fs")
+volume_db = -5.0
 bus = &"Music"
 script = ExtResource("14_kuj1q")
 player = NodePath("../Player")

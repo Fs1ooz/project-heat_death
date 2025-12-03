@@ -31,23 +31,23 @@ func _init():
 	mouse_default_cursor_shape = Control.CURSOR_HSIZE
 	clip_contents = true
 	focus_mode = Control.FOCUS_ALL
-	
+
 	var style := StyleBoxEmpty.new()
 	style.content_margin_left = 8
 	style.content_margin_right = 8
-	
+
 	_line_edit = LineEdit.new()
 	_line_edit.set_as_top_level(true)
 	_line_edit.visible = false
 	_line_edit.add_theme_stylebox_override("normal", style)
 	_line_edit.add_theme_stylebox_override("focus", StyleBoxEmpty.new())
-	
+
 	var _ret: int
 	_ret = _line_edit.focus_exited.connect(self._on_line_edit_focus_exited)
 	_ret = _line_edit.text_submitted.connect(self._on_line_edit_text_entered)
 	_ret = _line_edit.visibility_changed.connect(self._on_line_edit_visibility_changed)
 	_ret = _line_edit.gui_input.connect(self._on_line_edit_gui_input)
-	
+
 	add_child(_line_edit)
 
 
@@ -61,9 +61,9 @@ func _draw() -> void:
 		(size.x - number_size.x) / 2,
 		(size.y - number_size.y) / 2 + font.get_ascent()
 	)
-	
+
 	var stylebox := _stylebox_editing if _is_editing else _stylebox_hover if _mouse_hovering else _stylebox_normal
-	
+
 	if _line_edit.visible:
 		draw_style_box(stylebox, Rect2(Vector2.ZERO, size))
 	else:
@@ -91,7 +91,7 @@ func _gui_input(event: InputEvent) -> void:
 			_drag_cancelled = true
 		_is_editing = mb.pressed
 		queue_redraw()
-	
+
 	var mm := event as InputEventMouseMotion
 	if mm and mm.button_mask & MOUSE_BUTTON_MASK_LEFT:
 		_drag_motion(mm)
@@ -102,15 +102,15 @@ func _notification(what: int) -> void:
 	match what:
 		NOTIFICATION_ENTER_TREE, NOTIFICATION_THEME_CHANGED:
 			_update_stylebox()
-		
+
 		NOTIFICATION_MOUSE_ENTER:
 			_mouse_hovering = true
 			queue_redraw()
-		
+
 		NOTIFICATION_MOUSE_EXIT:
 			_mouse_hovering = false
 			queue_redraw()
-		
+
 		NOTIFICATION_FOCUS_ENTER:
 			if (Input.is_action_pressed("ui_focus_next") or Input.is_action_pressed("ui_focus_prev")) and not _line_edit_just_closed:
 				_show_text_edit()
@@ -144,7 +144,7 @@ func _drag_prepare(mouse: InputEventMouse) -> void:
 
 func _drag_done() -> void:
 	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
-	
+
 	if _drag_cancelled:
 		Input.warp_mouse(_drag_start_position)
 	else:
@@ -157,12 +157,12 @@ func _drag_done() -> void:
 
 func _drag_motion(motion: InputEventMouseMotion) -> void:
 	_drag_dist += motion.relative.x
-	
+
 	var factor := _drag_start_factor + _drag_dist / size.x
 	if factor < 0 or 1 < factor:
 		factor = clamp(factor, 0, 1)
 		_drag_dist = (factor - _drag_start_factor) * size.x
-	
+
 	var v := factor * (max_value - min_value) + min_value
 	var snap := motion.is_command_or_control_pressed() or motion.shift_pressed
 	if snap and not (is_equal_approx(v, min_value) or is_equal_approx(v, max_value)):
@@ -172,9 +172,9 @@ func _drag_motion(motion: InputEventMouseMotion) -> void:
 			v = round(v * 100.0) * 0.01
 		else:
 			v = round(v * 10.0) * 0.1
-	
+
 	set_value(clamp(v, min_value, max_value))
-	
+
 	queue_redraw()
 
 
