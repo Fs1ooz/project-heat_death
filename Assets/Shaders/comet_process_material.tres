@@ -1,0 +1,35 @@
+[gd_resource type="ParticleProcessMaterial" load_steps=7 format=3 uid="uid://b78knkhv3e2ad"]
+
+[sub_resource type="Curve" id="Curve_l6mb7"]
+_data = [Vector2(0, 0.90000004), 0.0, -0.91099924, 0, 0, Vector2(1, 0), -0.7048916, 0.0, 0, 0]
+point_count = 2
+metadata/_snap_enabled = true
+
+[sub_resource type="CurveTexture" id="CurveTexture_3u4kw"]
+curve = SubResource("Curve_l6mb7")
+
+[sub_resource type="Gradient" id="Gradient_tmuj1"]
+colors = PackedColorArray(0.6666667, 1, 1, 1, 0.3529412, 0.60784316, 0.6901961, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_4wf4l"]
+gradient = SubResource("Gradient_tmuj1")
+
+[sub_resource type="Curve" id="Curve_qk7d4"]
+_data = [Vector2(0, 1), 0.0, -0.30352652, 0, 0, Vector2(1, 0.1), -0.9, 0.0, 1, 0]
+point_count = 2
+metadata/_snap_enabled = true
+
+[sub_resource type="CurveTexture" id="CurveTexture_01a4e"]
+curve = SubResource("Curve_qk7d4")
+
+[resource]
+emission_shape = 1
+emission_sphere_radius = 128.0
+gravity = Vector3(0, 0, 0)
+scale_min = 500.0
+scale_max = 512.0
+scale_curve = SubResource("CurveTexture_01a4e")
+color_ramp = SubResource("GradientTexture1D_4wf4l")
+alpha_curve = SubResource("CurveTexture_3u4kw")
+hue_variation_min = -0.020000022
+hue_variation_max = -2.2351742e-08

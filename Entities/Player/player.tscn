@@ -1,10 +1,9 @@
-[gd_scene load_steps=12 format=3 uid="uid://470x1obeipdg"]
+[gd_scene load_steps=9 format=3 uid="uid://470x1obeipdg"]
 
 [ext_resource type="Script" uid="uid://bf2nvyuinsvhu" path="res://Entities/Player/player.gd" id="1_tekja"]
 [ext_resource type="Texture2D" uid="uid://dnffwiy1b287y" path="res://Assets/Images/isnobulo.png" id="2_5c2io"]
 [ext_resource type="AudioStream" uid="uid://1wfdu2dsudw4" path="res://Entities/Player/hit.sfxr" id="3_lu8i8"]
-[ext_resource type="PackedScene" uid="uid://cax8g23d402jc" path="res://Entities/Player/player_trail_2d.tscn" id="4_tekja"]
-[ext_resource type="Material" uid="uid://n3iqcxcturo3" path="res://Commons/pixeltrail2dshadermaterial.tres" id="5_5c2io"]
+[ext_resource type="Material" uid="uid://bvhfi1gat4c5" path="res://Entities/Player/sciaveramentegay.tres" id="6_4wf4l"]
 
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_5c2io"]
 friction = 0.0
@@ -19,17 +18,8 @@ random_pitch = 1.1
 streams_count = 1
 stream_0/stream = ExtResource("3_lu8i8")
 
-[sub_resource type="Curve" id="Curve_5c2io"]
-_data = [Vector2(0, 1), 0.0, -0.89614904, 0, 0, Vector2(1, 0), -0.40834725, 0.0, 0, 0]
-point_count = 2
-metadata/_snap_count = 8
-metadata/_snap_enabled = true
-
-[sub_resource type="Gradient" id="Gradient_tekja"]
-colors = PackedColorArray(0.8530103, 0.8530103, 0.8530103, 0.74509805, 1, 1, 1, 0.003921569)
-
 [sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_5c2io"]
-polygon = PackedVector2Array(-2.1855694e-06, -50, -14.000002, -45, -25.000002, -34, -31, -19.999998, -34, 1.4861872e-06, -29.999998, 23.000002, -22.999998, 36, -13.999998, 46, 2.360415e-06, 54, 18.000002, 43, 28.000002, 26.999998, 34, -1.0000014, 31, -22.000002, 23.999998, -37, 14.999998, -46)
+polygon = PackedVector2Array(-2.1855694e-06, -50, -14.000002, -45, -25.000002, -34, -31, -19.999998, -34, 1.4861872e-06, -39, 24.000002, -34, 40, -22.999998, 53, -0.9999973, 61, 25.000002, 48, 35, 26.999998, 34, -1.0000014, 31, -22.000002, 23.999998, -37, 14.999998, -46)
 
 [node name="Player" type="RigidBody2D" node_paths=PackedStringArray("collision_shape") groups=["player"]]
 collision_mask = 2
@@ -46,6 +36,16 @@ collision_shape = NodePath("CollisionShape2D")
 rotation = 1.5707964
 shape = SubResource("CapsuleShape2D_3uyv8")
 
+[node name="GPUParticles2D" type="GPUParticles2D" parent="CollisionShape2D"]
+z_index = -1
+rotation = -1.5707964
+amount = 500
+lifetime = 0.75
+randomness = 0.2
+trail_lifetime = 1.0
+trail_sections = 12
+process_material = ExtResource("6_4wf4l")
+
 [node name="Icon" type="Sprite2D" parent="CollisionShape2D"]
 z_index = 1
 rotation = -1.5707964
@@ -58,18 +58,13 @@ pitch_scale = 0.9
 max_polyphony = 5
 bus = &"Sound"
 
-[node name="Trail2D" parent="." instance=ExtResource("4_tekja")]
-visible = true
-material = ExtResource("5_5c2io")
-width = 70.0
-width_curve = SubResource("Curve_5c2io")
-gradient = SubResource("Gradient_tekja")
-
 [node name="RegenTimer" type="Timer" parent="."]
 wait_time = 5.0
 autostart = true
 
 [node name="LightOccluder2D" type="LightOccluder2D" parent="."]
+visible = false
+position = Vector2(1, 1)
 rotation = 1.5707964
 occluder = SubResource("OccluderPolygon2D_5c2io")
 

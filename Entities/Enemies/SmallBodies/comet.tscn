@@ -1,20 +1,12 @@
-[gd_scene load_steps=9 format=3 uid="uid://8aj1dylerrl1"]
+[gd_scene load_steps=6 format=3 uid="uid://8aj1dylerrl1"]
 
 [ext_resource type="Script" uid="uid://bt7gni3m0ejos" path="res://Entities/Enemies/SmallBodies/comet.gd" id="1_2xb01"]
-[ext_resource type="Script" uid="uid://dbkcdpcrycl4e" path="res://addons/trail_2d/trail_2d.gd" id="2_i3iov"]
+[ext_resource type="Material" uid="uid://b78knkhv3e2ad" path="res://Assets/Shaders/comet_process_material.tres" id="2_qk7d4"]
 [ext_resource type="Material" uid="uid://x8fi8f66an5a" path="res://Entities/Enemies/SmallBodies/cometshader.tres" id="2_riu8h"]
-[ext_resource type="Material" uid="uid://n3iqcxcturo3" path="res://Commons/pixeltrail2dshadermaterial.tres" id="2_tmuj1"]
 [ext_resource type="Texture2D" uid="uid://cutmcskxym36k" path="res://icon.svg" id="3_eqgex"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_tmuj1"]
-radius = 125.06398
-
-[sub_resource type="Curve" id="Curve_tmuj1"]
-_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
-point_count = 2
-
-[sub_resource type="Gradient" id="Gradient_riu8h"]
-colors = PackedColorArray(0.64104044, 0.7887038, 0.8258557, 1, 0.36074692, 0.5516501, 0.60209715, 0.4)
+radius = 130.0
 
 [node name="Comet" type="RigidBody2D" node_paths=PackedStringArray("collision") groups=["celestial_bodies"]]
 mass = 60.0
@@ -29,32 +21,24 @@ max_size = 40.0
 round_base = 10
 metadata/_custom_type_script = "uid://be8uvibib1twp"
 
+[node name="Timer" type="Timer" parent="."]
+autostart = true
+
 [node name="Collision" type="CollisionShape2D" parent="."]
 shape = SubResource("CircleShape2D_tmuj1")
 
-[node name="Polygon2D" type="Polygon2D" parent="Collision"]
-position = Vector2(66.36001, -392.19998)
-color = Color(0.423897, 0.700445, 0.9616289, 1)
-polygon = PackedVector2Array(-66.36001, 268.19998, -156.36002, 306.19998, -187.36002, 404.19998, -154.36002, 478.19998, -66.36001, 518.19995, 20.639992, 487.19998, 57.63999, 393.19998, 15.639992, 299.19998)
-
 [node name="Icon" type="Sprite2D" parent="Collision"]
 material = ExtResource("2_riu8h")
-scale = Vector2(7.505, 7.505)
+scale = Vector2(10, 10)
 texture = ExtResource("3_eqgex")
 
-[node name="Trail2D" type="Line2D" parent="."]
-material = ExtResource("2_tmuj1")
-width = 40.0
-width_curve = SubResource("Curve_tmuj1")
-gradient = SubResource("Gradient_riu8h")
-joint_mode = 1
-script = ExtResource("2_i3iov")
-length = 300
-metadata/_custom_type_script = "uid://dbkcdpcrycl4e"
-
-[node name="TrailTimer" type="Timer" parent="."]
-wait_time = 0.8
-autostart = true
+[node name="GPUParticles2D" type="GPUParticles2D" parent="Collision"]
+scale = Vector2(0.9999998, 0.9999998)
+amount = 5000
+lifetime = 5.0
+preprocess = 0.1
+visibility_rect = Rect2(-1000000000, -1000000000, 1000000000, 1000000000)
+process_material = ExtResource("2_qk7d4")
 
 [connection signal="body_entered" from="." to="." method="_on_body_entered"]
-[connection signal="timeout" from="TrailTimer" to="." method="_on_trail_timer_timeout"]
+[connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]

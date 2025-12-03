@@ -20,7 +20,6 @@ var _last_velocity: Vector2 = Vector2.ZERO
 ## Safe zone per allineamento completo
 @onready var regen_timer: Timer = $RegenTimer
 
-@onready var trail_2d: Line2D = $Trail2D
 
 @onready var hit_audio_stream_player: AudioStreamPlayer = $HitAudioStreamPlayer
 
@@ -146,9 +145,6 @@ func get_damage() -> float:
 func change_size(amount: float) -> void:
 	print(collision_shape.scale)
 	var tween = create_tween()
-	var point = trail_2d.width_curve.get_point_position(0).y
-	trail_2d.width_curve.set_point_value(0, point * amount)
-	trail_2d.length *= amount / 2
 	var scale_change = collision_shape.scale * amount
 	tween.tween_property(collision_shape,"scale",scale_change, 0.1)
 
