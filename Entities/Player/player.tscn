@@ -36,7 +36,7 @@ collision_shape = NodePath("CollisionShape2D")
 rotation = 1.5707964
 shape = SubResource("CapsuleShape2D_3uyv8")
 
-[node name="GPUParticles2D" type="GPUParticles2D" parent="CollisionShape2D"]
+[node name="Trail" type="GPUParticles2D" parent="CollisionShape2D"]
 z_index = -1
 rotation = -1.5707964
 amount = 500

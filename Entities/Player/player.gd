@@ -20,8 +20,8 @@ var _last_velocity: Vector2 = Vector2.ZERO
 ## Safe zone per allineamento completo
 @onready var regen_timer: Timer = $RegenTimer
 
-
 @onready var hit_audio_stream_player: AudioStreamPlayer = $HitAudioStreamPlayer
+@onready var trail: GPUParticles2D = $CollisionShape2D/Trail
 
 
 func _ready() -> void:
@@ -144,8 +144,16 @@ func get_damage() -> float:
 
 func change_size(amount: float) -> void:
 	print(collision_shape.scale)
+	var mat := trail.process_material as ParticleProcessMaterial
+	
+	if mat:
+		var initial_x = -25.0
+		mat.set("emission_shape_offset", Vector3(initial_x - 10.0, 0.0, 0.0))
 	var tween = create_tween()
 	var scale_change = collision_shape.scale * amount
+	
+	
+
 	tween.tween_property(collision_shape,"scale",scale_change, 0.1)
 
 ## Riproduce il suono di hit.

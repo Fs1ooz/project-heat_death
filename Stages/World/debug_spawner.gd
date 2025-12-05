@@ -18,7 +18,7 @@ var spawn_config = [
 	},
 	{
 		"scene": preload("res://Entities/Enemies/SmallBodies/comet.tscn"),
-		"probability": 75.0,
+		"probability": 0.75,
 		"min_probability": 25.0,
 		"cooldown": 5,
 		"current_cooldown": 0
