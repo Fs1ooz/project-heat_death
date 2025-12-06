@@ -1,0 +1,64 @@
+[gd_scene load_steps=7 format=3 uid="uid://b45rkwvpqpxtu"]
+
+[ext_resource type="Script" uid="uid://cctr46u7tm3jl" path="res://Stages/World/SolarSystem/AsteroidBelt/asteroid_belt.gd" id="1_qge1x"]
+[ext_resource type="PackedScene" uid="uid://470x1obeipdg" path="res://Entities/Player/player.tscn" id="2_3rd5y"]
+[ext_resource type="PackedScene" uid="uid://dr5pxtobflhyw" path="res://Stages/UpgradeUI/upgrade_ui.tscn" id="3_jgllk"]
+[ext_resource type="PackedScene" uid="uid://dyd3uoe8y1asi" path="res://Stages/World/game_over_screen.tscn" id="4_j3lp1"]
+[ext_resource type="PackedScene" uid="uid://cxcuuplyfhoxc" path="res://Entities/Player/player_life_bar.tscn" id="5_j1du2"]
+[ext_resource type="PackedScene" uid="uid://cbtv3r6oauteb" path="res://Stages/World/death_camera.tscn" id="6_j3lp1"]
+
+[node name="AsteroidBelt" type="Node2D"]
+script = ExtResource("1_qge1x")
+
+[node name="Asteroids" type="Node2D" parent="."]
+
+[node name="Meteoroids" type="Node2D" parent="."]
+
+[node name="Player" parent="." node_paths=PackedStringArray("life_bar") instance=ExtResource("2_3rd5y")]
+life_bar = NodePath("../CanvasLayer/PlayerLifeBar")
+
+[node name="Camera2D" parent="Player" index="4"]
+zoom_speed = 54.065
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="UpgradeUI" parent="CanvasLayer" instance=ExtResource("3_jgllk")]
+focus_behavior_recursive = 1
+
+[node name="GameOverScreen" parent="CanvasLayer" node_paths=PackedStringArray("death_camera", "player_camera") instance=ExtResource("4_j3lp1")]
+death_camera = NodePath("../../DeathCamera")
+player_camera = NodePath("../../Player/Camera2D")
+
+[node name="PlayerLifeBar" parent="CanvasLayer" instance=ExtResource("5_j1du2")]
+
+[node name="DeathCamera" parent="." instance=ExtResource("6_j3lp1")]
+
+[node name="BackgroundLayer" type="CanvasLayer" parent="."]
+layer = -3
+follow_viewport_enabled = true
+follow_viewport_scale = 0.5
+
+[node name="Parallax2D" type="Parallax2D" parent="BackgroundLayer"]
+scale = Vector2(5, 5)
+scroll_scale = Vector2(0.001, 0.001)
+repeat_size = Vector2(2000, 1438)
+autoscroll = Vector2(0.001, 0.002)
+repeat_times = 90000
+
+[node name="ColorRect" type="ColorRect" parent="BackgroundLayer/Parallax2D"]
+offset_left = -1038.0
+offset_top = -634.0
+offset_right = 1038.0
+offset_bottom = 828.0
+color = Color(0.01, 0.01, 0.01, 1)
+
+[node name="Parallax2D2" type="Parallax2D" parent="BackgroundLayer"]
+rotation = -3.1415925
+scale = Vector2(15, 15)
+scroll_scale = Vector2(0.02, 0.02)
+repeat_size = Vector2(2000, 1438)
+autoscroll = Vector2(1, 0.5)
+repeat_times = 200
+
+[editable path="Player"]
+[editable path="CanvasLayer/GameOverScreen"]

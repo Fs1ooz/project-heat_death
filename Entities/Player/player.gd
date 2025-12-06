@@ -11,8 +11,8 @@ extends RigidBody2D
 ## Configurazione movimento
 var max_hp: int = 100
 var hp: int = 100
-var speed: float = 700.0 ## Velocità massima (pixel/sec)
-var acceleration: float = 500.0 ## Accelerazione lineare (pixel/sec²)
+var speed: float = 70000.0 ## Velocità massima (pixel/sec)
+var acceleration: float = 50000.0 ## Accelerazione lineare (pixel/sec²)
 var rotation_responsiveness: float = 10.0 ## Responsività della rotazione verso il mousewwwwwwwwwwwwws
 var regen_tick: float = 3.0
 var auto_revive: bool = true
@@ -145,14 +145,14 @@ func get_damage() -> float:
 func change_size(amount: float) -> void:
 	print(collision_shape.scale)
 	var mat := trail.process_material as ParticleProcessMaterial
-	
+
 	if mat:
 		var initial_x = -25.0
 		mat.set("emission_shape_offset", Vector3(initial_x - 10.0, 0.0, 0.0))
 	var tween = create_tween()
 	var scale_change = collision_shape.scale * amount
-	
-	
+
+
 
 	tween.tween_property(collision_shape,"scale",scale_change, 0.1)
 
