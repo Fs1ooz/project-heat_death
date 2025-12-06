@@ -2,9 +2,9 @@
 
 [ext_resource type="PackedScene" uid="uid://470x1obeipdg" path="res://Entities/Player/player.tscn" id="1_0co0n"]
 [ext_resource type="Script" uid="uid://siuls68q6og5" path="res://Stages/World/world.gd" id="1_mt616"]
-[ext_resource type="PackedScene" uid="uid://cbtv3r6oauteb" path="res://Stages/World/death_camera.tscn" id="2_728k4"]
 [ext_resource type="PackedScene" uid="uid://dpgfvx5muvsrp" path="res://Stages/World/debug_spawner.tscn" id="2_wipa0"]
 [ext_resource type="Texture2D" uid="uid://bb6ve2asoxg1c" path="res://Assets/Images/IMG_2207.PNG" id="3_5t5yv"]
+[ext_resource type="Script" uid="uid://cnf8kwhvre5kg" path="res://Entities/Player/camera_2d.gd" id="4_qmwgx"]
 [ext_resource type="Texture2D" uid="uid://cpx6pvoxhj3oi" path="res://Assets/Images/IMG_2206.PNG" id="4_syafc"]
 [ext_resource type="PackedScene" uid="uid://dr5pxtobflhyw" path="res://Stages/UpgradeUI/upgrade_ui.tscn" id="5_qmwgx"]
 [ext_resource type="PackedScene" uid="uid://dyd3uoe8y1asi" path="res://Stages/World/game_over_screen.tscn" id="9_5t5yv"]
@@ -71,7 +71,9 @@ script = ExtResource("1_mt616")
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_728k4")
 
-[node name="DeathCamera" parent="." instance=ExtResource("2_728k4")]
+[node name="DeathCamera" type="Camera2D" parent="."]
+z_index = 2
+limit_enabled = false
 
 [node name="BackgroundLayer" type="CanvasLayer" parent="."]
 layer = -3
@@ -125,6 +127,12 @@ scale = Vector2(2.515625, 2.390625)
 
 [node name="Player" parent="." node_paths=PackedStringArray("life_bar") instance=ExtResource("1_0co0n")]
 life_bar = NodePath("../CanvasLayer/PlayerLifeBar")
+
+[node name="Camera2D" type="Camera2D" parent="Player"]
+limit_enabled = false
+position_smoothing_enabled = true
+position_smoothing_speed = 10.0
+script = ExtResource("4_qmwgx")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 

@@ -1,5 +1,0 @@
-[gd_scene format=3 uid="uid://cbtv3r6oauteb"]
-
-[node name="DeathCamera" type="Camera2D"]
-z_index = 2
-limit_enabled = false
