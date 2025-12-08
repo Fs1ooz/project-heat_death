@@ -1,7 +1,7 @@
 extends Control
 
 @onready var death_camera: Camera2D = $"../../DeathCamera"
-@onready var player_camera: Camera2D = $"../../Player/Camera2D"
+@onready var player_camera: Camera2D = $"../../Player/PlayerCamera"
 
 func _ready() -> void:
 	get_tree().paused = false

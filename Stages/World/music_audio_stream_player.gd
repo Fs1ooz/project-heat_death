@@ -39,7 +39,7 @@ func get_active_clip() -> int:
 
 
 func near_celestial_body() -> bool:
-	for body in get_tree().get_nodes_in_group("celestial_bodies"):
+	for body in get_tree().get_nodes_in_group("celestialbodies"):
 		if body is CelestialBody:
 			var to_body = body.global_position - player.global_position
 			var distance = to_body.length()

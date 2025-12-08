@@ -1,0 +1,178 @@
+[gd_scene load_steps=18 format=3 uid="uid://bwqwr2e2v3rvp"]
+
+[ext_resource type="Script" uid="uid://cyj080sf0wp5o" path="res://Stages/World/SolarSystem/asteroid_belt.gd" id="1_leih4"]
+[ext_resource type="PackedScene" uid="uid://470x1obeipdg" path="res://Entities/Player/player.tscn" id="2_aw4pb"]
+[ext_resource type="PackedScene" uid="uid://dooqkflafelol" path="res://Entities/Enemies/SmallBodies/asteroid.tscn" id="2_dgf5r"]
+[ext_resource type="PackedScene" uid="uid://bpeudpxsbd3x2" path="res://Entities/Enemies/SmallBodies/meteoroid.tscn" id="3_0oqe1"]
+[ext_resource type="PackedScene" uid="uid://dr5pxtobflhyw" path="res://Stages/UpgradeUI/upgrade_ui.tscn" id="3_dgf5r"]
+[ext_resource type="PackedScene" uid="uid://dyd3uoe8y1asi" path="res://Stages/World/game_over_screen.tscn" id="4_0oqe1"]
+[ext_resource type="Texture2D" uid="uid://bb6ve2asoxg1c" path="res://Assets/Images/IMG_2207.PNG" id="4_xxft0"]
+[ext_resource type="PackedScene" uid="uid://cxcuuplyfhoxc" path="res://Entities/Player/player_life_bar.tscn" id="5_81uqy"]
+[ext_resource type="AudioStream" uid="uid://btl310t212txn" path="res://Assets/Music/BETA - Base.mp3" id="6_gsnah"]
+[ext_resource type="AudioStream" uid="uid://cawomildbxiao" path="res://Assets/Music/BETA - Phase1.mp3" id="7_xxft0"]
+[ext_resource type="Texture2D" uid="uid://dnp4f53gveo2w" path="res://Assets/Images/right-arrow.png" id="8_gsnah"]
+[ext_resource type="AudioStream" uid="uid://wvogywji06eb" path="res://Assets/Music/BETA - Phase2.mp3" id="8_jpv6b"]
+[ext_resource type="Script" uid="uid://cvs60xrp5qjxm" path="res://Stages/World/music_audio_stream_player.gd" id="9_4onk6"]
+[ext_resource type="Script" uid="uid://bewwgxfpnvdxx" path="res://Stages/World/SolarSystem/texture_rect.gd" id="9_xxft0"]
+[ext_resource type="PackedScene" uid="uid://dpgfvx5muvsrp" path="res://Stages/World/debug_spawner.tscn" id="13_81uqy"]
+
+[sub_resource type="Environment" id="Environment_hiutt"]
+background_mode = 3
+tonemap_mode = 2
+tonemap_exposure = 1.05
+tonemap_white = 2.0
+glow_enabled = true
+glow_levels/1 = 10.0
+glow_levels/2 = 2.5
+glow_levels/4 = 3.0
+glow_levels/5 = 5.0
+glow_levels/6 = 3.0
+glow_levels/7 = 2.0
+glow_normalized = true
+glow_intensity = 8.0
+glow_strength = 1.18
+glow_blend_mode = 0
+glow_hdr_scale = 1.0
+glow_hdr_luminance_cap = 64.0
+fog_light_energy = 8.4
+fog_sun_scatter = 0.6
+fog_density = 0.5975
+fog_height = 384.0
+volumetric_fog_density = 1.0
+volumetric_fog_emission_energy = 1024.0
+volumetric_fog_gi_inject = 7.8
+volumetric_fog_length = 1024.0
+volumetric_fog_ambient_inject = 13.45
+adjustment_enabled = true
+adjustment_saturation = 1.5
+
+[sub_resource type="AudioStreamInteractive" id="AudioStreamInteractive_m4v0y"]
+clip_count = 3
+clip_0/name = &"Base"
+clip_0/stream = ExtResource("6_gsnah")
+clip_0/auto_advance = 0
+clip_1/name = &"Phase 1"
+clip_1/stream = ExtResource("7_xxft0")
+clip_1/auto_advance = 0
+clip_2/name = &"Phase 2"
+clip_2/stream = ExtResource("8_jpv6b")
+clip_2/auto_advance = 0
+_transitions = {
+Vector2i(-1, -1): {
+"fade_beats": 0.5,
+"fade_mode": 3,
+"from_time": 0,
+"hold_previous": true,
+"to_time": 0
+}
+}
+
+[node name="AsteroidBelt" type="Node2D"]
+script = ExtResource("1_leih4")
+asteroid_scene = ExtResource("2_dgf5r")
+meteoroid_scene = ExtResource("3_0oqe1")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_hiutt")
+
+[node name="Regions" type="Node2D" parent="."]
+
+[node name="InnerTransition" type="Node2D" parent="Regions"]
+
+[node name="InnerBelt" type="Node2D" parent="Regions"]
+
+[node name="FloraFamily" type="Node2D" parent="Regions"]
+
+[node name="KirkwoodGap_3to1" type="Node2D" parent="Regions"]
+
+[node name="MiddleBelt" type="Node2D" parent="Regions"]
+
+[node name="EunomiaFamily" type="Node2D" parent="Regions"]
+
+[node name="KoronisFamily" type="Node2D" parent="Regions"]
+
+[node name="Gap_5to2" type="Node2D" parent="Regions"]
+
+[node name="OuterBelt_Inner" type="Node2D" parent="Regions"]
+
+[node name="ThemisFamily" type="Node2D" parent="Regions"]
+
+[node name="HygieaFamily" type="Node2D" parent="Regions"]
+
+[node name="Gap_2to1" type="Node2D" parent="Regions"]
+
+[node name="CybeleGroup" type="Node2D" parent="Regions"]
+
+[node name="HildaGroup" type="Node2D" parent="Regions"]
+
+[node name="BackgroundLayer" type="CanvasLayer" parent="."]
+layer = -3
+follow_viewport_enabled = true
+follow_viewport_scale = 0.5
+
+[node name="Parallax2D" type="Parallax2D" parent="BackgroundLayer"]
+scale = Vector2(5, 5)
+scroll_scale = Vector2(0.001, 0.001)
+repeat_size = Vector2(2000, 1438)
+autoscroll = Vector2(0.001, 0.002)
+repeat_times = 500
+
+[node name="ColorRect" type="ColorRect" parent="BackgroundLayer/Parallax2D"]
+offset_left = -1038.0
+offset_top = -634.0
+offset_right = 1038.0
+offset_bottom = 828.0
+color = Color(0.01, 0.01, 0.01, 1)
+
+[node name="Img2207" type="Sprite2D" parent="BackgroundLayer/Parallax2D"]
+modulate = Color(0.84, 0.23519997, 0.23519997, 0.7764706)
+texture = ExtResource("4_xxft0")
+
+[node name="Parallax2D2" type="Parallax2D" parent="BackgroundLayer"]
+rotation = -3.1415925
+scale = Vector2(15, 15)
+scroll_scale = Vector2(0.02, 0.02)
+repeat_size = Vector2(2000, 1438)
+autoscroll = Vector2(1, 0.5)
+repeat_times = 200
+
+[node name="Img2207" type="Sprite2D" parent="BackgroundLayer/Parallax2D2"]
+modulate = Color(0.726468, 0.4546326, 0.7511804, 0.50980395)
+light_mask = 3
+texture = ExtResource("4_xxft0")
+
+[node name="DeathCamera" type="Camera2D" parent="."]
+z_index = 2
+limit_enabled = false
+
+[node name="Player" parent="." node_paths=PackedStringArray("life_bar") instance=ExtResource("2_aw4pb")]
+life_bar = NodePath("../UILayer/PlayerLifeBar")
+
+[node name="UILayer" type="CanvasLayer" parent="."]
+
+[node name="UpgradeUI" parent="UILayer" instance=ExtResource("3_dgf5r")]
+focus_behavior_recursive = 1
+metadata/_edit_use_anchors_ = true
+
+[node name="GameOverScreen" parent="UILayer" instance=ExtResource("4_0oqe1")]
+metadata/_edit_use_anchors_ = true
+
+[node name="PlayerLifeBar" parent="UILayer" instance=ExtResource("5_81uqy")]
+metadata/_edit_use_anchors_ = true
+
+[node name="TextureRect" type="TextureRect" parent="UILayer"]
+offset_right = 512.0
+offset_bottom = 512.0
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("8_gsnah")
+script = ExtResource("9_xxft0")
+
+[node name="MusicAudioStreamPlayer" type="AudioStreamPlayer" parent="."]
+stream = SubResource("AudioStreamInteractive_m4v0y")
+volume_db = -5.0
+bus = &"Music"
+script = ExtResource("9_4onk6")
+
+[node name="DebugSpawner" parent="." instance=ExtResource("13_81uqy")]
+
+[editable path="Player"]

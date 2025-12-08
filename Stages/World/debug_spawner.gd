@@ -4,29 +4,29 @@ extends Node2D
 var spawn_config = [
 	{
 		"scene": preload("res://Entities/Enemies/SmallBodies/meteoroid.tscn"),
-		"probability": 85.0,
-		"min_probability": 5.0,
+		"probability": 0.0,
+		"min_probability": 0.0,
 		"cooldown": 0,
 		"current_cooldown": 0
 	},
 	{
 		"scene": preload("res://Entities/EnergyDrop/energy_drop.tscn"),
-		"probability": 14.0,
+		"probability": 100.0,
 		"min_probability": 30.0,
 		"cooldown": 0,
 		"current_cooldown": 0
 	},
 	{
 		"scene": preload("res://Entities/Enemies/SmallBodies/comet.tscn"),
-		"probability": 0.75,
-		"min_probability": 25.0,
+		"probability": 0.0,
+		"min_probability": 0.0,
 		"cooldown": 5,
 		"current_cooldown": 0
 	},
 	{
 		"scene": preload("res://Entities/Enemies/SmallBodies/asteroid.tscn"),
-		"probability": 0.25,
-		"min_probability": 40.0,
+		"probability": 0.0,
+		"min_probability": 0.0,
 		"cooldown": 8,
 		"current_cooldown": 0
 	},
@@ -34,11 +34,16 @@ var spawn_config = [
 
 ## Riferimento al giocatore
 @export var player: Node2D
-## Raggio della zona sicura attorno al giocatore
-@export var safe_zone_radius: float = 1000.0
+
+## Distanza spawn basata sulla posizione del player
+@export var spawn_distance_min_multiplier: float = 1.2  # Quanto lontano minimo (moltiplicatore dello schermo)
+@export var spawn_distance_max_multiplier: float = 1.8  # Quanto lontano massimo
+@export var safe_zone_multiplier: float = 0.8  # Zona sicura (moltiplicatore dello schermo)
+
 ## Moltiplicatore difficoltà e tempo
 var time_elapsed: float = 0.0
 const DIFFICULTY_RAMP_TIME: float = 600.0
+
 ## Esponente per la curva (più alto = più esponenziale)
 @export var difficulty_exponent: float = 3.0
 
@@ -62,19 +67,32 @@ func _on_timer_timeout() -> void:
 	get_parent().add_child(new_object)
 
 func get_safe_spawn_position() -> Vector2:
-	var max_attempts = 20
-	var spawn_pos: Vector2
+	if player == null:
+		return Vector2.ZERO
 
-	for i in range(max_attempts):
-		spawn_pos = Vector2(randf_range(-12200, 12200), randf_range(-12400, 12400))
-		if player == null or spawn_pos.distance_to(player.global_position) > safe_zone_radius:
-			return spawn_pos
+	# Ottieni la dimensione dello schermo in world coordinates
+	var camera = get_viewport().get_camera_2d()
+	if camera == null:
+		return player.global_position + Vector2(1000, 0)
 
-	if player != null:
-		var direction = Vector2(randf_range(-1, 1), randf_range(-1, 1)).normalized()
-		return player.global_position + direction * safe_zone_radius * 1.5
+	# Calcola il raggio dello schermo basato sullo zoom
+	var viewport_size = get_viewport().get_visible_rect().size
+	var screen_radius = (viewport_size.length() * 0.5) / camera.zoom.x
 
-	return spawn_pos
+	# Calcola distanze di spawn basate sullo schermo
+	var min_spawn_distance = screen_radius * spawn_distance_min_multiplier
+	var max_spawn_distance = screen_radius * spawn_distance_max_multiplier
+
+	# Spawn in un anello attorno al player
+	var random_angle = randf() * TAU
+	var random_distance = randf_range(min_spawn_distance, max_spawn_distance)
+
+	var offset = Vector2(
+		cos(random_angle) * random_distance,
+		sin(random_angle) * random_distance
+	)
+
+	return player.global_position + offset
 
 func get_weighted_random_scene() -> PackedScene:
 	# Riduci cooldown

@@ -1,8 +1,9 @@
-[gd_scene load_steps=9 format=3 uid="uid://470x1obeipdg"]
+[gd_scene load_steps=10 format=3 uid="uid://470x1obeipdg"]
 
 [ext_resource type="Script" uid="uid://bf2nvyuinsvhu" path="res://Entities/Player/player.gd" id="1_tekja"]
 [ext_resource type="Texture2D" uid="uid://dnffwiy1b287y" path="res://Assets/Images/isnobulo.png" id="2_5c2io"]
 [ext_resource type="AudioStream" uid="uid://1wfdu2dsudw4" path="res://Entities/Player/hit.sfxr" id="3_lu8i8"]
+[ext_resource type="Script" uid="uid://cnf8kwhvre5kg" path="res://Entities/Player/camera_2d.gd" id="5_5c2io"]
 [ext_resource type="Material" uid="uid://bvhfi1gat4c5" path="res://Entities/Player/sciaveramentegay.tres" id="6_4wf4l"]
 
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_5c2io"]
@@ -67,5 +68,10 @@ visible = false
 position = Vector2(1, 1)
 rotation = 1.5707964
 occluder = SubResource("OccluderPolygon2D_5c2io")
+
+[node name="PlayerCamera" type="Camera2D" parent="."]
+limit_enabled = false
+position_smoothing_enabled = true
+script = ExtResource("5_5c2io")
 
 [connection signal="timeout" from="RegenTimer" to="." method="_on_regen_timer_timeout"]

@@ -1,9 +1,8 @@
 extends Camera2D
 
-@export var zoom_speed: float = 0.5
-@export var max_zoom: float = 2.0
-
-var scale_factor: float = 1.0
+@export var zoom_speed: float = 1.1  # Moltiplicatore (1.1 = 10% per scroll)
+@export var min_zoom: float = 0.000000000000000001  # Quanto piccolo può diventare
+@export var max_zoom: float = 2.0       # Quanto grande può diventare
 
 func _ready() -> void:
 	make_current()
@@ -11,11 +10,12 @@ func _ready() -> void:
 func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton:
 		if event.button_index == MOUSE_BUTTON_WHEEL_DOWN:
-			scale_factor += zoom_speed
+			# Zoom out (dividi per rendere più piccolo)
+			zoom /= zoom_speed
 		elif event.button_index == MOUSE_BUTTON_WHEEL_UP:
-			scale_factor = max(1.0, scale_factor - zoom_speed)
+			# Zoom in (moltiplica per rendere più grande)
+			zoom *= zoom_speed
 
-		# Convertiamo il fattore in zoom (sempre calcolato, mai sommato direttamente)
-		var z = 1.0 / scale_factor
-		z = clamp(z, 1.0 / 1_000_000.0, max_zoom)  # limite piccolo enorme senza float issues
-		zoom = Vector2(z, z)
+		# Clamp per limitare i valori
+		zoom.x = clamp(zoom.x, min_zoom, max_zoom)
+		zoom.y = clamp(zoom.y, min_zoom, max_zoom)

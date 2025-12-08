@@ -4,7 +4,7 @@ class_name CelestialBody
 # Proprietà comuni
 @export var internal_energy: int = 1
 @export var game_energy: int = 10
-@export var collision: CollisionShape2D
+@export var collision: Node2D
 @export var min_size: float = 1.0
 @export var max_size: float = 2.0
 @export var round_base: int = 50
@@ -104,7 +104,7 @@ func _spawn_energy_drop():
 	# IMPORTANTE: Ogni drop ha energia totale / numero effettivo di drop
 	var energy_per_drop = float(game_energy) / num_drops
 
-	var spawn_radius = max_size * 40.0
+	var spawn_radius = collision.scale.x * 25.0
 
 	for i in range(num_drops):
 		var energy_drop = energy_drop_scene.instantiate()

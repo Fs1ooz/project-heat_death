@@ -3,9 +3,9 @@
 [ext_resource type="Script" uid="uid://b76ax10rq762s" path="res://Entities/Enemies/SmallBodies/asteroid.gd" id="1_tefsh"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_y0ama"]
-radius = 240.05208
+radius = 124.0645
 
-[node name="Asteroid" type="RigidBody2D" node_paths=PackedStringArray("collision") groups=["celestial_bodies"]]
+[node name="Asteroid" type="RigidBody2D" node_paths=PackedStringArray("collision") groups=["celestialbodies"]]
 z_index = 1
 mass = 100.0
 continuous_cd = 2
@@ -15,19 +15,20 @@ script = ExtResource("1_tefsh")
 min_speed = 15.0
 max_speed = 30.0
 internal_energy = 5
-game_energy = 120
+game_energy = 500
 collision = NodePath("Collision")
-min_size = 20.0
-max_size = 50.0
+min_size = 100.0
+max_size = 500.0
 round_base = 10
 
 [node name="Collision" type="CollisionShape2D" parent="."]
 shape = SubResource("CircleShape2D_y0ama")
 
 [node name="Polygon2D" type="Polygon2D" parent="Collision"]
-position = Vector2(65, -383)
-scale = Vector2(0.3301486, 1)
+position = Vector2(34, -188.99998)
+scale = Vector2(0.17110927, 0.51827955)
 color = Color(0.43890208, 0.43890208, 0.43890208, 1)
+offset = Vector2(11.688477, -19.294617)
 polygon = PackedVector2Array(-39.37622, 154, -563.3827, 178, -835.9872, 260, -908.6817, 434, -690.59814, 558, -308.95178, 619, 163.56271, 592, 411.93567, 512, 539.1511, 381, 330.15436, 219)
 
 [node name="Polygon2D2" type="Polygon2D" parent="Collision/Polygon2D"]

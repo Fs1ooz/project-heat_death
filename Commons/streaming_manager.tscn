@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://dasfk22p86b1l"]
+
+[ext_resource type="Script" uid="uid://j551rbpyhlw5" path="res://Commons/streaming_manager.gd" id="1_b34ck"]
+
+[node name="StreamingManager" type="Node2D"]
+script = ExtResource("1_b34ck")

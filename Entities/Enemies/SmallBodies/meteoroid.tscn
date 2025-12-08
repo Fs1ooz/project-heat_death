@@ -1,23 +1,21 @@
-[gd_scene load_steps=3 format=3 uid="uid://bpeudpxsbd3x2"]
+[gd_scene load_steps=2 format=3 uid="uid://bpeudpxsbd3x2"]
 
 [ext_resource type="Script" uid="uid://bdmvnvgdm1aav" path="res://Entities/Enemies/SmallBodies/meteoroid.gd" id="1_otcpb"]
 
-[sub_resource type="CircleShape2D" id="CircleShape2D_qufua"]
-radius = 50.159744
-
-[node name="Meteoroid" type="RigidBody2D" node_paths=PackedStringArray("collision") groups=["celestial_bodies"]]
+[node name="Meteoroid" type="RigidBody2D" node_paths=PackedStringArray("collision") groups=["celestialbodies"]]
 script = ExtResource("1_otcpb")
 collision = NodePath("Collision")
-max_size = 5.0
+max_size = 50.0
 round_base = 5
 metadata/_custom_type_script = "uid://be8uvibib1twp"
 
-[node name="Collision" type="CollisionShape2D" parent="."]
-shape = SubResource("CircleShape2D_qufua")
+[node name="Collision" type="CollisionPolygon2D" parent="."]
+polygon = PackedVector2Array(42, 28, 51, -2, 24, -44, -23, -45, -48, -15, -45, 28, -12, 49)
 
 [node name="Polygon2D" type="Polygon2D" parent="Collision"]
+position = Vector2(0, -1)
 color = Color(0.52036595, 0.52036595, 0.52036595, 1)
 offset = Vector2(66, -392)
-polygon = PackedVector2Array(-65.36001, 342.19998, -103.36001, 358.19998, -115, 395, -100, 428, -66, 443, -30.360008, 427.19998, -15.360008, 391.19998, -33.36001, 356.19998)
+polygon = PackedVector2Array(-89, 348, -114, 378, -110, 422, -78, 442, -24, 421, -15.360008, 391.19998, -42, 349)
 
 [connection signal="body_entered" from="." to="." method="_on_body_entered"]

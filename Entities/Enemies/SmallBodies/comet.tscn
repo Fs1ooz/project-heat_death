@@ -8,7 +8,7 @@
 [sub_resource type="CircleShape2D" id="CircleShape2D_tmuj1"]
 radius = 130.0
 
-[node name="Comet" type="RigidBody2D" node_paths=PackedStringArray("collision") groups=["celestial_bodies"]]
+[node name="Comet" type="RigidBody2D" node_paths=PackedStringArray("collision") groups=["celestialbodies"]]
 mass = 60.0
 script = ExtResource("1_2xb01")
 min_speed = 100.0

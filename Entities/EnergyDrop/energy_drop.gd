@@ -1,10 +1,11 @@
 extends Area2D
 
-static var energy: int = 10
 static var starting_threshold: float = 500.0
 static var threshold: float = starting_threshold
 
-@onready var player = get_tree().get_first_node_in_group("player")
+
+@onready var energy: int = 10
+@onready var player: Player = get_tree().get_first_node_in_group("player")
 @onready var sfx: AudioStreamPlayer = $EnergyAudioStreamPlayer
 
 

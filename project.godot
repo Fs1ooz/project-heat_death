@@ -20,6 +20,8 @@ config/icon="uid://cutmcskxym36k"
 
 UpgradeManager="*res://Commons/upgrade_manager.tscn"
 GlobalSignals="*res://Commons/global_signals.tscn"
+UnitConversion="*res://Commons/unit_conversion.tscn"
+StreamingManager="*res://Commons/streaming_manager.tscn"
 
 [display]
 
@@ -35,7 +37,7 @@ enabled=PackedStringArray("res://addons/gdfxr/plugin.cfg", "res://addons/trail_2
 [global_group]
 
 player=""
-celestial_bodies=""
+celestialbodies=""
 
 [input]
 
@@ -84,3 +86,4 @@ fullscreen={
 
 textures/canvas_textures/default_texture_filter=0
 textures/default_filters/use_nearest_mipmap_filter=true
+environment/defaults/default_clear_color=Color(0, 0, 0, 1)
