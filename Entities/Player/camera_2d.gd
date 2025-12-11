@@ -1,7 +1,7 @@
 extends Camera2D
 
 @export var zoom_speed: float = 1.1  # Moltiplicatore (1.1 = 10% per scroll)
-@export var min_zoom: float = 0.000000000000000001  # Quanto piccolo può diventare
+@export var min_zoom: float = 0.0000000001  # Quanto piccolo può diventare
 @export var max_zoom: float = 2.0       # Quanto grande può diventare
 
 func _ready() -> void:

@@ -3,7 +3,7 @@ extends Node2D
 
 @export var streaming_enabled := true
 @export var max_bodies_before_streaming := 300
-@export var vision_radius_multiplier := 5000.0
+@export var vision_radius_multiplier := 3000.0
 @export var update_interval := 0.3
 @export var unload_multiplier := 1.8
 
@@ -40,9 +40,9 @@ func _process(delta):
 
 		if distance <= load_radius:
 			# Vicino → attiva
-			body.visible = true
+			#body.visible = true
 			body.process_mode = Node.PROCESS_MODE_INHERIT
 		elif distance > unload_radius:
 			# Lontano → disattiva
-			body.visible = false
+			#body.visible = false
 			body.process_mode = Node.PROCESS_MODE_DISABLED

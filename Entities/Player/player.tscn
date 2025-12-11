@@ -11,8 +11,8 @@ friction = 0.0
 bounce = 0.5
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_3uyv8"]
-radius = 37.0
-height = 120.0
+radius = 39.0
+height = 118.0
 
 [sub_resource type="AudioStreamRandomizer" id="AudioStreamRandomizer_5c2io"]
 random_pitch = 1.1
@@ -22,22 +22,34 @@ stream_0/stream = ExtResource("3_lu8i8")
 [sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_5c2io"]
 polygon = PackedVector2Array(-2.1855694e-06, -50, -14.000002, -45, -25.000002, -34, -31, -19.999998, -34, 1.4861872e-06, -39, 24.000002, -34, 40, -22.999998, 53, -0.9999973, 61, 25.000002, 48, 35, 26.999998, 34, -1.0000014, 31, -22.000002, 23.999998, -37, 14.999998, -46)
 
-[node name="Player" type="RigidBody2D" node_paths=PackedStringArray("collision_shape") groups=["player"]]
+[node name="Player" type="RigidBody2D" node_paths=PackedStringArray("collision", "trail", "sprite") groups=["player"]]
 collision_mask = 2
 physics_material_override = SubResource("PhysicsMaterial_5c2io")
 gravity_scale = 0.0
+freeze_mode = 1
 custom_integrator = true
 continuous_cd = 1
 contact_monitor = true
 max_contacts_reported = 50
+linear_damp_mode = 1
+angular_damp_mode = 1
 script = ExtResource("1_tekja")
-collision_shape = NodePath("CollisionShape2D")
+collision = NodePath("Collision")
+trail = NodePath("Collision/Trail")
+sprite = NodePath("Collision/Sprite")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+[node name="PlayerCamera" type="Camera2D" parent="."]
+limit_enabled = false
+position_smoothing_enabled = true
+position_smoothing_speed = 15.0
+rotation_smoothing_speed = 20.0
+script = ExtResource("5_5c2io")
+
+[node name="Collision" type="CollisionShape2D" parent="."]
 rotation = 1.5707964
 shape = SubResource("CapsuleShape2D_3uyv8")
 
-[node name="Trail" type="GPUParticles2D" parent="CollisionShape2D"]
+[node name="Trail" type="GPUParticles2D" parent="Collision"]
 z_index = -1
 rotation = -1.5707964
 amount = 500
@@ -47,10 +59,9 @@ trail_lifetime = 1.0
 trail_sections = 12
 process_material = ExtResource("6_4wf4l")
 
-[node name="Icon" type="Sprite2D" parent="CollisionShape2D"]
+[node name="Sprite" type="Sprite2D" parent="Collision"]
 z_index = 1
 rotation = -1.5707964
-scale = Vector2(1, 1.0390625)
 texture = ExtResource("2_5c2io")
 
 [node name="HitAudioStreamPlayer" type="AudioStreamPlayer" parent="."]
@@ -68,10 +79,5 @@ visible = false
 position = Vector2(1, 1)
 rotation = 1.5707964
 occluder = SubResource("OccluderPolygon2D_5c2io")
-
-[node name="PlayerCamera" type="Camera2D" parent="."]
-limit_enabled = false
-position_smoothing_enabled = true
-script = ExtResource("5_5c2io")
 
 [connection signal="timeout" from="RegenTimer" to="." method="_on_regen_timer_timeout"]

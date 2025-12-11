@@ -5,44 +5,65 @@ extends RigidBody2D
 ## - Gravity Scale: 0 (per top-down)
 ## - Mass: 1 (regolare a piacere)
 
+
 @export var life_bar: ProgressBar
 @export var alignment_safe_zone: float = 0.8
-@export var collision_shape: CollisionShape2D
+@export var collision: CollisionShape2D
 ## Configurazione movimento
 var max_hp: int = 100
 var hp: int = 100
 @export var speed: float = 700.0 ## Velocità massima (pixel/sec)
 @export var acceleration: float = 500.0 ## Accelerazione lineare (pixel/sec²)
+@export var trail: GPUParticles2D
+
+@export var sprite: Sprite2D
+
 var rotation_responsiveness: float = 10.0 ## Responsività della rotazione verso il mousewwwwwwwwwwwwws
 var regen_tick: float = 3.0
 var auto_revive: bool = true
 var _last_velocity: Vector2 = Vector2.ZERO
+
+var gravity_force = Vector2.ZERO
+
+var accumulated_forces := Vector2.ZERO
+
+var gravity: bool = false
+
+const G := 50000.0
 ## Safe zone per allineamento completo
 @onready var regen_timer: Timer = $RegenTimer
 
 @onready var hit_audio_stream_player: AudioStreamPlayer = $HitAudioStreamPlayer
-@onready var trail: GPUParticles2D = $CollisionShape2D/Trail
+
+var initial_radius: float
+var initial_height: float
+var initial_scale: Vector2
+
 
 
 func _ready() -> void:
-	life_bar.value = max_hp
-	global_position.x = -10000
+
+	initial_radius = collision.shape.radius
+	initial_height = collision.shape.height
+	initial_scale = sprite.scale
+	if life_bar:
+		life_bar.value = max_hp
+	await get_tree().create_timer(5).timeout
+
 
 func _physics_process(_delta: float) -> void:
-	# Salva la velocità PRIMA che la fisica modifichi tutto
 	_last_velocity = linear_velocity
 
 
 func _integrate_forces(state: PhysicsDirectBodyState2D) -> void:
+	if gravity:
+		_handle_gravity(state)
 
-	# Rotazione verso il mouse
 	_handle_rotation(state)
-
-	# Movimento WASD
 	_handle_movement(state)
-
-	# NUOVA LOGICA: Contrasta l'effetto delle collisioni in base alla massa
 	_handle_collision_resistance(state)
+
+
 
 func _handle_collision_resistance(state: PhysicsDirectBodyState2D) -> void:
 	var max_resistance: float = 0.0
@@ -81,7 +102,6 @@ func _handle_rotation(state: PhysicsDirectBodyState2D) -> void:
 	# Imposta velocità angolare direttamente
 	state.angular_velocity = angle_diff * rotation_responsiveness
 
-
 func _handle_movement(state: PhysicsDirectBodyState2D) -> void:
 	var input_dir: Vector2 = get_input()
 	var mouse_dir = _handle_mouse_input()
@@ -113,6 +133,17 @@ func _handle_movement(state: PhysicsDirectBodyState2D) -> void:
 
 	state.linear_velocity = new_velocity
 
+func _handle_gravity(state: PhysicsDirectBodyState2D) -> void:
+
+	var vel = state.linear_velocity
+	var dt = state.step
+
+	# forza → accelerazione
+	var accel = gravity_force / mass
+
+	vel += accel * dt
+	print("velocità gravità: ", vel)
+	state.linear_velocity = vel
 
 ## Restituisce un vettore normalizzato (modulo = 1) per l'input WASD.
 func get_input() -> Vector2:
@@ -125,7 +156,7 @@ func get_damage() -> float:
 	#var velocity_squared = linear_velocity.length_squared()
 
 	print("massa: ", mass)
-	print("velocità: ",velocity)
+	print("velocità: ", velocity)
 
 	#var kinetic_energy = 0.5 * mass * velocity_squared
 
@@ -144,18 +175,24 @@ func get_damage() -> float:
 
 
 func change_size(amount: float) -> void:
-	print(collision_shape.scale)
+
 	var mat := trail.process_material as ParticleProcessMaterial
+	mass *= amount
 
 	if mat:
 		var initial_x = -25.0
 		mat.set("emission_shape_offset", Vector3(initial_x - 10.0, 0.0, 0.0))
+
+	var scale_change = sprite.scale * amount
+	collision.shape.radius = initial_radius * scale_change.x
+	collision.shape.height = initial_height * scale_change.x
 	var tween = create_tween()
-	var scale_change = collision_shape.scale * amount
 
+	tween.tween_property(sprite, "scale", scale_change, 0.4).set_trans(Tween.TRANS_BOUNCE).set_ease(Tween.EASE_OUT)	# Check if tweener was created successfully before chaining
 
+	print("massa: ", mass)
+	print("new radius: ", collision.shape.radius)
 
-	tween.tween_property(collision_shape,"scale",scale_change, 0.1)
 
 ## Riproduce il suono di hit.
 func play_hit_sound() -> void:

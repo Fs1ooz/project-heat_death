@@ -12,7 +12,7 @@ var spawn_config = [
 	{
 		"scene": preload("res://Entities/EnergyDrop/energy_drop.tscn"),
 		"probability": 100.0,
-		"min_probability": 30.0,
+		"min_probability": 50.0,
 		"cooldown": 0,
 		"current_cooldown": 0
 	},
@@ -32,19 +32,20 @@ var spawn_config = [
 	},
 ]
 
+
+var max_energy: int = 10000
 ## Riferimento al giocatore
 @export var player: Node2D
 
-## Distanza spawn basata sulla posizione del player
-@export var spawn_distance_min_multiplier: float = 1.2  # Quanto lontano minimo (moltiplicatore dello schermo)
-@export var spawn_distance_max_multiplier: float = 1.8  # Quanto lontano massimo
-@export var safe_zone_multiplier: float = 0.8  # Zona sicura (moltiplicatore dello schermo)
+## Distanza minima FISSA in pixel dal player (zona "sicura")
+@export var spawn_ring_min_distance: float = 800.0
+
+## Moltiplicatore per la distanza massima basata su ciò che vede il player
+@export var spawn_max_distance_multiplier: float = 3.0
 
 ## Moltiplicatore difficoltà e tempo
 var time_elapsed: float = 0.0
 const DIFFICULTY_RAMP_TIME: float = 600.0
-
-## Esponente per la curva (più alto = più esponenziale)
 @export var difficulty_exponent: float = 3.0
 
 func _ready() -> void:
@@ -55,44 +56,58 @@ func _process(delta: float) -> void:
 	time_elapsed += delta
 
 func _on_timer_timeout() -> void:
+	if get_tree().get_nodes_in_group("energy").size() > max_energy:
+		return
 	var scene_to_spawn = get_weighted_random_scene()
 	if scene_to_spawn == null:
 		return
 
 	var new_object = scene_to_spawn.instantiate()
-	var spawn_pos = get_safe_spawn_position()
+	var spawn_pos = get_dynamic_ring_spawn_position()
 	new_object.global_position = spawn_pos
+	cleanup_old_energy()
+
 
 	await get_tree().create_timer(0.5).timeout
 	get_parent().add_child(new_object)
 
-func get_safe_spawn_position() -> Vector2:
+func get_dynamic_ring_spawn_position() -> Vector2:
 	if player == null:
 		return Vector2.ZERO
 
-	# Ottieni la dimensione dello schermo in world coordinates
-	var camera = get_viewport().get_camera_2d()
-	if camera == null:
-		return player.global_position + Vector2(1000, 0)
+	# Calcola la distanza massima basata su ciò che vede il player
+	var screen_radius = get_screen_radius()
+	var max_distance = max(spawn_ring_min_distance * 1.5, screen_radius * spawn_max_distance_multiplier)
+	var min_distance = spawn_ring_min_distance
 
-	# Calcola il raggio dello schermo basato sullo zoom
-	var viewport_size = get_viewport().get_visible_rect().size
-	var screen_radius = (viewport_size.length() * 0.5) / camera.zoom.x
-
-	# Calcola distanze di spawn basate sullo schermo
-	var min_spawn_distance = screen_radius * spawn_distance_min_multiplier
-	var max_spawn_distance = screen_radius * spawn_distance_max_multiplier
-
-	# Spawn in un anello attorno al player
+	# Spawn in un anello con distanze min/max
 	var random_angle = randf() * TAU
-	var random_distance = randf_range(min_spawn_distance, max_spawn_distance)
+	var random_distance = randf_range(min_distance, max_distance)
 
 	var offset = Vector2(
 		cos(random_angle) * random_distance,
 		sin(random_angle) * random_distance
 	)
 
+	print (player.global_position)
 	return player.global_position + offset
+
+func get_screen_radius() -> float:
+	# Ottieni la camera e le dimensioni del viewport
+	var camera = get_viewport().get_camera_2d()
+	if camera == null:
+		return spawn_ring_min_distance * 2  # Fallback
+
+	var viewport_size = get_viewport().get_visible_rect().size
+
+	# Calcola il raggio dello schermo visibile in world coordinates
+	var screen_width_world = viewport_size.x / camera.zoom.x
+	var screen_height_world = viewport_size.y / camera.zoom.y
+
+	# Usa la metà della diagonale come raggio massimo
+	var screen_radius = sqrt(screen_width_world * screen_width_world + screen_height_world * screen_height_world) / 2
+
+	return screen_radius
 
 func get_weighted_random_scene() -> PackedScene:
 	# Riduci cooldown
@@ -128,3 +143,22 @@ func get_weighted_random_scene() -> PackedScene:
 			return spawn.config.scene
 
 	return available_spawns[0].config.scene
+
+
+# Assicurati che tutti i pellet di energia siano nel gruppo "energy"
+
+func cleanup_old_energy() -> void:
+	var energies = get_tree().get_nodes_in_group("energy")
+	if energies.size() <= max_energy:
+		return
+
+	# Ordina per tempo di creazione (supponendo che tu abbia aggiunto un timestamp)
+	energies.sort_custom(_sort_by_age)
+
+	# Rimuovi quelli extra
+	for i in range(energies.size() - max_energy):
+		energies[i].queue_free()
+
+# Funzione di ordinamento basata su variabile _spawn_time
+func _sort_by_age(a, b):
+	return int(a._spawn_time - b._spawn_time)

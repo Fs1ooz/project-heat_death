@@ -1,0 +1,33 @@
+[gd_scene load_steps=5 format=3 uid="uid://d2i2r2ucklcu0"]
+
+[ext_resource type="Texture2D" uid="uid://0yxs2q0xu2iy" path="res://Entities/Enemies/SmallBodies/Ceres/Ceres.png" id="1_gp571"]
+[ext_resource type="Script" uid="uid://tvtxttl46aya" path="res://Entities/Enemies/SmallBodies/small_body.gd" id="1_xm1ix"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_xm1ix"]
+radius = 4511.649
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_lw3hp"]
+radius = 61.008198
+
+[node name="Ceres" type="RigidBody2D" node_paths=PackedStringArray("collision", "gravity_area_collision")]
+mass = 1000000.0
+script = ExtResource("1_xm1ix")
+internal_energy = 10
+game_energy = 10000
+min_size = 9400.0
+max_size = 9400.0
+collision = NodePath("Collision")
+gravity_area_collision = NodePath("GravityArea/GravityAreaCollision")
+metadata/_custom_type_script = "uid://tvtxttl46aya"
+
+[node name="GravityArea" type="Area2D" parent="."]
+
+[node name="GravityAreaCollision" type="CollisionShape2D" parent="GravityArea"]
+shape = SubResource("CircleShape2D_xm1ix")
+
+[node name="Collision" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_lw3hp")
+
+[node name="Ceres" type="Sprite2D" parent="Collision"]
+position = Vector2(0, -1)
+texture = ExtResource("1_gp571")

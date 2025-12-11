@@ -1,21 +1,35 @@
-[gd_scene load_steps=2 format=3 uid="uid://bpeudpxsbd3x2"]
+[gd_scene load_steps=4 format=3 uid="uid://bpeudpxsbd3x2"]
 
 [ext_resource type="Script" uid="uid://bdmvnvgdm1aav" path="res://Entities/Enemies/SmallBodies/meteoroid.gd" id="1_otcpb"]
 
-[node name="Meteoroid" type="RigidBody2D" node_paths=PackedStringArray("collision") groups=["celestialbodies"]]
+[sub_resource type="CircleShape2D" id="CircleShape2D_lyb38"]
+radius = 48.0
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_6m435"]
+radius = 404.01114
+
+[node name="Meteoroid" type="RigidBody2D" node_paths=PackedStringArray("collision", "gravity_area_collision") groups=["celestialbodies"]]
 script = ExtResource("1_otcpb")
+max_speed = 5.0
+game_energy = 20
+max_size = 25.0
 collision = NodePath("Collision")
-max_size = 50.0
-round_base = 5
+gravity_area_collision = NodePath("Gravity/GravityAreaCollision")
 metadata/_custom_type_script = "uid://be8uvibib1twp"
 
-[node name="Collision" type="CollisionPolygon2D" parent="."]
-polygon = PackedVector2Array(42, 28, 51, -2, 24, -44, -23, -45, -48, -15, -45, 28, -12, 49)
+[node name="Collision" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_lyb38")
 
 [node name="Polygon2D" type="Polygon2D" parent="Collision"]
-position = Vector2(0, -1)
-color = Color(0.52036595, 0.52036595, 0.52036595, 1)
-offset = Vector2(66, -392)
-polygon = PackedVector2Array(-89, 348, -114, 378, -110, 422, -78, 442, -24, 421, -15.360008, 391.19998, -42, 349)
+color = Color(0.5307092, 0.4973181, 0.48928988, 1)
+polygon = PackedVector2Array(49, 0, 44, -19, 36, -32, 20, -44, 0, -48, -19, -45, -33, -36, -44, -21, -48, 0, -46, 17, -36, 33, -22, 44, 0, 48, 18, 46, 35, 35, 44, 21)
+
+[node name="Gravity" type="Area2D" parent="."]
+collision_layer = 0
+
+[node name="GravityAreaCollision" type="CollisionShape2D" parent="Gravity"]
+shape = SubResource("CircleShape2D_6m435")
 
 [connection signal="body_entered" from="." to="." method="_on_body_entered"]
+[connection signal="body_entered" from="Gravity" to="." method="_on_gravity_body_entered"]
+[connection signal="body_exited" from="Gravity" to="." method="_on_gravity_body_exited"]

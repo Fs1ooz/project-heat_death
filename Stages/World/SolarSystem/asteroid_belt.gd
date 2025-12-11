@@ -2,17 +2,8 @@ extends Node2D
 
 @export var asteroid_scene: PackedScene
 @export var meteoroid_scene: PackedScene
-@export var energy_scene: PackedScene
 
 @onready var player: Player = $Player
-
-
-#func _input(event: InputEvent) -> void:
-	#if event.is_action_pressed("fullscreen"):
-		#if DisplayServer.window_get_mode() == DisplayServer.WINDOW_MODE_FULLSCREEN:
-			#DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_WINDOWED)
-		#else:
-			#DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_FULLSCREEN)
 
 
 # Definizione delle regioni in AU con contatori separati
@@ -77,11 +68,10 @@ const REGIONS := [
 	{ "name": "HildaGroup",      "min_au": 3.51, "max_au": 4.21, "asteroid_count": 15, "meteoroid_count": 300 },
 ]
 
-
-
 var current_region: String = ""
 
 func _ready() -> void:
+	pass
 	generate_belt()
 	spawn_player_near_smallest_ring()
 
@@ -126,7 +116,7 @@ func spawn_player_near_smallest_ring() -> void:
 		# Fallback se nessun corpo ha massa definita, prendiamo il primo a caso
 		smallest_body = celestial_bodies[0]
 
-	var offset_distance = 50.0 # Un po' più distante per sicurezza
+	var offset_distance = 100.0 # Un po' più distante per sicurezza
 	var random_angle = randf() * TAU
 	var spawn_offset = Vector2(cos(random_angle), sin(random_angle)) * offset_distance
 
@@ -152,9 +142,8 @@ func generate_belt() -> void:
 
 		# 2. Spawn METEOROIDI (Piccoli, tanti)
 		# Scala più piccola (es. 0.2 - 0.6)
-		spawn_ring(region_node, region_data["meteoroid_count"] * 5, min_pixels, max_pixels, meteoroid_scene)
+		spawn_ring(region_node, region_data["meteoroid_count"] * 2, min_pixels, max_pixels, meteoroid_scene)
 
-# Ho modificato la firma per accettare la scena e le dimensioni
 func spawn_ring(container: Node2D, count: int, min_r: float, max_r: float, scene: PackedScene) -> void:
 	if count <= 0:
 		return
@@ -163,31 +152,38 @@ func spawn_ring(container: Node2D, count: int, min_r: float, max_r: float, scene
 		var obj := scene.instantiate() as Node2D
 
 		# ---------------------------------------------
-		# 1) ORBITA REALISTICA: ellitticità 0.0–0.1
+		# 1) ECCENTRICITÀ REALISTICA: 0.0–0.1
 		# ---------------------------------------------
 		var eccentricity := randf_range(0.0, 0.1)
 
-		# Angolo orbitale (posizione lungo l’anello)
+		# ---------------------------------------------
+		# 2) DENSITÀ REALISTICA: più oggetti verso max_r
+		# ---------------------------------------------
+		var t := pow(randf(), 0.55)  # 0.55 → addensa verso l’esterno
+		var base_r := lerp(min_r, max_r, t) as float
+
+		# ---------------------------------------------
+		# 3) SPAWN SOLO SUL BORDO (interno o esterno)
+		# ---------------------------------------------
+		var spawn_on_inner_edge := randf() < 0.5
+		var r: float
+		if spawn_on_inner_edge:
+			r = base_r * (1.0 - eccentricity)  # ← Bordo interno ellittico
+			r = clamp(r, min_r * 0.98, min_r * 1.02)  # Vicino al bordo interno
+		else:
+			r = base_r * (1.0 + eccentricity)  # ← Bordo esterno ellittico
+			r = clamp(r, max_r * 0.98, max_r * 1.02)  # Vicino al bordo esterno
+
+		# Angolo orbitale casuale
 		var angle := randf() * TAU
 
 		# ---------------------------------------------
-		# 2) DENSITÀ REALISTICA: più roba verso max_r
-		#    (la cintura è più densa esternamente)
-		# ---------------------------------------------
-		var t := pow(randf(), 0.55)  # 0.55 → addensa verso max_r
-		var base_r := lerp(min_r, max_r, t) as float
-
-		# Applica ellitticità
-		var r := base_r * (1.0 - eccentricity * cos(angle))
-
-		# ---------------------------------------------
-		# 3) SPESSORE DELLA CINTURA (non piatta!)
-		#    ± 3% della distanza radiale
+		# 4) SPESSORE VERTICALE (±3% della distanza)
 		# ---------------------------------------------
 		var vertical_noise := randf_range(-0.03, 0.03) * r
 
 		# ---------------------------------------------
-		# 4) POSIZIONE FINALE
+		# 5) POSIZIONE FINALE
 		# ---------------------------------------------
 		var pos := Vector2(
 			cos(angle) * r,
@@ -195,10 +191,5 @@ func spawn_ring(container: Node2D, count: int, min_r: float, max_r: float, scene
 		)
 
 		obj.position = pos
-
-		# ---------------------------------------------
-		# 5) ORIENTAMENTO CASUALE (optional)
-		# ---------------------------------------------
 		obj.rotation = randf() * TAU
-
 		container.add_child(obj)

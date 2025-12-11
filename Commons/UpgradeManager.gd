@@ -6,7 +6,7 @@ extends Node
 
 const e: float = 2.71828182845904523536028747135266249775724709369995
 
-var energy: int = 2000
+var energy: int = 0
 
 signal energy_changed(new_energy: int)
 

@@ -4,23 +4,23 @@
 [ext_resource type="AudioStream" uid="uid://dp1e7mdwgi743" path="res://Assets/Sounds/coin.sfxr" id="2_psw32"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_rdhfw"]
-radius = 37.0
+radius = 77.02597
 
 [sub_resource type="AudioStreamRandomizer" id="AudioStreamRandomizer_psw32"]
 random_pitch = 2.0
 streams_count = 1
 stream_0/stream = ExtResource("2_psw32")
 
-[node name="EnergyDrop" type="Area2D"]
+[node name="EnergyDrop" type="Area2D" groups=["energy"]]
 script = ExtResource("1_nnvmk")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("CircleShape2D_rdhfw")
 
-[node name="Polygon2D" type="Polygon2D" parent="."]
-color = Color(0.28235292, 0.96862745, 0.66477877, 1)
+[node name="Polygon2D" type="Polygon2D" parent="CollisionShape2D"]
+color = Color(0.5051135, 0.99269015, 0.7457301, 1)
 offset = Vector2(-1, -2)
-polygon = PackedVector2Array(-29, 2, 1, -28, 31, 2, 1, 32)
+polygon = PackedVector2Array(-50, 0, 0, -50, 50, 0, 0, 50)
 
 [node name="EnergyAudioStreamPlayer" type="AudioStreamPlayer" parent="."]
 stream = SubResource("AudioStreamRandomizer_psw32")

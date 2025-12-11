@@ -1,13 +1,24 @@
 extends RigidBody2D
 class_name CelestialBody
 
+
+const G := 5_000.0
+const SOFTENING := 10.0
+const MAX_FORCE := 1_000_000.0
+var bodies_in_gravity: Array[RigidBody2D] = []
+
 # Proprietà comuni
 @export var internal_energy: int = 1
 @export var game_energy: int = 10
-@export var collision: Node2D
+
 @export var min_size: float = 1.0
 @export var max_size: float = 2.0
-@export var round_base: int = 50
+@export var round_base: int = 5
+
+
+
+@export var collision: Node2D
+@export var gravity_area_collision: CollisionShape2D
 
 
 var health: float
@@ -24,6 +35,14 @@ func _ready() -> void:
 	_setup_mass()
 	_setup_health()
 
+func _physics_process(_delta: float) -> void:
+	for body in bodies_in_gravity:
+		if not is_instance_valid(body):
+			continue
+
+		_apply_gravity(body)
+
+
 # Configurazione fisica comune
 func _setup_physics() -> void:
 	z_index = 1
@@ -37,15 +56,43 @@ func _setup_physics() -> void:
 	physics_material_override.bounce = 0.0
 	physics_material_override.friction = 0.0
 
+
 func _setup_scale() -> void:
-	var scale_rand: float = randf_range(min_size, max_size)
-	collision.scale = Vector2(scale_rand, scale_rand)
+	var scale_rand := randf_range(min_size, max_size)
+
+	var sprite = collision.get_child(0)
+
+	# IMPORTANTE: salva la scala ORIGINALE dello sprite dall'editor
+	var original_sprite_scale = sprite.scale
+
+	# Applica la nuova scala RELATIVA a quella originale
+	sprite.scale = original_sprite_scale * scale_rand
+
+	# Duplica lo shape
+	var shape := collision.shape.duplicate() as Shape2D
+	var area = null
+	if gravity_area_collision:
+		area = gravity_area_collision.shape.duplicate() as Shape2D
+
+	if shape is CircleShape2D:
+		# Scala RELATIVAMENTE al valore originale, non moltiplicare direttamente
+		var original_radius = collision.shape.radius  # valore dall'editor
+		shape.radius = original_radius * scale_rand
+	if area is CircleShape2D:
+		var original_radius = gravity_area_collision.shape.radius  # valore dall'editor
+		area.radius = original_radius * scale_rand
+
+	collision.shape = shape
+	if gravity_area_collision:
+		gravity_area_collision.shape = area
+
 
 func _setup_mass() -> void:
-	var size_x: float = collision.scale.x
-	var raw_mass = size_x * internal_energy
+	var radius: float = collision.shape.radius / 5
+	var raw_mass = radius * mass
 	mass = max(round_base, snappedi(raw_mass, round_base))
-	#print(get_class(), " MASSA: ", mass)
+	#if mass > 1000:
+		#print(get_class(), " MASSA: ", mass)
 
 func _setup_health() -> void:
 	var raw_health = mass * internal_energy
@@ -56,11 +103,11 @@ func _setup_health() -> void:
 # Gestione collisioni
 func _on_body_entered(body: Node) -> void:
 	if body is Player:
-
+		var dmg_mult = 0.001
 		body.play_hit_sound()
-		var rel_vel = (linear_velocity - body._last_velocity).length() * 0.005
+		var rel_vel = (linear_velocity - body._last_velocity).length() * dmg_mult
 		var mass_ratio =  mass / body.mass
-		var damage_to_player = rel_vel * snappedf(mass_ratio, 0.005)
+		var damage_to_player = rel_vel * snappedf(mass_ratio, dmg_mult)
 		body.take_damage(int(damage_to_player))
 		print("rel_vel: ", rel_vel)
 		print("ratio: ", mass_ratio)
@@ -80,7 +127,13 @@ func take_damage(damage: float) -> void:
 func die() -> void:
 	_spawn_energy_drop()
 	_spawn_explosion()
+	bodies_in_gravity.clear()
+	for body in bodies_in_gravity:
+		if "gravity" in body:
+			body.gravity = false  # questo chiama il setter!
+	GlobalSignals.emit_signal("death", self)
 	queue_free()
+
 
 func _spawn_explosion() -> void:
 	var explosion_red = explosion_red_scene.instantiate()
@@ -99,12 +152,12 @@ func play_sound_once(sound: AudioStream) -> void:
 
 func _spawn_energy_drop():
 	var num_drops = int(game_energy)  # Calcola quanti drop vorresti
-	num_drops = clamp(num_drops, 5, 20)  # Limita tra 5 e 20
+	num_drops = clamp(num_drops, 5, 100)  # Limita tra 5 e 100
 
 	# IMPORTANTE: Ogni drop ha energia totale / numero effettivo di drop
 	var energy_per_drop = float(game_energy) / num_drops
 
-	var spawn_radius = collision.scale.x * 25.0
+	var spawn_radius = collision.shape.radius / 1.5
 
 	for i in range(num_drops):
 		var energy_drop = energy_drop_scene.instantiate()
@@ -120,3 +173,33 @@ func _spawn_energy_drop():
 			energy_drop.linear_velocity = offset.normalized() * randf_range(30, 60)
 
 		get_parent().call_deferred("add_child", energy_drop)
+
+
+func _on_gravity_body_entered(body: Node2D) -> void:
+	if body is RigidBody2D and body != self:
+
+		bodies_in_gravity.append(body)
+
+
+func _on_gravity_body_exited(body: Node2D) -> void:
+	if body is Player:
+		body.gravity = false
+	bodies_in_gravity.erase(body)
+
+
+func _apply_gravity(body: RigidBody2D) -> void:
+	var dir := global_position - body.global_position
+	var dist_sq := dir.length_squared() + SOFTENING
+
+	var force := G * mass * body.mass / dist_sq
+	force = min(force + 200, MAX_FORCE)
+
+	var force_vector = dir.normalized() * force
+	# Se è il Player, usa il metodo speciale
+	if body is Player:
+		body.gravity = true
+		body.gravity_force = force_vector
+	else:
+		# Per altri RigidBody2D normali
+		body.apply_central_force(force_vector)
+	apply_central_force(-force_vector / 10)
