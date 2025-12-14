@@ -4,6 +4,7 @@ extends Node2D
 @export var meteoroid_scene: PackedScene
 
 @onready var player: Player = $Player
+@onready var sun: Light2D = $Sun
 
 
 # Definizione delle regioni in AU con contatori separati
@@ -116,7 +117,7 @@ func spawn_player_near_smallest_ring() -> void:
 		# Fallback se nessun corpo ha massa definita, prendiamo il primo a caso
 		smallest_body = celestial_bodies[0]
 
-	var offset_distance = 100.0 # Un po' più distante per sicurezza
+	var offset_distance = 150.0 # Un po' più distante per sicurezza
 	var random_angle = randf() * TAU
 	var spawn_offset = Vector2(cos(random_angle), sin(random_angle)) * offset_distance
 
@@ -150,18 +151,15 @@ func spawn_ring(container: Node2D, count: int, min_r: float, max_r: float, scene
 
 	for i in count:
 		var obj := scene.instantiate() as Node2D
-
 		# ---------------------------------------------
 		# 1) ECCENTRICITÀ REALISTICA: 0.0–0.1
 		# ---------------------------------------------
 		var eccentricity := randf_range(0.0, 0.1)
-
 		# ---------------------------------------------
 		# 2) DENSITÀ REALISTICA: più oggetti verso max_r
 		# ---------------------------------------------
 		var t := pow(randf(), 0.55)  # 0.55 → addensa verso l’esterno
 		var base_r := lerp(min_r, max_r, t) as float
-
 		# ---------------------------------------------
 		# 3) SPAWN SOLO SUL BORDO (interno o esterno)
 		# ---------------------------------------------
@@ -191,5 +189,19 @@ func spawn_ring(container: Node2D, count: int, min_r: float, max_r: float, scene
 		)
 
 		obj.position = pos
-		obj.rotation = randf() * TAU
+		# Cerca il corpo centrale attorno al quale orbitare
+		var central_body = sun
+
+		# Imposta velocità tangenziale per orbita circolare
+		var clockwise_orbit = randf() < 0.5
+
 		container.add_child(obj)
+
+
+		set_orbit(obj, central_body, clockwise_orbit)
+
+
+func set_orbit(obj, central_body, clockwise_orbit):
+	obj.set_circular_orbit(central_body, clockwise_orbit)
+
+	obj.rotation = randf() * TAU

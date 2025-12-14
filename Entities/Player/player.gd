@@ -10,9 +10,10 @@ extends RigidBody2D
 @export var alignment_safe_zone: float = 0.8
 @export var collision: CollisionShape2D
 ## Configurazione movimento
-var max_hp: int = 100
-var hp: int = 100
-@export var speed: float = 700.0 ## Velocità massima (pixel/sec)
+@export var max_hp: int = 100
+@export var hp: int = 100
+
+@export var speed: float = 1000.0 ## Velocità massima (pixel/sec)
 @export var acceleration: float = 500.0 ## Accelerazione lineare (pixel/sec²)
 @export var trail: GPUParticles2D
 
@@ -27,10 +28,10 @@ var gravity_force = Vector2.ZERO
 
 var accumulated_forces := Vector2.ZERO
 
+var energy_threshold: float = 300.0
+
 var gravity: bool = false
 
-const G := 50000.0
-## Safe zone per allineamento completo
 @onready var regen_timer: Timer = $RegenTimer
 
 @onready var hit_audio_stream_player: AudioStreamPlayer = $HitAudioStreamPlayer
@@ -38,117 +39,143 @@ const G := 50000.0
 var initial_radius: float
 var initial_height: float
 var initial_scale: Vector2
+var initial_mass: float
 
+var old_mass: float = 1.0
+var mass_percentage: float = 1.0
 
+@onready var initial_particle_scale: Vector2
+@onready var mat: ParticleProcessMaterial = trail.process_material
 
 func _ready() -> void:
-
+	initial_mass = mass
 	initial_radius = collision.shape.radius
 	initial_height = collision.shape.height
 	initial_scale = sprite.scale
+
+
+	initial_particle_scale = Vector2(mat.scale_min, mat.scale_max)
+
 	if life_bar:
 		life_bar.value = max_hp
+
 	await get_tree().create_timer(5).timeout
 
+
+
+#region Movement
+#region Movement
 
 func _physics_process(_delta: float) -> void:
 	_last_velocity = linear_velocity
 
 
 func _integrate_forces(state: PhysicsDirectBodyState2D) -> void:
-	if gravity:
+
+	if not gravity:
+		_handle_movement(state)
+		print("NON GRAVITO")
+	else:
 		_handle_gravity(state)
-
+		printerr(" GRAVITO")
 	_handle_rotation(state)
-	_handle_movement(state)
 	_handle_collision_resistance(state)
-
 
 
 func _handle_collision_resistance(state: PhysicsDirectBodyState2D) -> void:
 	var max_resistance: float = 0.0
 
-	# Trova la resistenza massima tra tutte le collisioni
 	for i in range(state.get_contact_count()):
 		var collider = state.get_contact_collider_object(i)
 		if collider is CelestialBody:
 			var mass_ratio = mass / collider.mass
+
 			if mass_ratio >= 5.0:
 				max_resistance = 1.0
 				print("💥 BULLDOZER MODE vs ", collider.name)
-				break  # Non può essere più alto di 1
+				break
 			elif mass_ratio > 1.0:
-
-				var resistance = smoothstep(1.0, 3.0, mass_ratio)   # built-in Godot
+				var resistance = smoothstep(1.0, 3.0, mass_ratio)
 				max_resistance = max(max_resistance, resistance)
 				print("⚡ Resistenza: %.0f%% vs %s" % [resistance * 100, collider.name])
 
-
 	if max_resistance > 0.0:
 		state.linear_velocity = state.linear_velocity.lerp(_last_velocity, max_resistance)
+
 
 func _handle_rotation(state: PhysicsDirectBodyState2D) -> void:
 	var mouse_pos = get_global_mouse_position()
 	var dir = mouse_pos - global_position
 
-	# Non ruotare se il mouse è troppo vicino
 	if dir.length_squared() < 1.0:
 		state.angular_velocity = 0.0
 		return
 
 	var target_angle = dir.angle()
 	var angle_diff = wrapf(target_angle - rotation, -PI, PI)
-
-	# Imposta velocità angolare direttamente
 	state.angular_velocity = angle_diff * rotation_responsiveness
 
 func _handle_movement(state: PhysicsDirectBodyState2D) -> void:
-	var input_dir: Vector2 = get_input()
-	var mouse_dir = _handle_mouse_input()
-	# Calcola velocità target
-	var target_velocity: Vector2
-	var movement_angle: float = input_dir.angle()
-	if mouse_dir:
-		movement_angle = mouse_dir.angle()
-		target_velocity = mouse_dir  * speed
-	else:
-		movement_angle = input_dir.angle()
-		target_velocity = input_dir * speed
+	var input_dir := get_input()
+	var mouse_dir := _handle_mouse_input()
+	var dir := mouse_dir if mouse_dir.length() > 0.1 else input_dir
 
+	# NESSUN INPUT → rallenta (attrito)
+	if dir.length() < 0.1:
+		state.linear_velocity = state.linear_velocity.move_toward(
+			Vector2.ZERO,
+			acceleration * state.step
+		)
+		return
 
-	var alignment: float = cos(rotation - movement_angle)
-
-	# Applica safe zone
+	# Velocità target
+	var movement_angle := dir.angle()
+	var alignment := cos(rotation - movement_angle)
 	if alignment > alignment_safe_zone:
 		alignment = 1.0
 
-	# Fattore velocità basato su allineamento
-	var speed_factor: float = remap(alignment, -1.0, 1.0, 0.2, 1.0)
-	target_velocity *= speed_factor
-	# Interpola verso la velocità target
-	var current_velocity: Vector2 = state.linear_velocity
-	var new_velocity: Vector2
+	var speed_factor := remap(alignment, -1.0, 1.0, 0.2, 1.0)
+	var target_velocity := dir.normalized() * speed * speed_factor
 
-	new_velocity = current_velocity.move_toward(target_velocity, acceleration * state.step)
-
-	state.linear_velocity = new_velocity
+	# Accelerazione verso il target
+	state.linear_velocity = state.linear_velocity.move_toward(
+		target_velocity,
+		acceleration * state.step
+	)
 
 func _handle_gravity(state: PhysicsDirectBodyState2D) -> void:
+	# Input
+	var input_dir := get_input()
+	var mouse_dir := _handle_mouse_input()
+	var dir := mouse_dir if mouse_dir.length() > 0.1 else input_dir
 
-	var vel = state.linear_velocity
-	var dt = state.step
+	# Calcola la gravità come vettore velocità
+	var gravity_accel: Vector2 = gravity_force / mass
+	var gravity_velocity: Vector2 = gravity_accel * state.step
 
-	# forza → accelerazione
-	var accel = gravity_force / mass
+	# APPLICA SEMPRE LA GRAVITÀ sottraendola dalla velocità
+	state.linear_velocity += gravity_velocity
 
-	vel += accel * dt
-	print("velocità gravità: ", vel)
-	state.linear_velocity = vel
+	# Se c'è input, applica anche il movimento
+	if dir.length() > 0.1:
+		var movement_angle := dir.angle()
+		var alignment := cos(rotation - movement_angle)
+		if alignment > alignment_safe_zone:
+			alignment = 1.0
 
-## Restituisce un vettore normalizzato (modulo = 1) per l'input WASD.
+		var speed_factor := remap(alignment, -1.0, 1.0, 0.2, 1.0)
+		var target_velocity := dir.normalized() * speed * speed_factor
+
+		# Accelera verso la velocità target (contrasta la gravità con l'input)
+		state.linear_velocity = state.linear_velocity.move_toward(
+			target_velocity,
+			acceleration * state.step
+		)
+
 func get_input() -> Vector2:
 	return Input.get_vector("left", "right", "up", "down")
 
+#endregion
 
 ## Calcola e restituisce il danno del giocatore usando la legge dell'energia cinetica (E = 1/2 mv^2), scherzo, usando la quantità di moto (p = m * v)
 func get_damage() -> float:
@@ -173,25 +200,39 @@ func get_damage() -> float:
 
 	return damage
 
+var lvl: int = 0
 
 func change_size(amount: float) -> void:
+	change_mass(amount)
+	change_scale(amount)
+	lvl += 1
+	# Emetti il segnale con i nuovi valori
+	energy_threshold *= amount
+	print(lvl, " energytresh: ", energy_threshold)
 
-	var mat := trail.process_material as ParticleProcessMaterial
+func change_mass(amount: float):
+	old_mass = mass
 	mass *= amount
+	mass_percentage = mass / old_mass
 
-	if mat:
-		var initial_x = -25.0
-		mat.set("emission_shape_offset", Vector3(initial_x - 10.0, 0.0, 0.0))
 
+func change_scale(amount: float):
 	var scale_change = sprite.scale * amount
 	collision.shape.radius = initial_radius * scale_change.x
 	collision.shape.height = initial_height * scale_change.x
-	var tween = create_tween()
 
-	tween.tween_property(sprite, "scale", scale_change, 0.4).set_trans(Tween.TRANS_BOUNCE).set_ease(Tween.EASE_OUT)	# Check if tweener was created successfully before chaining
+	mat.scale_min = initial_particle_scale.x * amount
+	mat.scale_max = initial_particle_scale.y * amount
 
-	print("massa: ", mass)
-	print("new radius: ", collision.shape.radius)
+	if mat:
+		var initial_x = -25.0
+		mat.set("emission_shape_offset", Vector3(initial_x * amount, 0.0, 0.0))
+
+	sprite.scale = scale_change
+	#var tween = create_tween()
+	#tween.set_parallel(true)
+	#tween.tween_property(sprite, "scale", scale_change, 0.3).set_trans(Tween.TRANS_BOUNCE).set_ease(Tween.EASE_OUT)
+
 
 
 ## Riproduce il suono di hit.

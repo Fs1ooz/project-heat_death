@@ -6,12 +6,11 @@
 radius = 48.0
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_6m435"]
-radius = 404.01114
+radius = 1064.0569
 
 [node name="Meteoroid" type="RigidBody2D" node_paths=PackedStringArray("collision", "gravity_area_collision") groups=["celestialbodies"]]
 script = ExtResource("1_otcpb")
-max_speed = 5.0
-game_energy = 20
+game_energy = 30
 max_size = 25.0
 collision = NodePath("Collision")
 gravity_area_collision = NodePath("Gravity/GravityAreaCollision")

@@ -2,7 +2,7 @@ extends RigidBody2D
 class_name CelestialBody
 
 
-const G := 5_000.0
+const G := 5_000_000.0
 const SOFTENING := 10.0
 const MAX_FORCE := 1_000_000.0
 var bodies_in_gravity: Array[RigidBody2D] = []
@@ -14,7 +14,6 @@ var bodies_in_gravity: Array[RigidBody2D] = []
 @export var min_size: float = 1.0
 @export var max_size: float = 2.0
 @export var round_base: int = 5
-
 
 
 @export var collision: Node2D
@@ -41,7 +40,6 @@ func _physics_process(_delta: float) -> void:
 			continue
 
 		_apply_gravity(body)
-
 
 # Configurazione fisica comune
 func _setup_physics() -> void:
@@ -109,9 +107,9 @@ func _on_body_entered(body: Node) -> void:
 		var mass_ratio =  mass / body.mass
 		var damage_to_player = rel_vel * snappedf(mass_ratio, dmg_mult)
 		body.take_damage(int(damage_to_player))
-		print("rel_vel: ", rel_vel)
-		print("ratio: ", mass_ratio)
-		print("damage_to_player: ", damage_to_player)
+		#print("rel_vel: ", rel_vel)
+		#print("ratio: ", mass_ratio)
+		#print("damage_to_player: ", damage_to_player)
 
 		take_damage(body.get_damage())
 
@@ -127,10 +125,13 @@ func take_damage(damage: float) -> void:
 func die() -> void:
 	_spawn_energy_drop()
 	_spawn_explosion()
-	bodies_in_gravity.clear()
 	for body in bodies_in_gravity:
 		if "gravity" in body:
-			body.gravity = false  # questo chiama il setter!
+			body.gravity = false
+			printerr("morto e sepolto grvt falsa")
+
+
+	bodies_in_gravity.clear()
 	GlobalSignals.emit_signal("death", self)
 	queue_free()
 
@@ -188,18 +189,51 @@ func _on_gravity_body_exited(body: Node2D) -> void:
 
 
 func _apply_gravity(body: RigidBody2D) -> void:
+	#print("velocità rotazione orbita: ", linear_velocity)
 	var dir := global_position - body.global_position
 	var dist_sq := dir.length_squared() + SOFTENING
 
-	var force := G * mass * body.mass / dist_sq
-	force = min(force + 200, MAX_FORCE)
+	if dist_sq <= 0.001:
+		return
 
-	var force_vector = dir.normalized() * force
-	# Se è il Player, usa il metodo speciale
+	var force := G * mass * body.mass / dist_sq
+	var force_vector := dir.normalized() * force
+
 	if body is Player:
+		# PLAYER → custom integrator
 		body.gravity = true
 		body.gravity_force = force_vector
 	else:
-		# Per altri RigidBody2D normali
+		# ALTRI CELESTIAL BODY → fisica standard
 		body.apply_central_force(force_vector)
-	apply_central_force(-force_vector / 10)
+
+	apply_central_force(-force_vector)
+
+var orbital_center: Node2D = null
+var orbit_clockwise: bool = true
+var has_orbit: bool = false
+
+func set_circular_orbit(around: Node2D, clockwise := true) -> void:
+	# Salva i parametri dell'orbita
+	orbital_center = around
+	orbit_clockwise = clockwise
+	has_orbit = true
+
+	# Applica l'orbita
+	_apply_orbit()
+
+func _apply_orbit() -> void:
+	if not has_orbit or not is_instance_valid(orbital_center):
+		return
+
+	var r = global_position.distance_to(orbital_center.global_position)
+	var orbit_mass: float = orbital_center.mass if orbital_center is RigidBody2D else 10_000.0
+	var v = sqrt(G * orbit_mass / r)
+	var tangent = (global_position - orbital_center.global_position).orthogonal().normalized()
+	if not orbit_clockwise:
+		tangent = -tangent
+	linear_velocity = tangent * v
+
+# Funzione pubblica per riapplicare l'orbita (chiamata dallo streaming manager)
+func reapply_orbit() -> void:
+	_apply_orbit()

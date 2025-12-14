@@ -1,4 +1,4 @@
-[gd_scene load_steps=18 format=3 uid="uid://bwqwr2e2v3rvp"]
+[gd_scene load_steps=20 format=3 uid="uid://bwqwr2e2v3rvp"]
 
 [ext_resource type="Script" uid="uid://cyj080sf0wp5o" path="res://Stages/World/SolarSystem/asteroid_belt.gd" id="1_leih4"]
 [ext_resource type="PackedScene" uid="uid://470x1obeipdg" path="res://Entities/Player/player.tscn" id="2_aw4pb"]
@@ -66,6 +66,15 @@ Vector2i(-1, -1): {
 "to_time": 0
 }
 }
+
+[sub_resource type="Gradient" id="Gradient_xxft0"]
+offsets = PackedFloat32Array(0.47435898)
+colors = PackedColorArray(1, 1, 1, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_jpv6b"]
+gradient = SubResource("Gradient_xxft0")
+fill_from = Vector2(1, 0.7991453)
+fill_to = Vector2(0, 0)
 
 [node name="AsteroidBelt" type="Node2D"]
 script = ExtResource("1_leih4")
@@ -178,4 +187,12 @@ script = ExtResource("9_4onk6")
 [node name="DebugSpawner" parent="." node_paths=PackedStringArray("player") instance=ExtResource("13_81uqy")]
 player = NodePath("../Player")
 
+[node name="Sun" type="PointLight2D" parent="."]
+position = Vector2(110.999985, 63.99999)
+scale = Vector2(4.578125, 3.78125)
+energy = 16.0
+texture = SubResource("GradientTexture2D_jpv6b")
+texture_scale = 15.48
+
 [editable path="Player"]
+[editable path="DebugSpawner"]

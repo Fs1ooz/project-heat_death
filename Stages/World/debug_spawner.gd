@@ -1,7 +1,7 @@
 extends Node2D
 
 ## Configurazione spawn con probabilità, cooldown e scaling
-var spawn_config = [
+@export var spawn_config = [
 	{
 		"scene": preload("res://Entities/Enemies/SmallBodies/meteoroid.tscn"),
 		"probability": 0.0,
@@ -11,7 +11,7 @@ var spawn_config = [
 	},
 	{
 		"scene": preload("res://Entities/EnergyDrop/energy_drop.tscn"),
-		"probability": 100.0,
+		 "probability": 100.0,
 		"min_probability": 50.0,
 		"cooldown": 0,
 		"current_cooldown": 0
@@ -89,7 +89,7 @@ func get_dynamic_ring_spawn_position() -> Vector2:
 		sin(random_angle) * random_distance
 	)
 
-	print (player.global_position)
+	#print (player.global_position)
 	return player.global_position + offset
 
 func get_screen_radius() -> float:
