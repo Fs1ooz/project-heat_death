@@ -55,6 +55,7 @@ func _ready() -> void:
 
 
 	initial_particle_scale = Vector2(mat.scale_min, mat.scale_max)
+	global_position.x = 2_900_000
 
 	if life_bar:
 		life_bar.value = max_hp
@@ -74,10 +75,10 @@ func _integrate_forces(state: PhysicsDirectBodyState2D) -> void:
 
 	if not gravity:
 		_handle_movement(state)
-		print("NON GRAVITO")
+		#print("NON GRAVITO")
 	else:
 		_handle_gravity(state)
-		printerr(" GRAVITO")
+		#printerr(" GRAVITO")
 	_handle_rotation(state)
 	_handle_collision_resistance(state)
 

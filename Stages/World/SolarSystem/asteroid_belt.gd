@@ -74,7 +74,7 @@ var current_region: String = ""
 func _ready() -> void:
 	pass
 	generate_belt()
-	spawn_player_near_smallest_ring()
+	#spawn_player_near_smallest_ring()
 
 func _process(_delta: float) -> void:
 	update_player_region()
@@ -97,32 +97,32 @@ func update_player_region() -> void:
 		# Nota: %.2f AU è più leggibile
 		print("📍 Regione: %s | Distanza: %d Mio km (%.2f AU)" % [current_region, distance_km / 1_000_000, player_distance_au])
 
-func spawn_player_near_smallest_ring() -> void:
-	# Cerca tra tutti i corpi celesti
-	var celestial_bodies = get_tree().get_nodes_in_group("celestialbodies")
-	if celestial_bodies.is_empty():
-		printerr("Nessun corpo celeste trovato!")
-		return
-
-	var smallest_body = null
-	var min_mass = INF
-
-	for body in celestial_bodies:
-		# Assicuriamoci che lo script abbia la proprietà mass
-		if "mass" in body and body.mass < min_mass:
-			min_mass = body.mass
-			smallest_body = body
-
-	if smallest_body == null:
-		# Fallback se nessun corpo ha massa definita, prendiamo il primo a caso
-		smallest_body = celestial_bodies[0]
-
-	var offset_distance = 150.0 # Un po' più distante per sicurezza
-	var random_angle = randf() * TAU
-	var spawn_offset = Vector2(cos(random_angle), sin(random_angle)) * offset_distance
-
-	player.global_position = smallest_body.global_position + spawn_offset
-	print("Spawn vicino a: ", smallest_body.name, " (massa: ", min_mass, ")")
+#func spawn_player_near_smallest_ring() -> void:
+	## Cerca tra tutti i corpi celesti
+	#var celestial_bodies = get_tree().get_nodes_in_group("celestialbodies")
+	#if celestial_bodies.is_empty():
+		#printerr("Nessun corpo celeste trovato!")
+		#return
+#
+	#var smallest_body = null
+	#var min_mass = INF
+#
+	#for body in celestial_bodies:
+		## Assicuriamoci che lo script abbia la proprietà mass
+		#if "mass" in body and body.mass < min_mass:
+			#min_mass = body.mass
+			#smallest_body = body
+#
+	#if smallest_body == null:
+		## Fallback se nessun corpo ha massa definita, prendiamo il primo a caso
+		#smallest_body = celestial_bodies[0]
+#
+	#var offset_distance = 150.0 # Un po' più distante per sicurezza
+	#var random_angle = randf() * TAU
+	#var spawn_offset = Vector2(cos(random_angle), sin(random_angle)) * offset_distance
+#
+	#player.global_position = smallest_body.global_position + spawn_offset
+	#print("Spawn vicino a: ", smallest_body.name, " (massa: ", min_mass, ")")
 
 func generate_belt() -> void:
 	for region_data in REGIONS:
