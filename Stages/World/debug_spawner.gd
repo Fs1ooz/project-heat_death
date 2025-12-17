@@ -38,10 +38,10 @@ var max_energy: int = 10000
 @export var player: Node2D
 
 ## Distanza minima FISSA in pixel dal player (zona "sicura")
-@export var spawn_ring_min_distance: float = 800.0
+@export var spawn_ring_min_distance: float = 1000.0
 
 ## Moltiplicatore per la distanza massima basata su ciò che vede il player
-@export var spawn_max_distance_multiplier: float = 3.0
+@export var spawn_max_distance_multiplier: float = 100.0
 
 ## Moltiplicatore difficoltà e tempo
 var time_elapsed: float = 0.0

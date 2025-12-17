@@ -74,7 +74,7 @@ var current_region: String = ""
 func _ready() -> void:
 	pass
 	generate_belt()
-	#spawn_player_near_smallest_ring()
+	spawn_player_near_smallest_ring()
 
 func _process(_delta: float) -> void:
 	update_player_region()
@@ -97,32 +97,25 @@ func update_player_region() -> void:
 		# Nota: %.2f AU è più leggibile
 		print("📍 Regione: %s | Distanza: %d Mio km (%.2f AU)" % [current_region, distance_km / 1_000_000, player_distance_au])
 
-#func spawn_player_near_smallest_ring() -> void:
-	## Cerca tra tutti i corpi celesti
-	#var celestial_bodies = get_tree().get_nodes_in_group("celestialbodies")
-	#if celestial_bodies.is_empty():
-		#printerr("Nessun corpo celeste trovato!")
-		#return
-#
-	#var smallest_body = null
-	#var min_mass = INF
-#
-	#for body in celestial_bodies:
-		## Assicuriamoci che lo script abbia la proprietà mass
-		#if "mass" in body and body.mass < min_mass:
-			#min_mass = body.mass
-			#smallest_body = body
-#
-	#if smallest_body == null:
-		## Fallback se nessun corpo ha massa definita, prendiamo il primo a caso
-		#smallest_body = celestial_bodies[0]
-#
-	#var offset_distance = 150.0 # Un po' più distante per sicurezza
-	#var random_angle = randf() * TAU
-	#var spawn_offset = Vector2(cos(random_angle), sin(random_angle)) * offset_distance
-#
-	#player.global_position = smallest_body.global_position + spawn_offset
-	#print("Spawn vicino a: ", smallest_body.name, " (massa: ", min_mass, ")")
+func spawn_player_near_smallest_ring() -> void:
+	var bodies := get_tree().get_nodes_in_group("celestialbodies")
+	if bodies.is_empty():
+		push_error("Nessun corpo celeste trovato!")
+		return
+
+	var smallest := bodies[0]
+	var min_mass := smallest.mass if "mass" in smallest else INF as float
+
+	for body in bodies:
+		if not "mass" in body:
+			continue
+		if body.mass < min_mass:
+			min_mass = body.mass
+			smallest = body
+
+	var offset_distance := 450.0
+	var spawn_offset := Vector2.from_angle(randf() * TAU) * offset_distance
+	player.global_position = smallest.global_position + spawn_offset
 
 func generate_belt() -> void:
 	for region_data in REGIONS:
@@ -139,11 +132,11 @@ func generate_belt() -> void:
 
 		# 1. Spawn ASTEROIDI (Grandi, pochi)
 		# Puoi passare anche un range di scala specifico se vuoi (es. 1.0 - 3.0)
-		spawn_ring(region_node, region_data["asteroid_count"], min_pixels, max_pixels, asteroid_scene)
+		spawn_ring(region_node, region_data["asteroid_count"] / 2, min_pixels, max_pixels, asteroid_scene)
 
 		# 2. Spawn METEOROIDI (Piccoli, tanti)
 		# Scala più piccola (es. 0.2 - 0.6)
-		spawn_ring(region_node, region_data["meteoroid_count"] * 2, min_pixels, max_pixels, meteoroid_scene)
+		spawn_ring(region_node, region_data["meteoroid_count"] / 2, min_pixels, max_pixels, meteoroid_scene)
 
 func spawn_ring(container: Node2D, count: int, min_r: float, max_r: float, scene: PackedScene) -> void:
 	if count <= 0:

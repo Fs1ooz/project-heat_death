@@ -55,7 +55,7 @@ func _ready() -> void:
 
 
 	initial_particle_scale = Vector2(mat.scale_min, mat.scale_max)
-	global_position.x = 2_900_000
+	#global_position.x = 2_900_000
 
 	if life_bar:
 		life_bar.value = max_hp

@@ -2,7 +2,7 @@ extends RigidBody2D
 class_name CelestialBody
 
 
-const G := 5_000_000.0
+const G := 500_000.0
 const SOFTENING := 10.0
 const MAX_FORCE := 1_000_000.0
 var bodies_in_gravity: Array[RigidBody2D] = []
@@ -37,7 +37,7 @@ func _ready() -> void:
 func _physics_process(_delta: float) -> void:
 	for body in bodies_in_gravity:
 		if not is_instance_valid(body):
-			continue
+			return
 
 		_apply_gravity(body)
 

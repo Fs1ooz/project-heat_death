@@ -1,7 +1,7 @@
 extends Node2D
 @export var streaming_enabled := true
 @export var max_bodies_before_streaming := 300
-@export var vision_radius_multiplier := 1_000.0
+@export var vision_radius_multiplier := 10_000.0
 @export var update_interval := 0.3
 @export var unload_multiplier := 1.8
 var update_timer := 0.0
@@ -32,9 +32,11 @@ func _process(delta):
 
 		if distance <= load_radius:
 			# Vicino → attiva E riapplica orbita
+			body.visible = true
 			body.sleeping = false
 			if "has_orbit" in body and body.has_orbit:
 				body.reapply_orbit()
 		elif distance > unload_radius:
 			# Lontano → disattiva
+			body.visible = false
 			body.sleeping = true
