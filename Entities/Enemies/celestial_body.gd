@@ -2,9 +2,8 @@ extends RigidBody2D
 class_name CelestialBody
 
 
-const G := 500_000.0
-const SOFTENING := 10.0
-const MAX_FORCE := 1_000_000.0
+const G := 50_000.0
+const MAX_FORCE := 100_000_000.0
 var bodies_in_gravity: Array[RigidBody2D] = []
 
 # Proprietà comuni
@@ -19,7 +18,9 @@ var bodies_in_gravity: Array[RigidBody2D] = []
 @export var collision: Node2D
 @export var gravity_area_collision: CollisionShape2D
 
-
+@export var base_noise: float = 1.0
+var current_noise: float = 0.0
+var entropy_force: Vector2
 var health: float
 var explosion_red_scene = preload("uid://dvg5n5eu3oyde")
 var energy_drop_scene = preload("uid://ctismywjnvljg")
@@ -33,13 +34,17 @@ func _ready() -> void:
 	_setup_scale()
 	_setup_mass()
 	_setup_health()
+	EntropyManager.entropy_changed.connect(_on_entropy_changed)
+
 
 func _physics_process(_delta: float) -> void:
 	for body in bodies_in_gravity:
 		if not is_instance_valid(body):
 			return
-
 		_apply_gravity(body)
+			# Applica la forza da entropia continuamente
+	if entropy_force.length() > 0:
+		apply_central_force(entropy_force)
 
 # Configurazione fisica comune
 func _setup_physics() -> void:
@@ -89,8 +94,8 @@ func _setup_mass() -> void:
 	var radius: float = collision.shape.radius / 5
 	var raw_mass = radius * mass
 	mass = max(round_base, snappedi(raw_mass, round_base))
-	#if mass > 1000:
-		#print(get_class(), " MASSA: ", mass)
+	if mass > 1000:
+		print(get_class(), " MASSA: ", mass)
 
 func _setup_health() -> void:
 	var raw_health = mass * internal_energy
@@ -127,9 +132,8 @@ func die() -> void:
 	_spawn_explosion()
 	for body in bodies_in_gravity:
 		if "gravity" in body:
-			body.gravity = false
-			printerr("morto e sepolto grvt falsa")
-
+			body.gravity_force = Vector2.ZERO
+#
 
 	bodies_in_gravity.clear()
 	GlobalSignals.emit_signal("death", self)
@@ -183,15 +187,15 @@ func _on_gravity_body_entered(body: Node2D) -> void:
 
 
 func _on_gravity_body_exited(body: Node2D) -> void:
-	if body is Player:
-		body.gravity = false
+	#if body is Player:
+		##body.gravity = false
 	bodies_in_gravity.erase(body)
 
 
 func _apply_gravity(body: RigidBody2D) -> void:
 	#print("velocità rotazione orbita: ", linear_velocity)
 	var dir := global_position - body.global_position
-	var dist_sq := dir.length_squared() + SOFTENING
+	var dist_sq := dir.length_squared()
 
 	if dist_sq <= 0.001:
 		return
@@ -201,7 +205,7 @@ func _apply_gravity(body: RigidBody2D) -> void:
 
 	if body is Player:
 		# PLAYER → custom integrator
-		body.gravity = true
+		#body.gravity = true
 		body.gravity_force = force_vector
 	else:
 		# ALTRI CELESTIAL BODY → fisica standard
@@ -213,27 +217,42 @@ var orbital_center: Node2D = null
 var orbit_clockwise: bool = true
 var has_orbit: bool = false
 
-func set_circular_orbit(around: Node2D, clockwise := true) -> void:
-	# Salva i parametri dell'orbita
-	orbital_center = around
-	orbit_clockwise = clockwise
-	has_orbit = true
+#func set_circular_orbit(around: Node2D, clockwise := true) -> void:
+	## Salva i parametri dell'orbita
+	#orbital_center = around
+	#orbit_clockwise = clockwise
+	#has_orbit = true
+#
+	## Applica l'orbita
+	#_apply_orbit()
 
-	# Applica l'orbita
-	_apply_orbit()
+#func _apply_orbit() -> void:
+	#if not has_orbit or not is_instance_valid(orbital_center):
+		#return
+#
+	#var r = global_position.distance_to(orbital_center.global_position)
+	#var orbit_mass: float = orbital_center.mass if orbital_center is RigidBody2D else 10_000.0
+	#var v = sqrt(G * orbit_mass / r)
+	#var tangent = (global_position - orbital_center.global_position).orthogonal().normalized()
+	#if not orbit_clockwise:
+		#tangent = -tangent
+	#linear_velocity = tangent * v
+#
+## Funzione pubblica per riapplicare l'orbita (chiamata dallo streaming manager)
+#func reapply_orbit() -> void:
+	#_apply_orbit()
 
-func _apply_orbit() -> void:
-	if not has_orbit or not is_instance_valid(orbital_center):
+func _on_entropy_changed(entropy: float):
+	if not visible:
 		return
+	var t = clamp(entropy / 100.0, 0.0, 1.0)
 
-	var r = global_position.distance_to(orbital_center.global_position)
-	var orbit_mass: float = orbital_center.mass if orbital_center is RigidBody2D else 10_000.0
-	var v = sqrt(G * orbit_mass / r)
-	var tangent = (global_position - orbital_center.global_position).orthogonal().normalized()
-	if not orbit_clockwise:
-		tangent = -tangent
-	linear_velocity = tangent * v
+	current_noise = lerp(base_noise, 100.0, t)
 
-# Funzione pubblica per riapplicare l'orbita (chiamata dallo streaming manager)
-func reapply_orbit() -> void:
-	_apply_orbit()
+	# Genera una nuova forza random che verrà applicata continuamente
+	entropy_force = Vector2(
+		randf_range(-1, 1),
+		randf_range(-1, 1)
+	).normalized() * current_noise * mass * 10
+
+	print("Entropy force: ", entropy_force.length())

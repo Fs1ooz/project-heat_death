@@ -22,11 +22,12 @@ UpgradeManager="*res://Commons/upgrade_manager.tscn"
 GlobalSignals="*res://Commons/global_signals.tscn"
 UnitConversion="*res://Commons/unit_conversion.tscn"
 StreamingManager="*res://Commons/streaming_manager.tscn"
+EntropyManager="*res://Commons/entropy_manager.tscn"
 
 [display]
 
-window/size/viewport_width=640
-window/size/viewport_height=360
+window/size/viewport_width=960
+window/size/viewport_height=540
 window/stretch/mode="viewport"
 window/stretch/scale_mode="integer"
 

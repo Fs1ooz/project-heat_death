@@ -132,11 +132,11 @@ func generate_belt() -> void:
 
 		# 1. Spawn ASTEROIDI (Grandi, pochi)
 		# Puoi passare anche un range di scala specifico se vuoi (es. 1.0 - 3.0)
-		spawn_ring(region_node, region_data["asteroid_count"] / 2, min_pixels, max_pixels, asteroid_scene)
+		spawn_ring(region_node, region_data["asteroid_count"], min_pixels, max_pixels, asteroid_scene)
 
 		# 2. Spawn METEOROIDI (Piccoli, tanti)
 		# Scala più piccola (es. 0.2 - 0.6)
-		spawn_ring(region_node, region_data["meteoroid_count"] / 2, min_pixels, max_pixels, meteoroid_scene)
+		spawn_ring(region_node, region_data["meteoroid_count"] * 2, min_pixels, max_pixels, meteoroid_scene)
 
 func spawn_ring(container: Node2D, count: int, min_r: float, max_r: float, scene: PackedScene) -> void:
 	if count <= 0:
@@ -183,18 +183,18 @@ func spawn_ring(container: Node2D, count: int, min_r: float, max_r: float, scene
 
 		obj.position = pos
 		# Cerca il corpo centrale attorno al quale orbitare
-		var central_body = sun
-
-		# Imposta velocità tangenziale per orbita circolare
-		var clockwise_orbit = randf() < 0.5
-
+		#var central_body = sun
+#
+		## Imposta velocità tangenziale per orbita circolare
+		#var clockwise_orbit = randf() < 0.5
+#
 		container.add_child(obj)
 
+#
+		#set_orbit(obj, central_body, clockwise_orbit)
 
-		set_orbit(obj, central_body, clockwise_orbit)
 
-
-func set_orbit(obj, central_body, clockwise_orbit):
-	obj.set_circular_orbit(central_body, clockwise_orbit)
-
-	obj.rotation = randf() * TAU
+#func set_orbit(obj, central_body, clockwise_orbit):
+	#obj.set_circular_orbit(central_body, clockwise_orbit)
+#
+	#obj.rotation = randf() * TAU

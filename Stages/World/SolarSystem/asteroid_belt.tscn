@@ -1,4 +1,4 @@
-[gd_scene load_steps=22 format=3 uid="uid://bwqwr2e2v3rvp"]
+[gd_scene load_steps=21 format=3 uid="uid://bwqwr2e2v3rvp"]
 
 [ext_resource type="Script" uid="uid://cyj080sf0wp5o" path="res://Stages/World/SolarSystem/asteroid_belt.gd" id="1_leih4"]
 [ext_resource type="PackedScene" uid="uid://470x1obeipdg" path="res://Entities/Player/player.tscn" id="2_aw4pb"]
@@ -14,8 +14,8 @@
 [ext_resource type="AudioStream" uid="uid://wvogywji06eb" path="res://Assets/Music/BETA - Phase2.mp3" id="8_jpv6b"]
 [ext_resource type="Script" uid="uid://cvs60xrp5qjxm" path="res://Stages/World/music_audio_stream_player.gd" id="9_4onk6"]
 [ext_resource type="Script" uid="uid://bewwgxfpnvdxx" path="res://Stages/World/SolarSystem/texture_rect.gd" id="9_xxft0"]
-[ext_resource type="PackedScene" uid="uid://dpgfvx5muvsrp" path="res://Stages/World/debug_spawner.tscn" id="13_81uqy"]
-[ext_resource type="Shader" uid="uid://tnlaeyxsg7m" path="res://Stages/World/SolarSystem/asteroid_belt.gdshader" id="16_jpv6b"]
+[ext_resource type="PackedScene" uid="uid://dnto56yr1b1ff" path="res://Commons/entropy_counter.tscn" id="11_jpv6b"]
+[ext_resource type="PackedScene" uid="uid://bosimyr8qkuso" path="res://Stages/World/energy_spawner.tscn" id="15_xxft0"]
 
 [sub_resource type="Environment" id="Environment_hiutt"]
 background_mode = 3
@@ -77,13 +77,6 @@ gradient = SubResource("Gradient_xxft0")
 fill_from = Vector2(1, 0.7991453)
 fill_to = Vector2(0, 0)
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_4onk6"]
-shader = ExtResource("16_jpv6b")
-shader_parameter/radius = 0.8
-shader_parameter/speed = 10.0
-shader_parameter/effect_color = Color(0.34509805, 0.34509805, 0.34509805, 0.40784314)
-shader_parameter/strenght = 0.5
-
 [node name="AsteroidBelt" type="Node2D"]
 script = ExtResource("1_leih4")
 asteroid_scene = ExtResource("2_dgf5r")
@@ -99,25 +92,25 @@ follow_viewport_scale = 0.5
 
 [node name="Parallax2D" type="Parallax2D" parent="BackgroundLayer"]
 scale = Vector2(5, 5)
-scroll_scale = Vector2(0.001, 0.001)
+scroll_scale = Vector2(0.01, 0.01)
 repeat_size = Vector2(2000, 1438)
 autoscroll = Vector2(0.001, 0.002)
 repeat_times = 25
 
 [node name="Img2207" type="Sprite2D" parent="BackgroundLayer/Parallax2D"]
-modulate = Color(0.84, 0.23519997, 0.23519997, 0.7764706)
+modulate = Color(0.8392157, 0.23529412, 0.23529412, 1)
 texture = ExtResource("4_xxft0")
 
 [node name="Parallax2D2" type="Parallax2D" parent="BackgroundLayer"]
 rotation = -3.1415925
 scale = Vector2(15, 15)
-scroll_scale = Vector2(0.02, 0.02)
+scroll_scale = Vector2(0.1, 0.1)
 repeat_size = Vector2(2000, 1438)
 autoscroll = Vector2(1, 0.5)
 repeat_times = 25
 
 [node name="Img2207" type="Sprite2D" parent="BackgroundLayer/Parallax2D2"]
-modulate = Color(0.726468, 0.4546326, 0.7511804, 0.50980395)
+modulate = Color(0.7254902, 0.45490196, 0.7529412, 0.87058824)
 light_mask = 3
 texture = ExtResource("4_xxft0")
 
@@ -179,36 +172,22 @@ scale = Vector2(0.05, 0.1)
 texture = ExtResource("8_gsnah")
 script = ExtResource("9_xxft0")
 
+[node name="EntropyCounter" parent="UILayer" instance=ExtResource("11_jpv6b")]
+
 [node name="MusicAudioStreamPlayer" type="AudioStreamPlayer" parent="."]
 stream = SubResource("AudioStreamInteractive_m4v0y")
 volume_db = -5.0
 bus = &"Music"
 script = ExtResource("9_4onk6")
 
-[node name="DebugSpawner" parent="." node_paths=PackedStringArray("player") instance=ExtResource("13_81uqy")]
-player = NodePath("../Player")
-
 [node name="Sun" type="PointLight2D" parent="."]
 energy = 16.0
 texture = SubResource("GradientTexture2D_jpv6b")
 texture_scale = 15.48
 
-[node name="FogOfWar" type="CanvasLayer" parent="."]
-
-[node name="ColorRect" type="ColorRect" parent="FogOfWar"]
-material = SubResource("ShaderMaterial_4onk6")
-anchors_preset = -1
-anchor_left = -0.652
-anchor_top = -0.79444444
-anchor_right = 1.697
-anchor_bottom = 1.7750001
-offset_left = 0.27999878
-offset_right = -0.080078125
-offset_bottom = -6.1035156e-05
-grow_horizontal = 2
-grow_vertical = 2
-color = Color(0.27022192, 0.27022192, 0.2702219, 1)
-metadata/_edit_use_anchors_ = true
+[node name="EnergySpawner" parent="." node_paths=PackedStringArray("player") instance=ExtResource("15_xxft0")]
+player = NodePath("../Player")
+max_energy = 500
+spawn_max_distance_multiplier = 50.0
 
 [editable path="Player"]
-[editable path="DebugSpawner"]

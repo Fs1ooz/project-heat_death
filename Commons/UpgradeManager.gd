@@ -40,8 +40,9 @@ enum UpgradeType {
 	MAX_HEALTH,
 	REGENERATION,
 	SPEED,
-	MASS,
 	ACCELERATION,
+	MASS,
+	#DENSITY,
 }
 
 
@@ -91,7 +92,7 @@ var upgrades_data: Dictionary = {
 		"base_cost": 30,
 		"current_cost": 30,
 	},
-
+#
 	#UpgradeType.DENSITY: {
 		#"name": "Density",
 		#"description": "Increases density.",
@@ -117,13 +118,12 @@ func get_ball_stats() -> Dictionary:
 	return stats
 
 
-func apply_upgrade(upgrade_type: UpgradeType):
+func apply_upgrade(upgrade_type: UpgradeType) -> bool:
 	var upgrade_data = upgrades_data[upgrade_type]
-
 
 	if energy < upgrade_data["current_cost"]:
 		print("Non abbastanza energia!")
-		return
+		return false
 
 	lose_energy(upgrade_data["current_cost"])
 
@@ -137,9 +137,9 @@ func apply_upgrade(upgrade_type: UpgradeType):
 		UpgradeType.SPEED:
 			power = upgrade_data["current_power"] + upgrade_data["level"] * 100
 		UpgradeType.ACCELERATION:
-			power = upgrade_data["current_power"] + pow(upgrade_data["current_power"], upgrade_data["level"] / 4)
+			power = upgrade_data["current_power"] + upgrade_data["level"] * 200
 		UpgradeType.MASS:
-			power = upgrade_data["current_power"] + upgrade_data["level"] * 2
+			power = 1.5
 
 		#UpgradeType.DENSITY:
 			#power = upgrade_data["current_power"] + upgrade_data["level"] * 1.1
@@ -162,13 +162,13 @@ func apply_upgrade(upgrade_type: UpgradeType):
 			UpgradeType.ACCELERATION:
 				player.acceleration = power
 			UpgradeType.MASS:
-				player.change_size(1.5)
-				player.mass = power
+				player.change_size(power)
 			#UpgradeType.DENSITY:
 				#player.change_size(-1.05)
 
 
 	#upgrade_applied.emit(upgrade_type, power)
+	return true
 
 func calculate_next_cost(upgrade_data: Dictionary) -> int:
 	var base_cost = upgrade_data.get("base_cost", 10)

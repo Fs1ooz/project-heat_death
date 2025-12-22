@@ -22,13 +22,16 @@ anti_aliasing = false
 anti_aliasing_size = 0.913
 
 [node name="PlayerLifeBar" type="ProgressBar"]
-anchors_preset = 5
+anchors_preset = 7
 anchor_left = 0.5
+anchor_top = 1.0
 anchor_right = 0.5
-offset_left = -109.0
-offset_right = 108.0
-offset_bottom = 13.0
+anchor_bottom = 1.0
+offset_left = -108.5
+offset_top = -13.0
+offset_right = 108.5
 grow_horizontal = 2
+grow_vertical = 0
 theme_override_styles/background = SubResource("StyleBoxFlat_dv5b2")
 theme_override_styles/fill = SubResource("StyleBoxFlat_u0tjt")
 step = 1.0

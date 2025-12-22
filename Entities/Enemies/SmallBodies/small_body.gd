@@ -7,6 +7,7 @@ class_name SmallBody
 #
 
 #func _ready() -> void:
+
 	#super()
 	#call_deferred("_kick")
 #

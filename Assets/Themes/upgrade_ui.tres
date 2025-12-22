@@ -1,6 +1,30 @@
-[gd_resource type="Theme" load_steps=4 format=3 uid="uid://brvjefc4224hi"]
+[gd_resource type="Theme" load_steps=6 format=3 uid="uid://brvjefc4224hi"]
 
 [ext_resource type="FontFile" uid="uid://cyihsnt10pf04" path="res://Assets/Fonts/EnterCommand.ttf" id="1_doery"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_eihhl"]
+bg_color = Color(0.099985994, 0.099985994, 0.099985994, 1)
+border_width_left = 5
+border_width_top = 5
+border_width_right = 5
+border_width_bottom = 5
+border_color = Color(0.89059, 0.89059, 0.8905901, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_e4hfg"]
+bg_color = Color(0.072842695, 0.072842605, 0.072842635, 1)
+border_width_left = 5
+border_width_top = 5
+border_width_right = 5
+border_width_bottom = 5
+border_color = Color(0.16924524, 0.16924533, 0.16924512, 1)
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_doery"]
 bg_color = Color(0.40495878, 0.40495878, 0.40495878, 0.28627452)
@@ -17,7 +41,10 @@ corner_radius_bottom_right = 2
 corner_radius_bottom_left = 2
 
 [resource]
+Button/font_sizes/font_size = 32
 Button/fonts/font = ExtResource("1_doery")
+Button/styles/normal = SubResource("StyleBoxFlat_eihhl")
+Button/styles/pressed = SubResource("StyleBoxFlat_e4hfg")
 Label/font_sizes/font_size = 32
 Label/fonts/font = ExtResource("1_doery")
 ProgressBar/styles/background = SubResource("StyleBoxFlat_doery")

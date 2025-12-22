@@ -19,6 +19,7 @@ extends RigidBody2D
 
 @export var sprite: Sprite2D
 
+
 var rotation_responsiveness: float = 10.0 ## Responsività della rotazione verso il mousewwwwwwwwwwwwws
 var regen_tick: float = 3.0
 var auto_revive: bool = true
@@ -30,7 +31,7 @@ var accumulated_forces := Vector2.ZERO
 
 var energy_threshold: float = 300.0
 
-var gravity: bool = false
+var gravity: bool = true
 
 @onready var regen_timer: Timer = $RegenTimer
 
@@ -64,21 +65,18 @@ func _ready() -> void:
 
 
 
-#region Movement
+
 #region Movement
 
 func _physics_process(_delta: float) -> void:
 	_last_velocity = linear_velocity
 
-
 func _integrate_forces(state: PhysicsDirectBodyState2D) -> void:
-
 	if not gravity:
 		_handle_movement(state)
-		#print("NON GRAVITO")
+		print("NON GRAVITO")
 	else:
 		_handle_gravity(state)
-		#printerr(" GRAVITO")
 	_handle_rotation(state)
 	_handle_collision_resistance(state)
 
@@ -95,7 +93,7 @@ func _handle_collision_resistance(state: PhysicsDirectBodyState2D) -> void:
 				max_resistance = 1.0
 				print("💥 BULLDOZER MODE vs ", collider.name)
 				break
-			elif mass_ratio > 1.0:
+			elif mass_ratio > 0.6:
 				var resistance = smoothstep(1.0, 3.0, mass_ratio)
 				max_resistance = max(max_resistance, resistance)
 				print("⚡ Resistenza: %.0f%% vs %s" % [resistance * 100, collider.name])
@@ -152,7 +150,7 @@ func _handle_gravity(state: PhysicsDirectBodyState2D) -> void:
 
 	# Calcola la gravità come vettore velocità
 	var gravity_accel: Vector2 = gravity_force / mass
-	var gravity_velocity: Vector2 = gravity_accel * state.step
+	var gravity_velocity: Vector2 = gravity_accel * 5 * state.step
 
 	# APPLICA SEMPRE LA GRAVITÀ sottraendola dalla velocità
 	state.linear_velocity += gravity_velocity
@@ -209,7 +207,6 @@ func change_size(amount: float) -> void:
 	lvl += 1
 	# Emetti il segnale con i nuovi valori
 	energy_threshold *= amount
-	print(lvl, " energytresh: ", energy_threshold)
 
 func change_mass(amount: float):
 	old_mass = mass
@@ -222,14 +219,19 @@ func change_scale(amount: float):
 	collision.shape.radius = initial_radius * scale_change.x
 	collision.shape.height = initial_height * scale_change.x
 
-	mat.scale_min = initial_particle_scale.x * amount
-	mat.scale_max = initial_particle_scale.y * amount
+	# Calcola la scala totale rispetto all'inizio
+	var total_scale_factor = scale_change.x / initial_scale.x
+
+	# Applica la scala totale alle particelle
+	mat.scale_min = initial_particle_scale.x * total_scale_factor
+	mat.scale_max = initial_particle_scale.y * total_scale_factor
 
 	if mat:
 		var initial_x = -25.0
 		mat.set("emission_shape_offset", Vector3(initial_x * amount, 0.0, 0.0))
 
 	sprite.scale = scale_change
+
 	#var tween = create_tween()
 	#tween.set_parallel(true)
 	#tween.tween_property(sprite, "scale", scale_change, 0.3).set_trans(Tween.TRANS_BOUNCE).set_ease(Tween.EASE_OUT)
