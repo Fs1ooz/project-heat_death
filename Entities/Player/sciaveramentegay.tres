@@ -1,7 +1,7 @@
 [gd_resource type="ParticleProcessMaterial" load_steps=9 format=3 uid="uid://bvhfi1gat4c5"]
 
 [sub_resource type="Curve" id="Curve_d4ywq"]
-_data = [Vector2(0, 0.8), 0.0, -0.13285534, 0, 0, Vector2(1, 0.1), -1.0819256, 0.0, 0, 0]
+_data = [Vector2(0, 0.8), 0.0, -0.13285534, 0, 0, Vector2(1, 0), -1.0819256, 0.0, 0, 0]
 point_count = 2
 metadata/_snap_enabled = true
 
@@ -9,7 +9,7 @@ metadata/_snap_enabled = true
 curve = SubResource("Curve_d4ywq")
 
 [sub_resource type="Gradient" id="Gradient_d4ywq"]
-colors = PackedColorArray(0.50928617, 0.50928617, 0.50928617, 1, 0.34117648, 0.34117648, 0.34117648, 1)
+colors = PackedColorArray(0.50980395, 0.50980395, 0.50980395, 1, 0.3137255, 0.3137255, 0.3137255, 1)
 
 [sub_resource type="GradientTexture1D" id="GradientTexture1D_88gdh"]
 gradient = SubResource("Gradient_d4ywq")

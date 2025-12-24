@@ -48,7 +48,7 @@ func _refresh_buttons() -> void:
 	for upgrade_type in visible_upgrades:
 
 		var btn = _create_button(upgrade_type)
-		upgrades_h_box_container.add_child(btn)
+		upgrades_h_box_container.add_child.call_deferred(btn)
 
 
 

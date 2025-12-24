@@ -14,5 +14,6 @@ grow_horizontal = 2
 theme = ExtResource("1_1ci5r")
 text = "0.0"
 horizontal_alignment = 1
-visible_characters = 3
+visible_characters = 5
+visible_ratio = 1.6666666
 script = ExtResource("1_fmoht")

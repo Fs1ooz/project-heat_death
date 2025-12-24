@@ -69,8 +69,8 @@ var upgrades_data: Dictionary = {
 		"name": "Speed",
 		"description": "Increases speed.",
 		"level": 1,
-		"base_power": 700.0,
-		"current_power": 700.0,
+		"base_power": 1000.0,
+		"current_power": 1000.0,
 		"base_cost": 10,
 		"current_cost": 10,
 	},
@@ -139,7 +139,7 @@ func apply_upgrade(upgrade_type: UpgradeType) -> bool:
 		UpgradeType.ACCELERATION:
 			power = upgrade_data["current_power"] + upgrade_data["level"] * 200
 		UpgradeType.MASS:
-			power = 1.5
+			power = 1.25
 
 		#UpgradeType.DENSITY:
 			#power = upgrade_data["current_power"] + upgrade_data["level"] * 1.1

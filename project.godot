@@ -79,13 +79,21 @@ fullscreen={
 ]
 }
 
+[layer_names]
+
+2d_render/layer_1="Player"
+2d_render/layer_2="CelestialBodies"
+2d_physics/layer_1="Player"
+2d_physics/layer_2="CelestialBodies"
+
 [physics]
 
 2d/default_gravity=0.0
 2d/default_gravity_vector=Vector2(0, 0)
+2d/default_linear_damp=0.0
+2d/default_angular_damp=0.0
 
 [rendering]
 
 textures/canvas_textures/default_texture_filter=0
 textures/default_filters/use_nearest_mipmap_filter=true
-environment/defaults/default_clear_color=Color(0.01773239, 0.017732393, 0.017732384, 1)

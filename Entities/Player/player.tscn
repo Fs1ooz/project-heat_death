@@ -24,6 +24,7 @@ polygon = PackedVector2Array(-2.1855694e-06, -50, -14.000002, -45, -25.000002, -
 
 [node name="Player" type="RigidBody2D" node_paths=PackedStringArray("collision", "trail", "sprite") groups=["player"]]
 collision_mask = 2
+mass = 10.0
 physics_material_override = SubResource("PhysicsMaterial_5c2io")
 gravity_scale = 0.0
 freeze_mode = 1

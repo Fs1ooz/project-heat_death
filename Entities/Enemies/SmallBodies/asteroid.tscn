@@ -6,7 +6,7 @@
 radius = 118.016945
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_vwlwn"]
-radius = 2209.0906
+radius = 2177.9404
 
 [node name="Asteroid" type="RigidBody2D" node_paths=PackedStringArray("collision", "gravity_area_collision") groups=["celestialbodies"]]
 z_index = 1
@@ -16,8 +16,8 @@ max_contacts_reported = 4
 script = ExtResource("1_tefsh")
 internal_energy = 5
 game_energy = 100
-min_size = 100.0
-max_size = 200.0
+min_size = 50.0
+max_size = 100.0
 round_base = 10
 collision = NodePath("Collision")
 gravity_area_collision = NodePath("Gravity/GravityAreaCollision")
@@ -80,7 +80,6 @@ color = Color(0.15377831, 0.15377831, 0.15377831, 1)
 polygon = PackedVector2Array(-1196.8983, 751, -1187.7239, 760, -1151.026, 758, -1132.677, 754)
 
 [node name="Gravity" type="Area2D" parent="."]
-collision_layer = 0
 
 [node name="GravityAreaCollision" type="CollisionShape2D" parent="Gravity"]
 shape = SubResource("CircleShape2D_vwlwn")

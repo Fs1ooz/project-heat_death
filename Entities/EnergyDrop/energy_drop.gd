@@ -18,7 +18,10 @@ var colors := [
 
 var playback: AudioStreamPlayback = null
 
+var _spawn_time: float = 0.0
+
 func _ready() -> void:
+	_spawn_time = Time.get_unix_time_from_system()  # Timestamp preciso
 	energy = weighted_random_energy(50, 3.0)
 	update_color()
 

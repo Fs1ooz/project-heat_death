@@ -1,0 +1,26 @@
+[gd_scene load_steps=2 format=3 uid="uid://cslvpssd0qp67"]
+
+[ext_resource type="PackedScene" uid="uid://dooqkflafelol" path="res://Entities/Enemies/SmallBodies/asteroid.tscn" id="1_hpy1x"]
+
+[node name="GravitySimulation" type="Node2D"]
+
+[node name="Camera2D" type="Camera2D" parent="."]
+position = Vector2(-1, 1)
+zoom = Vector2(0.065, 0.065)
+
+[node name="Asteroid2" parent="." instance=ExtResource("1_hpy1x")]
+position = Vector2(-1865, 31)
+linear_velocity = Vector2(48.005, 48.05)
+internal_energy = 1
+game_energy = 10
+min_size = 1.0
+max_size = 2.0
+round_base = 5
+
+[node name="Asteroid" parent="." instance=ExtResource("1_hpy1x")]
+position = Vector2(2002, 0)
+internal_energy = 1
+game_energy = 10
+min_size = 1.0
+max_size = 2.0
+round_base = 5

@@ -7,11 +7,11 @@ extends Node2D
 @export var energy_scene: PackedScene = preload("res://Entities/EnergyDrop/energy_drop.tscn")
 @export var player: Node2D
 
-@export var max_energy: int = 10000
+@export var max_energy: int = 500
 
 ## Spawn ring
 @export var spawn_ring_min_distance: float = 900.0
-@export var spawn_max_distance_multiplier: float = 50.0
+@export var spawn_max_distance_multiplier: float = 30.0
 
 ## =========================
 ## STATO
@@ -81,16 +81,15 @@ func _sort_by_age(a, b) -> bool:
 
 
 func _on_timer_timeout() -> void:
-	var energies = get_tree().get_nodes_in_group("energy")
-	if energies.size() >= max_energy:
-		return
-
 	if energy_scene == null or player == null:
 		return
 
+	# Prima fai il cleanup SE necessario
+	var energies = get_tree().get_nodes_in_group("energy")
+	if energies.size() >= max_energy:
+		cleanup_old_energy()  # ← Rimuovi la più vecchia prima di spawnare
+
+	# Poi spawna la nuova energia
 	var energy = energy_scene.instantiate()
 	energy.global_position = get_dynamic_ring_spawn_position()
-
-	cleanup_old_energy()
-
 	get_parent().add_child(energy)

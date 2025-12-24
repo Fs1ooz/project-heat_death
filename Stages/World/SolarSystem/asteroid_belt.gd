@@ -2,42 +2,10 @@ extends Node2D
 
 @export var asteroid_scene: PackedScene
 @export var meteoroid_scene: PackedScene
+@export var safety_margin_multiplier: float = 5000.0  # Moltiplicatore per lo spazio di sicurezza
 
 @onready var player: Player = $Player
 @onready var sun: Light2D = $Sun
-
-
-# Definizione delle regioni in AU con contatori separati
-# REALISMO: Ho abbassato drasticamente gli asteroidi (grandi) e alzato i meteoroidi (piccoli)
-#const REGIONS := [
-	## Hungaria / Transizione
-	#{ "name": "InnerTransition", "min_au": 1.87, "max_au": 2.21, "asteroid_count": 5, "meteoroid_count": 150 },
-#
-	## Fascia Interna (Densa)
-	#{ "name": "InnerBelt",       "min_au": 2.21, "max_au": 2.54, "asteroid_count": 25, "meteoroid_count": 450 },
-	#{ "name": "FloraFamily",     "min_au": 2.07, "max_au": 2.27, "asteroid_count": 15, "meteoroid_count": 300 },
-#
-	## Kirkwood Gap 3:1 (Quasi vuoto)
-	#{ "name": "KirkwoodGap_3to1", "min_au": 2.44, "max_au": 2.57, "asteroid_count": 2, "meteoroid_count": 15 },
-#
-	## Fascia Centrale (Il cuore della fascia)
-	#{ "name": "MiddleBelt",      "min_au": 2.51, "max_au": 2.81, "asteroid_count": 40, "meteoroid_count": 650 },
-	#{ "name": "EunomiaFamily",   "min_au": 2.57, "max_au": 2.74, "asteroid_count": 15, "meteoroid_count": 250 },
-#
-	## Kirkwood Gap 5:2
-	#{ "name": "Gap_5to2",        "min_au": 2.79, "max_au": 2.84, "asteroid_count": 1, "meteoroid_count": 20 },
-#
-	## Fascia Esterna
-	#{ "name": "KoronisFamily",   "min_au": 2.81, "max_au": 2.97, "asteroid_count": 12, "meteoroid_count": 220 },
-	#{ "name": "OuterBelt_Inner", "min_au": 2.91, "max_au": 3.11, "asteroid_count": 30, "meteoroid_count": 550 },
-	#{ "name": "ThemisFamily",    "min_au": 3.01, "max_au": 3.18, "asteroid_count": 20, "meteoroid_count": 380 },
-	#{ "name": "HygieaFamily",    "min_au": 3.14, "max_au": 3.31, "asteroid_count": 18, "meteoroid_count": 320 },
-#
-	## Bordo esterno
-	#{ "name": "Gap_2to1",        "min_au": 3.28, "max_au": 3.29, "asteroid_count": 0, "meteoroid_count": 10 },
-	#{ "name": "CybeleGroup",     "min_au": 3.31, "max_au": 3.51, "asteroid_count": 25, "meteoroid_count": 420 },
-	#{ "name": "HildaGroup",      "min_au": 3.51, "max_au": 4.21, "asteroid_count": 15, "meteoroid_count": 300 },
-#]
 
 const REGIONS := [
 	# Hungaria / Transizione
@@ -70,11 +38,13 @@ const REGIONS := [
 ]
 
 var current_region: String = ""
+# Ora salviamo posizione E raggio di sicurezza di ogni oggetto
+var occupied_spaces: Array[Dictionary] = []
+var spawn_cluster_position: Vector2 = Vector2.ZERO
 
 func _ready() -> void:
-	pass
 	generate_belt()
-	spawn_player_near_smallest_ring()
+	spawn_player_in_cluster()
 
 func _process(_delta: float) -> void:
 	update_player_region()
@@ -94,34 +64,26 @@ func update_player_region() -> void:
 	if new_region != current_region and new_region != "":
 		current_region = new_region
 		var distance_km := UnitConversion.pixels_to_km(player_distance_pixels)
-		# Nota: %.2f AU è più leggibile
 		print("📍 Regione: %s | Distanza: %d Mio km (%.2f AU)" % [current_region, distance_km / 1_000_000, player_distance_au])
 
-func spawn_player_near_smallest_ring() -> void:
-	var bodies := get_tree().get_nodes_in_group("celestialbodies")
-	if bodies.is_empty():
-		push_error("Nessun corpo celeste trovato!")
-		return
-
-	var smallest := bodies[0]
-	var min_mass := smallest.mass if "mass" in smallest else INF as float
-
-	for body in bodies:
-		if not "mass" in body:
-			continue
-		if body.mass < min_mass:
-			min_mass = body.mass
-			smallest = body
-
-	var offset_distance := 450.0
-	var spawn_offset := Vector2.from_angle(randf() * TAU) * offset_distance
-	player.global_position = smallest.global_position + spawn_offset
+func spawn_player_in_cluster() -> void:
+	if spawn_cluster_position == Vector2.ZERO:
+		push_warning("Cluster non generato, spawn di default")
+		player.global_position = Vector2(UnitConversion.au_to_pixels(2.5), 0)
+	else:
+		# Spawn al centro del cluster con un piccolo offset
+		var offset := Vector2.from_angle(randf() * TAU) * randf_range(50, 150)
+		player.global_position = spawn_cluster_position + offset
+		print("🎯 Player spawnato nel cluster a %.0f, %.0f" % [spawn_cluster_position.x, spawn_cluster_position.y])
 
 func generate_belt() -> void:
+	# Scegli una regione casuale per il cluster (preferibilmente nella fascia centrale)
+	var cluster_regions := ["MiddleBelt", "InnerBelt", "EunomiaFamily"]
+	var chosen_region: String = cluster_regions[randi() % cluster_regions.size()]
+
 	for region_data in REGIONS:
 		var region_node := $Regions.get_node_or_null(region_data["name"])
 
-		# Se il nodo non esiste, lo creiamo al volo (più comodo per non impazzire nell'editor)
 		if not region_node:
 			region_node = Node2D.new()
 			region_node.name = region_data["name"]
@@ -130,71 +92,132 @@ func generate_belt() -> void:
 		var min_pixels := UnitConversion.au_to_pixels(region_data["min_au"])
 		var max_pixels := UnitConversion.au_to_pixels(region_data["max_au"])
 
-		# 1. Spawn ASTEROIDI (Grandi, pochi)
-		# Puoi passare anche un range di scala specifico se vuoi (es. 1.0 - 3.0)
+		# Reset spazi occupati per ogni regione
+		occupied_spaces.clear()
+
+		# Se questa è la regione scelta, crea il cluster PRIMA di tutto il resto
+		if region_data["name"] == chosen_region:
+			create_spawn_cluster(region_node, min_pixels, max_pixels)
+
+		# Spawn asteroidi (grandi)
 		spawn_ring(region_node, region_data["asteroid_count"], min_pixels, max_pixels, asteroid_scene)
 
-		# 2. Spawn METEOROIDI (Piccoli, tanti)
-		# Scala più piccola (es. 0.2 - 0.6)
-		spawn_ring(region_node, region_data["meteoroid_count"] * 2, min_pixels, max_pixels, meteoroid_scene)
+		# Spawn meteoroidi (piccoli)
+		spawn_ring(region_node, region_data["meteoroid_count"] * 3, min_pixels, max_pixels, meteoroid_scene)
+
+func get_object_radius(obj: RigidBody2D) -> float:
+	# Usa la massa per calcolare il raggio
+	# Formula: raggio ∝ ∛massa (volume è proporzionale a massa per densità costante)
+	if "mass" in obj:
+		# Scala il raggio in base alla massa: massa più grande = raggio più grande
+		# pow(massa, 1/3) perché Volume = (4/3)πr³, quindi r = ∛(3V/4π)
+		var base_radius: float = obj.mass
+		return base_radius
+
+	# Fallback se non ha massa
+	return 50.0
+
+func create_spawn_cluster(container: Node2D, min_r: float, max_r: float) -> void:
+	# Crea un cluster di 8-12 meteoroidi vicini
+	var cluster_size := randi_range(8, 12)
+	var cluster_radius := 15_000.0  # Raggio del cluster
+
+	# Posizione centrale del cluster (nella fascia scelta)
+	var mid_r := (min_r + max_r) / 2.0
+	var angle := randf() * TAU
+	spawn_cluster_position = Vector2(cos(angle) * mid_r, sin(angle) * mid_r)
+
+	print("🎯 Creazione cluster spawn a %.0f AU (%.0f, %.0f)" % [
+		UnitConversion.pixels_to_au(spawn_cluster_position.length()),
+		spawn_cluster_position.x,
+		spawn_cluster_position.y
+	])
+
+	# Spawna i meteoroidi attorno al punto centrale
+	for i in range(cluster_size):
+		var local_angle := (TAU / cluster_size) * i + randf_range(-0.3, 0.3)
+		var local_distance := randf_range(cluster_radius * 0.3, cluster_radius)
+		var local_offset := Vector2(cos(local_angle), sin(local_angle)) * local_distance
+
+		var meteoroid_pos := spawn_cluster_position + local_offset
+
+		var obj := meteoroid_scene.instantiate() as Node2D
+		obj.position = meteoroid_pos
+		container.add_child(obj)
+
+		# Registra gli spazi occupati dal cluster
+		var obj_radius := get_object_radius(obj)
+		var safety_radius := obj_radius * safety_margin_multiplier
+		occupied_spaces.append({
+			"position": meteoroid_pos,
+			"radius": safety_radius
+		})
 
 func spawn_ring(container: Node2D, count: int, min_r: float, max_r: float, scene: PackedScene) -> void:
 	if count <= 0:
 		return
 
-	for i in count:
-		var obj := scene.instantiate() as Node2D
-		# ---------------------------------------------
-		# 1) ECCENTRICITÀ REALISTICA: 0.0–0.1
-		# ---------------------------------------------
-		var eccentricity := randf_range(0.0, 0.1)
-		# ---------------------------------------------
-		# 2) DENSITÀ REALISTICA: più oggetti verso max_r
-		# ---------------------------------------------
-		var t := pow(randf(), 0.55)  # 0.55 → addensa verso l’esterno
+	var max_attempts := count * 10
+	var spawned := 0
+	var attempts := 0
+
+	while spawned < count and attempts < max_attempts:
+		attempts += 1
+
+		var eccentricity := randf_range(0.1, 0.2)
+		var t := pow(randf(), 0.55)
 		var base_r := lerp(min_r, max_r, t) as float
-		# ---------------------------------------------
-		# 3) SPAWN SOLO SUL BORDO (interno o esterno)
-		# ---------------------------------------------
+
 		var spawn_on_inner_edge := randf() < 0.5
 		var r: float
 		if spawn_on_inner_edge:
-			r = base_r * (1.0 - eccentricity)  # ← Bordo interno ellittico
-			r = clamp(r, min_r * 0.98, min_r * 1.02)  # Vicino al bordo interno
+			r = base_r * (1.0 - eccentricity)
+			r = clamp(r, min_r * 0.98, min_r * 1.02)
 		else:
-			r = base_r * (1.0 + eccentricity)  # ← Bordo esterno ellittico
-			r = clamp(r, max_r * 0.98, max_r * 1.02)  # Vicino al bordo esterno
+			r = base_r * (1.0 + eccentricity)
+			r = clamp(r, max_r * 0.98, max_r * 1.02)
 
-		# Angolo orbitale casuale
 		var angle := randf() * TAU
-
-		# ---------------------------------------------
-		# 4) SPESSORE VERTICALE (±3% della distanza)
-		# ---------------------------------------------
 		var vertical_noise := randf_range(-0.03, 0.03) * r
 
-		# ---------------------------------------------
-		# 5) POSIZIONE FINALE
-		# ---------------------------------------------
 		var pos := Vector2(
 			cos(angle) * r,
 			sin(angle) * r + vertical_noise
 		)
 
-		obj.position = pos
-		# Cerca il corpo centrale attorno al quale orbitare
-		#var central_body = sun
-#
-		## Imposta velocità tangenziale per orbita circolare
-		#var clockwise_orbit = randf() < 0.5
-#
-		container.add_child(obj)
+		# Crea l'oggetto temporaneamente per ottenere il suo raggio
+		var obj := scene.instantiate() as Node2D
+		var obj_radius := get_object_radius(obj)
+		var safety_radius := obj_radius * safety_margin_multiplier
 
-#
-		#set_orbit(obj, central_body, clockwise_orbit)
+		# Controlla se la posizione è valida considerando il raggio dell'oggetto
+		if is_position_valid(pos, safety_radius):
+			obj.position = pos
+			container.add_child(obj)
 
+			# Salva posizione E raggio di sicurezza
+			occupied_spaces.append({
+				"position": pos,
+				"radius": safety_radius
+			})
+			spawned += 1
+		else:
+			# Se la posizione non è valida, libera l'oggetto
+			obj.queue_free()
 
-#func set_orbit(obj, central_body, clockwise_orbit):
-	#obj.set_circular_orbit(central_body, clockwise_orbit)
-#
-	#obj.rotation = randf() * TAU
+	if spawned < count:
+		print("⚠️ Regione %s: generati solo %d/%d oggetti (spazio insufficiente)" % [container.name, spawned, count])
+
+func is_position_valid(pos: Vector2, new_object_radius: float) -> bool:
+	# Controlla se c'è sovrapposizione con altri oggetti
+	for space in occupied_spaces:
+		var occupied_pos: Vector2 = space["position"]
+		var occupied_radius: float = space["radius"]
+
+		# Distanza minima = somma dei due raggi di sicurezza
+		var min_distance := new_object_radius + occupied_radius
+
+		if pos.distance_to(occupied_pos) < min_distance:
+			return false
+
+	return true

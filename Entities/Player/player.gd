@@ -5,12 +5,11 @@ extends RigidBody2D
 ## - Gravity Scale: 0 (per top-down)
 ## - Mass: 1 (regolare a piacere)
 
-
 @export var life_bar: ProgressBar
 @export var alignment_safe_zone: float = 0.8
 @export var collision: CollisionShape2D
 ## Configurazione movimento
-@export var max_hp: int = 100
+@export var max_hp: int = 300
 @export var hp: int = 100
 
 @export var speed: float = 1000.0 ## Velocità massima (pixel/sec)
@@ -72,11 +71,12 @@ func _physics_process(_delta: float) -> void:
 	_last_velocity = linear_velocity
 
 func _integrate_forces(state: PhysicsDirectBodyState2D) -> void:
-	if not gravity:
-		_handle_movement(state)
-		print("NON GRAVITO")
-	else:
-		_handle_gravity(state)
+	_handle_gravity(state)
+	#if not gravity:
+		##_handle_movement(state)
+		#print("NON GRAVITO")
+	#else:
+		#_handle_gravity(state)
 	_handle_rotation(state)
 	_handle_collision_resistance(state)
 
@@ -93,7 +93,7 @@ func _handle_collision_resistance(state: PhysicsDirectBodyState2D) -> void:
 				max_resistance = 1.0
 				print("💥 BULLDOZER MODE vs ", collider.name)
 				break
-			elif mass_ratio > 0.6:
+			elif mass_ratio > 0.3:
 				var resistance = smoothstep(1.0, 3.0, mass_ratio)
 				max_resistance = max(max_resistance, resistance)
 				print("⚡ Resistenza: %.0f%% vs %s" % [resistance * 100, collider.name])
@@ -142,34 +142,44 @@ func _handle_movement(state: PhysicsDirectBodyState2D) -> void:
 		acceleration * state.step
 	)
 
+var _debug_timer := 0.0
+const DEBUG_INTERVAL := 0.5 # secondi
+
 func _handle_gravity(state: PhysicsDirectBodyState2D) -> void:
-	# Input
+	_debug_timer += state.step
+	var do_print := false
+	if _debug_timer >= DEBUG_INTERVAL:
+		_debug_timer = 0.0
+		do_print = true
+
+	# ===== GRAVITÀ =====
+	var gravity_accel: Vector2 = gravity_force  / (mass / 2)
+	var gravity_delta_v := gravity_accel * state.step
+	state.linear_velocity += gravity_delta_v
+
+	# ===== MOVEMENT (STEERING) =====
 	var input_dir := get_input()
 	var mouse_dir := _handle_mouse_input()
 	var dir := mouse_dir if mouse_dir.length() > 0.1 else input_dir
 
-	# Calcola la gravità come vettore velocità
-	var gravity_accel: Vector2 = gravity_force / mass
-	var gravity_velocity: Vector2 = gravity_accel * 5 * state.step
+	# rimuovi la componente di gravità dalla velocità
+	var planar_velocity := state.linear_velocity - gravity_delta_v
 
-	# APPLICA SEMPRE LA GRAVITÀ sottraendola dalla velocità
-	state.linear_velocity += gravity_velocity
-
-	# Se c'è input, applica anche il movimento
 	if dir.length() > 0.1:
-		var movement_angle := dir.angle()
-		var alignment := cos(rotation - movement_angle)
-		if alignment > alignment_safe_zone:
-			alignment = 1.0
+		planar_velocity += dir.normalized() * acceleration * state.step
 
-		var speed_factor := remap(alignment, -1.0, 1.0, 0.2, 1.0)
-		var target_velocity := dir.normalized() * speed * speed_factor
+	# clamp SOLO il movimento
+	planar_velocity = planar_velocity.limit_length(speed)
 
-		# Accelera verso la velocità target (contrasta la gravità con l'input)
-		state.linear_velocity = state.linear_velocity.move_toward(
-			target_velocity,
-			acceleration * state.step
-		)
+	# ricombina
+	state.linear_velocity = planar_velocity + gravity_delta_v
+
+	if do_print:
+		print("---- DEBUG ----")
+		print("Planar velocity:", planar_velocity, "len:", planar_velocity.length())
+		print("Gravity Δv:", gravity_delta_v.length())
+		print("FINAL velocity:", state.linear_velocity.length())
+
 
 func get_input() -> Vector2:
 	return Input.get_vector("left", "right", "up", "down")
