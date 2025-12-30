@@ -2,9 +2,9 @@ extends RigidBody2D
 class_name CelestialBody
 
 
-const G := 667_000.0
+const G: float = 6_674_300.0  # o anche * 50, * 100
 const MAX_FORCE := 1_000_000_000_000.0
-const SOFTENING := 10.0
+const SOFTENING := 5.0
 var bodies_in_gravity: Array[RigidBody2D] = []
 
 # Proprietà comuni

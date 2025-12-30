@@ -2,7 +2,7 @@ extends Node2D
 
 @export var asteroid_scene: PackedScene
 @export var meteoroid_scene: PackedScene
-@export var safety_margin_multiplier: float = 5000.0  # Moltiplicatore per lo spazio di sicurezza
+@export var safety_margin_multiplier: float = 10_000.0  # Moltiplicatore per lo spazio di sicurezza
 
 @onready var player: Player = $Player
 @onready var sun: Light2D = $Sun
@@ -16,14 +16,14 @@ const REGIONS := [
 	{ "name": "FloraFamily",     "min_au": 2.07, "max_au": 2.27, "asteroid_count": 15, "meteoroid_count": 300 },
 
 	# Kirkwood Gap 3:1 (Quasi vuoto)
-	{ "name": "KirkwoodGap_3to1", "min_au": 2.44, "max_au": 2.57, "asteroid_count": 2, "meteoroid_count": 15 },
+	{ "name": "KirkwoodGap_3to1", "min_au": 2.44, "max_au": 2.57, "asteroid_count": 2, "meteoroid_count": 105 },
 
 	# Fascia Centrale (Il cuore della fascia)
 	{ "name": "MiddleBelt",      "min_au": 2.51, "max_au": 2.81, "asteroid_count": 40, "meteoroid_count": 650 },
 	{ "name": "EunomiaFamily",   "min_au": 2.57, "max_au": 2.74, "asteroid_count": 15, "meteoroid_count": 250 },
 
 	# Kirkwood Gap 5:2
-	{ "name": "Gap_5to2",        "min_au": 2.79, "max_au": 2.84, "asteroid_count": 1, "meteoroid_count": 20 },
+	{ "name": "Gap_5to2",        "min_au": 2.79, "max_au": 2.84, "asteroid_count": 1, "meteoroid_count": 200 },
 
 	# Fascia Esterna
 	{ "name": "KoronisFamily",   "min_au": 2.81, "max_au": 2.97, "asteroid_count": 12, "meteoroid_count": 220 },
@@ -31,8 +31,9 @@ const REGIONS := [
 	{ "name": "ThemisFamily",    "min_au": 3.01, "max_au": 3.18, "asteroid_count": 20, "meteoroid_count": 380 },
 	{ "name": "HygieaFamily",    "min_au": 3.14, "max_au": 3.31, "asteroid_count": 18, "meteoroid_count": 320 },
 
-	# Bordo esterno
+
 	{ "name": "Gap_2to1",        "min_au": 3.28, "max_au": 3.29, "asteroid_count": 0, "meteoroid_count": 100 },
+	# Bordo esterno
 	{ "name": "CybeleGroup",     "min_au": 3.31, "max_au": 3.51, "asteroid_count": 25, "meteoroid_count": 420 },
 	{ "name": "HildaGroup",      "min_au": 3.51, "max_au": 4.21, "asteroid_count": 15, "meteoroid_count": 300 },
 ]
@@ -110,7 +111,6 @@ func get_object_radius(obj: RigidBody2D) -> float:
 	# Formula: raggio ∝ ∛massa (volume è proporzionale a massa per densità costante)
 	if "mass" in obj:
 		# Scala il raggio in base alla massa: massa più grande = raggio più grande
-		# pow(massa, 1/3) perché Volume = (4/3)πr³, quindi r = ∛(3V/4π)
 		var base_radius: float = obj.mass
 		return base_radius
 
@@ -164,7 +164,8 @@ func spawn_ring(container: Node2D, count: int, min_r: float, max_r: float, scene
 	while spawned < count and attempts < max_attempts:
 		attempts += 1
 
-		var eccentricity := randf_range(0.1, 0.2)
+		var eccentricity :=  0.05
+		#randf_range(0.03, 0.08)
 		var t := pow(randf(), 0.55)
 		var base_r := lerp(min_r, max_r, t) as float
 
@@ -206,7 +207,7 @@ func spawn_ring(container: Node2D, count: int, min_r: float, max_r: float, scene
 			obj.queue_free()
 
 	if spawned < count:
-		print("⚠️ Regione %s: generati solo %d/%d oggetti (spazio insufficiente)" % [container.name, spawned, count])
+		printerr("⚠️ Regione %s: generati solo %d/%d oggetti (spazio insufficiente)" % [container.name, spawned, count])
 
 func is_position_valid(pos: Vector2, new_object_radius: float) -> bool:
 	# Controlla se c'è sovrapposizione con altri oggetti

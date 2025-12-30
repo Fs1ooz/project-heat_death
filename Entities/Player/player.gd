@@ -5,7 +5,7 @@ extends RigidBody2D
 ## - Gravity Scale: 0 (per top-down)
 ## - Mass: 1 (regolare a piacere)
 
-@export var life_bar: ProgressBar
+@export var life_bar: ProgressBar = null
 @export var alignment_safe_zone: float = 0.8
 @export var collision: CollisionShape2D
 ## Configurazione movimento
@@ -52,7 +52,6 @@ func _ready() -> void:
 	initial_radius = collision.shape.radius
 	initial_height = collision.shape.height
 	initial_scale = sprite.scale
-
 
 	initial_particle_scale = Vector2(mat.scale_min, mat.scale_max)
 	#global_position.x = 2_900_000
@@ -114,6 +113,7 @@ func _handle_rotation(state: PhysicsDirectBodyState2D) -> void:
 	var angle_diff = wrapf(target_angle - rotation, -PI, PI)
 	state.angular_velocity = angle_diff * rotation_responsiveness
 
+
 func _handle_movement(state: PhysicsDirectBodyState2D) -> void:
 	var input_dir := get_input()
 	var mouse_dir := _handle_mouse_input()
@@ -145,6 +145,9 @@ func _handle_movement(state: PhysicsDirectBodyState2D) -> void:
 var _debug_timer := 0.0
 const DEBUG_INTERVAL := 0.5 # secondi
 
+# Aggiungi questa variabile in cima alla classe Player
+
+# E poi modifica la funzione così:
 func _handle_gravity(state: PhysicsDirectBodyState2D) -> void:
 	_debug_timer += state.step
 	var do_print := false
@@ -153,9 +156,10 @@ func _handle_gravity(state: PhysicsDirectBodyState2D) -> void:
 		do_print = true
 
 	# ===== GRAVITÀ =====
-	var gravity_accel: Vector2 = gravity_force  / (mass / 2)
+	var gravity_accel: Vector2 = gravity_force / mass
 	var gravity_delta_v := gravity_accel * state.step
-	state.linear_velocity += gravity_delta_v
+
+	state.linear_velocity += gravity_delta_v  # ← applica direttamente
 
 	# ===== MOVEMENT (STEERING) =====
 	var input_dir := get_input()
@@ -176,11 +180,9 @@ func _handle_gravity(state: PhysicsDirectBodyState2D) -> void:
 
 	if do_print:
 		print("---- DEBUG ----")
-		print("Planar velocity:", planar_velocity, "len:", planar_velocity.length())
+		print("Planar velocity:", planar_velocity.length())
 		print("Gravity Δv:", gravity_delta_v.length())
 		print("FINAL velocity:", state.linear_velocity.length())
-
-
 func get_input() -> Vector2:
 	return Input.get_vector("left", "right", "up", "down")
 
@@ -284,7 +286,8 @@ func game_over() -> void:
 
 
 func _update_life_bar() -> void:
-	life_bar.value = hp
+	if life_bar:
+		life_bar.value = hp
 	#life_bar.start_fade()
 
 func _on_regen_timer_timeout() -> void:

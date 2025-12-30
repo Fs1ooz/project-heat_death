@@ -73,7 +73,6 @@ func _physics_process(delta: float) -> void:
 	global_position = global_position.move_toward(player.global_position, speed)
 
 
-
 func _on_body_entered(body: Node2D) -> void:
 	if body is Player:
 
@@ -82,7 +81,7 @@ func _on_body_entered(body: Node2D) -> void:
 		sfx.connect("finished", queue_free)
 
 		#var amount = max(1.2 / body.mass,  )
-		var amount = 1.0 + (0.05 / (body.mass + 1))
+		var amount = 1.0 + (0.1 / (body.mass + 1))
 		body.change_size(amount)
 
 		UpgradeManager.gain_energy(energy)
