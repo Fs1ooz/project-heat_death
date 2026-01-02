@@ -25,7 +25,7 @@ func _ready() -> void:
 
 
 func _input(event: InputEvent) -> void:
-	if event.is_action_pressed("space"):
+	if event.is_action_pressed("space") and EntropyManager.entropy_value >= 0:
 		upgrades_h_box_container.visible = !upgrades_h_box_container.visible
 
 

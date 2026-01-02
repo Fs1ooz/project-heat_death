@@ -1,6 +1,6 @@
 [gd_scene load_steps=10 format=3 uid="uid://470x1obeipdg"]
 
-[ext_resource type="Script" uid="uid://bf2nvyuinsvhu" path="res://Entities/Player/player.gd" id="1_tekja"]
+[ext_resource type="Script" uid="uid://bf2nvyuinsvhu" path="res://Entities/Player/player.gd" id="1_5c2io"]
 [ext_resource type="Texture2D" uid="uid://dnffwiy1b287y" path="res://Assets/Images/isnobulo.png" id="2_5c2io"]
 [ext_resource type="AudioStream" uid="uid://1wfdu2dsudw4" path="res://Entities/Player/hit.sfxr" id="3_lu8i8"]
 [ext_resource type="Script" uid="uid://cnf8kwhvre5kg" path="res://Entities/Player/camera_2d.gd" id="5_5c2io"]
@@ -22,22 +22,21 @@ stream_0/stream = ExtResource("3_lu8i8")
 [sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_5c2io"]
 polygon = PackedVector2Array(-2.1855694e-06, -50, -14.000002, -45, -25.000002, -34, -31, -19.999998, -34, 1.4861872e-06, -39, 24.000002, -34, 40, -22.999998, 53, -0.9999973, 61, 25.000002, 48, 35, 26.999998, 34, -1.0000014, 31, -22.000002, 23.999998, -37, 14.999998, -46)
 
-[node name="Player" type="RigidBody2D" node_paths=PackedStringArray("collision", "trail", "sprite") groups=["player"]]
+[node name="Player" type="RigidBody2D" node_paths=PackedStringArray("collision", "sprite", "trail") groups=["player"]]
 collision_mask = 2
 mass = 5.0
 physics_material_override = SubResource("PhysicsMaterial_5c2io")
 gravity_scale = 0.0
 freeze_mode = 1
-custom_integrator = true
 continuous_cd = 1
 contact_monitor = true
 max_contacts_reported = 50
 linear_damp_mode = 1
 angular_damp_mode = 1
-script = ExtResource("1_tekja")
+script = ExtResource("1_5c2io")
 collision = NodePath("Collision")
-trail = NodePath("Collision/Sprite/Trail")
 sprite = NodePath("Collision/Sprite")
+trail = NodePath("Collision/Sprite/Trail")
 
 [node name="PlayerCamera" type="Camera2D" parent="."]
 limit_enabled = false

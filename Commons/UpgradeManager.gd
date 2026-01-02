@@ -118,6 +118,10 @@ func get_ball_stats() -> Dictionary:
 	return stats
 
 
+func get_current_power(type: UpgradeType) -> float:
+	return upgrades_data[type]["current_power"]
+
+
 func apply_upgrade(upgrade_type: UpgradeType) -> bool:
 	var upgrade_data = upgrades_data[upgrade_type]
 

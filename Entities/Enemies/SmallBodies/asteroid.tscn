@@ -6,7 +6,7 @@
 radius = 118.016945
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_vwlwn"]
-radius = 2177.9404
+radius = 968.16736
 
 [node name="Asteroid" type="RigidBody2D" node_paths=PackedStringArray("collision", "gravity_area_collision") groups=["celestialbodies"]]
 z_index = 1

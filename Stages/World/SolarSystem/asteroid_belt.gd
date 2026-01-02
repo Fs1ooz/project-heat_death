@@ -16,14 +16,14 @@ const REGIONS := [
 	{ "name": "FloraFamily",     "min_au": 2.07, "max_au": 2.27, "asteroid_count": 15, "meteoroid_count": 300 },
 
 	# Kirkwood Gap 3:1 (Quasi vuoto)
-	{ "name": "KirkwoodGap_3to1", "min_au": 2.44, "max_au": 2.57, "asteroid_count": 2, "meteoroid_count": 105 },
+	{ "name": "KirkwoodGap_3to1", "min_au": 2.44, "max_au": 2.57, "asteroid_count": 2, "meteoroid_count": 35 },
 
 	# Fascia Centrale (Il cuore della fascia)
 	{ "name": "MiddleBelt",      "min_au": 2.51, "max_au": 2.81, "asteroid_count": 40, "meteoroid_count": 650 },
 	{ "name": "EunomiaFamily",   "min_au": 2.57, "max_au": 2.74, "asteroid_count": 15, "meteoroid_count": 250 },
 
 	# Kirkwood Gap 5:2
-	{ "name": "Gap_5to2",        "min_au": 2.79, "max_au": 2.84, "asteroid_count": 1, "meteoroid_count": 200 },
+	{ "name": "Gap_5to2",        "min_au": 2.79, "max_au": 2.84, "asteroid_count": 1, "meteoroid_count": 50 },
 
 	# Fascia Esterna
 	{ "name": "KoronisFamily",   "min_au": 2.81, "max_au": 2.97, "asteroid_count": 12, "meteoroid_count": 220 },
@@ -32,7 +32,7 @@ const REGIONS := [
 	{ "name": "HygieaFamily",    "min_au": 3.14, "max_au": 3.31, "asteroid_count": 18, "meteoroid_count": 320 },
 
 
-	{ "name": "Gap_2to1",        "min_au": 3.28, "max_au": 3.29, "asteroid_count": 0, "meteoroid_count": 100 },
+	{ "name": "Gap_2to1",        "min_au": 3.28, "max_au": 3.29, "asteroid_count": 0, "meteoroid_count": 20 },
 	# Bordo esterno
 	{ "name": "CybeleGroup",     "min_au": 3.31, "max_au": 3.51, "asteroid_count": 25, "meteoroid_count": 420 },
 	{ "name": "HildaGroup",      "min_au": 3.51, "max_au": 4.21, "asteroid_count": 15, "meteoroid_count": 300 },
@@ -104,7 +104,7 @@ func generate_belt() -> void:
 		spawn_ring(region_node, region_data["asteroid_count"], min_pixels, max_pixels, asteroid_scene)
 
 		# Spawn meteoroidi (piccoli)
-		spawn_ring(region_node, region_data["meteoroid_count"] * 3, min_pixels, max_pixels, meteoroid_scene)
+		spawn_ring(region_node, region_data["meteoroid_count"] * 2, min_pixels, max_pixels, meteoroid_scene)
 
 func get_object_radius(obj: RigidBody2D) -> float:
 	# Usa la massa per calcolare il raggio
@@ -153,61 +153,45 @@ func create_spawn_cluster(container: Node2D, min_r: float, max_r: float) -> void
 			"radius": safety_radius
 		})
 
+# --- cascata state ---
+var ring_last_angle   : float   = 0.0   # angolo del punto precedente
+var ring_mean_separation : float = 0.0  # distanza arco ideale tra due sassi
+var ring_left_to_spawn   : int   = 0    # quanti ne mancano per chiudere l’anello
+
 func spawn_ring(container: Node2D, count: int, min_r: float, max_r: float, scene: PackedScene) -> void:
 	if count <= 0:
 		return
 
-	var max_attempts := count * 10
-	var spawned := 0
-	var attempts := 0
+	# --- prepara la “cascata” ---
+	ring_last_angle        = randf() * TAU          # partenza casuale
+	ring_mean_separation   = TAU / float(count)     # passo angolare medio
+	ring_left_to_spawn     = count
 
-	while spawned < count and attempts < max_attempts:
-		attempts += 1
+	var base_radius: float
+	var eccentricity: float = 0.01
 
-		var eccentricity :=  0.05
-		#randf_range(0.03, 0.08)
-		var t := pow(randf(), 0.55)
-		var base_r := lerp(min_r, max_r, t) as float
+	for i in count:
+		# --- angolo con piccolo jitter (±25 % del passo) ---
+		var jitter  = randf_range(-0.25, 0.25) * ring_mean_separation
+		var angle   = ring_last_angle + ring_mean_separation + jitter
+		ring_last_angle = angle
 
-		var spawn_on_inner_edge := randf() < 0.5
-		var r: float
-		if spawn_on_inner_edge:
-			r = base_r * (1.0 - eccentricity)
-			r = clamp(r, min_r * 0.98, min_r * 1.02)
-		else:
-			r = base_r * (1.0 + eccentricity)
-			r = clamp(r, max_r * 0.98, max_r * 1.02)
+		# --- raggio con eccentricity (come avevi già) ---
+		var t        = pow(randf(), 0.55)
+		base_radius  = lerp(min_r, max_r, t)
+		var r  = base_radius * (1.0 + eccentricity * -1.0 if randf()<0.5 else 1.0)
+		r = clamp(r, min_r*0.98, max_r*1.02)
 
-		var angle := randf() * TAU
-		var vertical_noise := randf_range(-0.03, 0.03) * r
+		# --- noise verticale ---
+		var vertical_noise = randf_range(-0.03, 0.03) * r
 
-		var pos := Vector2(
-			cos(angle) * r,
-			sin(angle) * r + vertical_noise
-		)
+		var pos := Vector2(cos(angle)*r, sin(angle)*r + vertical_noise)
 
-		# Crea l'oggetto temporaneamente per ottenere il suo raggio
+		# --- istanzia direttamente (nessun check) ---
 		var obj := scene.instantiate() as Node2D
-		var obj_radius := get_object_radius(obj)
-		var safety_radius := obj_radius * safety_margin_multiplier
+		obj.position = pos
+		container.add_child(obj)
 
-		# Controlla se la posizione è valida considerando il raggio dell'oggetto
-		if is_position_valid(pos, safety_radius):
-			obj.position = pos
-			container.add_child(obj)
-
-			# Salva posizione E raggio di sicurezza
-			occupied_spaces.append({
-				"position": pos,
-				"radius": safety_radius
-			})
-			spawned += 1
-		else:
-			# Se la posizione non è valida, libera l'oggetto
-			obj.queue_free()
-
-	if spawned < count:
-		printerr("⚠️ Regione %s: generati solo %d/%d oggetti (spazio insufficiente)" % [container.name, spawned, count])
 
 func is_position_valid(pos: Vector2, new_object_radius: float) -> bool:
 	# Controlla se c'è sovrapposizione con altri oggetti

@@ -2,7 +2,7 @@ extends Node2D
 
 @export var streaming_enabled := true
 @export var max_bodies_before_streaming := 100
-@export var vision_radius_multiplier := 50_000.0
+@export var vision_radius_multiplier := 100_000.0
 @export var update_interval := 0.3
 @export var unload_multiplier := 1.8
 @export var scale_growth_factor := 0.5  # Quanto il raggio cresce con la scala (0.5 = radice quadrata)

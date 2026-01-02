@@ -4,7 +4,7 @@ class_name CelestialBody
 
 const G: float = 6_674_300.0  # o anche * 50, * 100
 const MAX_FORCE := 1_000_000_000_000.0
-const SOFTENING := 5.0
+const SOFTENING := 10.0
 var bodies_in_gravity: Array[RigidBody2D] = []
 
 # Proprietà comuni
@@ -147,9 +147,8 @@ func die() -> void:
 	_spawn_explosion()
 	for body in bodies_in_gravity:
 		if body is Player:
-			var death_entropy: float = max(1.0, (50.0 * mass)/(mass + 10000.0))
-			EntropyManager.change_entropy(-death_entropy)
-			body.gravity_force = Vector2.ZERO
+			var death_entropy: float = - max(1.0, (50.0 * mass)/(mass + 1000.0))
+			EntropyManager.change_entropy(death_entropy)
 #
 	printerr("Sono scattato porc")
 	bodies_in_gravity.clear()
@@ -245,14 +244,14 @@ func _apply_gravity(body: RigidBody2D) -> void:
 	var force := G * mass * body.mass / dist_sq + SOFTENING
 	var force_vector := dir.normalized() * force
 
-	if body is Player:
-		#print("DIST: ", snapped(dist_sq, 0.1), " | FORZA: ", snapped(force_magnitude, 0.1))
-		# PLAYER → custom integrator
-		#body.gravity = true
-		body.gravity_force = force_vector
-	else:
+	#if body is Player:
+		##print("DIST: ", snapped(dist_sq, 0.1), " | FORZA: ", snapped(force_magnitude, 0.1))
+		## PLAYER → custom integrator
+		##body.gravity = true
+		#body.gravity_force = force_vector
+	#else:
 		# ALTRI CELESTIAL BODY → fisica standard
-		body.apply_central_force(force_vector)
+	body.apply_central_force(force_vector)
 	apply_central_force(-force_vector)
 
 	#print("I'm gravitating it: ", body.mass, " ", mass,  " ", dist_sq, " forza di g: ", force_vector.length())
@@ -320,3 +319,7 @@ func get_damage() -> float:
 	print("Danno finale: ", damage)
 
 	return damage
+
+
+func get_gravity_radius():
+	return gravity_area_collision.shape.radius

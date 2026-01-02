@@ -156,7 +156,7 @@ layer = -1
 follow_viewport_enabled = true
 
 [node name="Parallax2D" type="Parallax2D" parent="ParallaxBackgroundLayer"]
-scale = Vector2(5, 5)
+scale = Vector2(15, 15)
 scroll_scale = Vector2(0.01, 0.01)
 repeat_size = Vector2(2000, 1438)
 autoscroll = Vector2(0.001, 0.002)
@@ -168,7 +168,7 @@ texture = ExtResource("4_xxft0")
 
 [node name="Parallax2D2" type="Parallax2D" parent="ParallaxBackgroundLayer"]
 rotation = -3.1415925
-scale = Vector2(10, 10)
+scale = Vector2(50, 50)
 scroll_scale = Vector2(0.1, 0.1)
 repeat_size = Vector2(2000, 1438)
 autoscroll = Vector2(1, 0.5)

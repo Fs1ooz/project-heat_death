@@ -9,17 +9,18 @@ extends RigidBody2D
 @export var alignment_safe_zone: float = 0.8
 @export var collision: CollisionShape2D
 ## Configurazione movimento
-@export var max_hp: int = 300
+@export var max_hp: int = 100
 @export var hp: int = 100
 
-@export var speed: float = 1000.0 ## Velocità massima (pixel/sec)
-@export var acceleration: float = 500.0 ## Accelerazione lineare (pixel/sec²)
-@export var trail: GPUParticles2D
+@export var speed: float = UpgradeManager.get_current_power(UpgradeManager.UpgradeType.SPEED)  ## Velocità massima (pixel/sec)
+@export var acceleration: float = UpgradeManager.get_current_power(UpgradeManager.UpgradeType.ACCELERATION)  ## Accelerazione lineare (pixel/sec²)
 
 @export var sprite: Sprite2D
+@export var trail: GPUParticles2D
 
 
-var rotation_responsiveness: float = 10.0 ## Responsività della rotazione verso il mousewwwwwwwwwwwwws
+var rotation_responsiveness: float = 10.0
+
 var regen_tick: float = 3.0
 var auto_revive: bool = true
 var _last_velocity: Vector2 = Vector2.ZERO
@@ -62,23 +63,88 @@ func _ready() -> void:
 	await get_tree().create_timer(5).timeout
 
 
-
-
 #region Movement
 
-func _physics_process(_delta: float) -> void:
+var can_reset: bool = false
+
+func _physics_process(delta: float) -> void:
 	_last_velocity = linear_velocity
 
-func _integrate_forces(state: PhysicsDirectBodyState2D) -> void:
-	_handle_gravity(state)
-	#if not gravity:
-		##_handle_movement(state)
-		#print("NON GRAVITO")
-	#else:
-		#_handle_gravity(state)
-	_handle_rotation(state)
-	_handle_collision_resistance(state)
+	if EntropyManager.entropy_value < 0:  # se entropia negativa
+		apply_entropy(delta)  # applica caos
+	else:
+		can_reset = true
+	if can_reset:
+		reset_entropy_stats()
 
+	_handle_movement()
+	#_handle_rotation()
+
+
+
+
+
+func _integrate_forces(state: PhysicsDirectBodyState2D) -> void:
+	_handle_collision_resistance(state)
+	_handle_rotation(state)
+
+func _handle_rotation(state: PhysicsDirectBodyState2D) -> void:
+	var mouse_pos = get_global_mouse_position()
+	var dir = mouse_pos - global_position
+	if dir.length_squared() < 1.0:
+		state.angular_velocity = 0.0
+		return
+	var target_angle = dir.angle()
+	var angle_diff = wrapf(target_angle - rotation, -PI, PI)
+	state.angular_velocity = angle_diff * rotation_responsiveness
+
+
+func reset_entropy_stats() -> void:
+	speed = UpgradeManager.get_current_power(UpgradeManager.UpgradeType.SPEED)
+	acceleration = UpgradeManager.get_current_power(UpgradeManager.UpgradeType.ACCELERATION)
+	gravity_force = Vector2.ZERO
+	can_reset = false
+
+
+var oscillation_speed := 100000.0   # Intensità della forza
+var oscillation_frequency := 2.0  # Quante oscillazioni al secondo
+var time_passed := 0.0            # Contatore del tempo
+
+func apply_entropy(delta: float) -> void:
+	var entropy: float = abs(EntropyManager.entropy_value)
+	if entropy == 0.0:
+		return
+
+	time_passed += delta
+
+	# Oscillazione sinusoidale lungo Y locale
+	var oscillation := sin(time_passed * oscillation_frequency * TAU)  # -1..1
+	var local_dir := Vector2(0, oscillation)
+	var world_dir := local_dir.rotated(rotation)
+	apply_central_force(world_dir * entropy * oscillation_speed)
+
+
+	# 2. IMPULSI IMPROVVISI
+	if entropy > 10.0 and randf() < 0.01:  # aggiungi probabilità per non sparare ogni frame
+		var rands_vec := Vector2(randf_range(-1.0, 1.0), randf_range(-1.0, 1.0)).normalized()
+		rands_vec = rands_vec.rotated(rotation)
+		apply_central_impulse(rands_vec * entropy)
+
+	# 3. ROTAZIONE CASUALE
+	if entropy > 30.0:
+		apply_torque(randf_range(-1.0, 1.0) * entropy * 0.05)
+
+
+	## 4. VISUAL
+	#if randf() < entropy:
+		#sprite.modulate = Color(
+			#randf_range(0.7, 1.3),
+			#randf_range(0.7, 1.3),
+			#randf_range(0.7, 1.3)
+		#)
+		#sprite.scale = initial_scale * randf_range(0.9, 1.1)
+#
+#
 
 func _handle_collision_resistance(state: PhysicsDirectBodyState2D) -> void:
 	var max_resistance: float = 0.0
@@ -101,88 +167,71 @@ func _handle_collision_resistance(state: PhysicsDirectBodyState2D) -> void:
 		state.linear_velocity = state.linear_velocity.lerp(_last_velocity, max_resistance)
 
 
-func _handle_rotation(state: PhysicsDirectBodyState2D) -> void:
-	var mouse_pos = get_global_mouse_position()
-	var dir = mouse_pos - global_position
+#
+#func _handle_rotation() -> void:
+	#var mouse_pos = get_global_mouse_position()
+	#var dir = mouse_pos - global_position
+#
+	#if dir.length_squared() < 1.0:
+		#angular_velocity = 0.0
+		#return
+#
+	#var target_angle = dir.angle()
+	#var angle_diff = wrapf(target_angle - rotation, -PI, PI)
+#
+	## PD controller semplice
+	#var torque = angle_diff * rotation_responsiveness - angular_velocity * damping
+#
+	#apply_torque(torque)
+#
+func _handle_movement() -> void:
+	var dir := _handle_mouse_input() if _handle_mouse_input().length() > 0.1 else get_input()
 
-	if dir.length_squared() < 1.0:
-		state.angular_velocity = 0.0
-		return
+	if dir.length() > 0.1:
+		apply_central_force(dir.normalized() * acceleration * mass)
 
-	var target_angle = dir.angle()
-	var angle_diff = wrapf(target_angle - rotation, -PI, PI)
-	state.angular_velocity = angle_diff * rotation_responsiveness
-
-
-func _handle_movement(state: PhysicsDirectBodyState2D) -> void:
-	var input_dir := get_input()
-	var mouse_dir := _handle_mouse_input()
-	var dir := mouse_dir if mouse_dir.length() > 0.1 else input_dir
-
-	# NESSUN INPUT → rallenta (attrito)
-	if dir.length() < 0.1:
-		state.linear_velocity = state.linear_velocity.move_toward(
-			Vector2.ZERO,
-			acceleration * state.step
-		)
-		return
-
-	# Velocità target
-	var movement_angle := dir.angle()
-	var alignment := cos(rotation - movement_angle)
-	if alignment > alignment_safe_zone:
-		alignment = 1.0
-
-	var speed_factor := remap(alignment, -1.0, 1.0, 0.2, 1.0)
-	var target_velocity := dir.normalized() * speed * speed_factor
-
-	# Accelerazione verso il target
-	state.linear_velocity = state.linear_velocity.move_toward(
-		target_velocity,
-		acceleration * state.step
-	)
-
-var _debug_timer := 0.0
-const DEBUG_INTERVAL := 0.5 # secondi
+	linear_velocity = linear_velocity.limit_length(speed)
 
 # Aggiungi questa variabile in cima alla classe Player
 
+#var do_print := false
+
 # E poi modifica la funzione così:
-func _handle_gravity(state: PhysicsDirectBodyState2D) -> void:
-	_debug_timer += state.step
-	var do_print := false
-	if _debug_timer >= DEBUG_INTERVAL:
-		_debug_timer = 0.0
-		do_print = true
+#func _handle_gravity(state: PhysicsDirectBodyState2D) -> void:
+	##_debug_timer += state.step
+##
+##if _debug_timer >= DEBUG_INTERVAL:
+		##_debug_timer = 0.0
+		##do_print = true
+	## ===== GRAVITÀ =====
+	#var gravity_accel: Vector2 = gravity_force / mass
+	#var gravity_delta_v := gravity_accel * state.step
+#
+	#state.linear_velocity += gravity_delta_v  # ← applica direttamente
+#
+	## ===== MOVEMENT (STEERING) =====
+	#var input_dir := get_input()
+	#var mouse_dir := _handle_mouse_input()
+	#var dir := mouse_dir if mouse_dir.length() > 0.1 else input_dir
+#
+	## rimuovi la componente di gravità dalla velocità
+	#var planar_velocity := state.linear_velocity - gravity_delta_v
+#
+	#if dir.length() > 0.1:
+		#planar_velocity += dir.normalized() * acceleration * state.step
+#
+	## clamp SOLO il movimento
+	#planar_velocity = planar_velocity.limit_length(speed)
+#
+	## ricombina
+	#state.linear_velocity = planar_velocity + gravity_delta_v
+#
+	##if do_print:
+		##print("---- DEBUG ----")
+		##print("Planar velocity:", planar_velocity.length())
+		##print("Gravity Δv:", gravity_delta_v.length())
+		##print("FINAL velocity:", state.linear_velocity.length())
 
-	# ===== GRAVITÀ =====
-	var gravity_accel: Vector2 = gravity_force / mass
-	var gravity_delta_v := gravity_accel * state.step
-
-	state.linear_velocity += gravity_delta_v  # ← applica direttamente
-
-	# ===== MOVEMENT (STEERING) =====
-	var input_dir := get_input()
-	var mouse_dir := _handle_mouse_input()
-	var dir := mouse_dir if mouse_dir.length() > 0.1 else input_dir
-
-	# rimuovi la componente di gravità dalla velocità
-	var planar_velocity := state.linear_velocity - gravity_delta_v
-
-	if dir.length() > 0.1:
-		planar_velocity += dir.normalized() * acceleration * state.step
-
-	# clamp SOLO il movimento
-	planar_velocity = planar_velocity.limit_length(speed)
-
-	# ricombina
-	state.linear_velocity = planar_velocity + gravity_delta_v
-
-	if do_print:
-		print("---- DEBUG ----")
-		print("Planar velocity:", planar_velocity.length())
-		print("Gravity Δv:", gravity_delta_v.length())
-		print("FINAL velocity:", state.linear_velocity.length())
 func get_input() -> Vector2:
 	return Input.get_vector("left", "right", "up", "down")
 
