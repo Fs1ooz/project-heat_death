@@ -177,5 +177,5 @@ func apply_upgrade(upgrade_type: UpgradeType) -> bool:
 func calculate_next_cost(upgrade_data: Dictionary) -> int:
 	var base_cost = upgrade_data.get("base_cost", 10)
 	var level = upgrade_data["level"]
-	var growth_factor = 1.3
+	var growth_factor = 1.05
 	return int(base_cost * pow(growth_factor, level))

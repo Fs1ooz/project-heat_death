@@ -18,6 +18,7 @@ extends RigidBody2D
 @export var sprite: Sprite2D
 @export var trail: GPUParticles2D
 
+@export var shockwave: Node
 
 var rotation_responsiveness: float = 10.0
 
@@ -63,6 +64,7 @@ func _ready() -> void:
 	await get_tree().create_timer(5).timeout
 
 
+
 #region Movement
 
 var can_reset: bool = false
@@ -72,21 +74,21 @@ func _physics_process(delta: float) -> void:
 
 	if EntropyManager.entropy_value < 0:  # se entropia negativa
 		apply_entropy(delta)  # applica caos
-	else:
-		can_reset = true
-	if can_reset:
-		reset_entropy_stats()
+
 
 	_handle_movement()
 	#_handle_rotation()
 
-
-
+func _input(event: InputEvent) -> void:
+	if event.is_action_pressed("space") and EntropyManager.entropy_value < 0:
+		EntropyManager.change_entropy(abs(EntropyManager.entropy_value) * 2)
+		shockwave.trigger_shockwave(global_position, 3)
 
 
 func _integrate_forces(state: PhysicsDirectBodyState2D) -> void:
 	_handle_collision_resistance(state)
 	_handle_rotation(state)
+
 
 func _handle_rotation(state: PhysicsDirectBodyState2D) -> void:
 	var mouse_pos = get_global_mouse_position()
@@ -99,14 +101,8 @@ func _handle_rotation(state: PhysicsDirectBodyState2D) -> void:
 	state.angular_velocity = angle_diff * rotation_responsiveness
 
 
-func reset_entropy_stats() -> void:
-	speed = UpgradeManager.get_current_power(UpgradeManager.UpgradeType.SPEED)
-	acceleration = UpgradeManager.get_current_power(UpgradeManager.UpgradeType.ACCELERATION)
-	gravity_force = Vector2.ZERO
-	can_reset = false
 
-
-var oscillation_speed := 100000.0   # Intensità della forza
+var oscillation_speed := 1000.0   # Intensità della forza
 var oscillation_frequency := 2.0  # Quante oscillazioni al secondo
 var time_passed := 0.0            # Contatore del tempo
 

@@ -1,6 +1,7 @@
-[gd_scene load_steps=4 format=3 uid="uid://dooqkflafelol"]
+[gd_scene load_steps=5 format=3 uid="uid://dooqkflafelol"]
 
 [ext_resource type="Script" uid="uid://b76ax10rq762s" path="res://Entities/Enemies/SmallBodies/asteroid.gd" id="1_tefsh"]
+[ext_resource type="PackedScene" uid="uid://bgievdkpstd3t" path="res://Entities/Enemies/visible_screen_enabler_component.tscn" id="2_tefsh"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_y0ama"]
 radius = 118.016945
@@ -84,6 +85,10 @@ polygon = PackedVector2Array(-1196.8983, 751, -1187.7239, 760, -1151.026, 758, -
 [node name="GravityAreaCollision" type="CollisionShape2D" parent="Gravity"]
 shape = SubResource("CircleShape2D_vwlwn")
 
+[node name="VisibleScreenEnablerComponent" parent="." instance=ExtResource("2_tefsh")]
+
 [connection signal="body_entered" from="." to="." method="_on_body_entered"]
 [connection signal="body_entered" from="Gravity" to="." method="_on_gravity_body_entered"]
 [connection signal="body_exited" from="Gravity" to="." method="_on_gravity_body_exited"]
+[connection signal="screen_entered" from="VisibleScreenEnablerComponent" to="." method="_on_visible_screen_enabler_component_screen_entered"]
+[connection signal="screen_exited" from="VisibleScreenEnablerComponent" to="." method="_on_visible_screen_enabler_component_screen_exited"]

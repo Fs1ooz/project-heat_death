@@ -7,9 +7,10 @@ const MAX_FORCE := 1_000_000_000_000.0
 const SOFTENING := 10.0
 var bodies_in_gravity: Array[RigidBody2D] = []
 
+
 # Proprietà comuni
 @export var internal_energy: int = 1
-@export var game_energy: int = 10
+@export var game_energy: int = 5
 
 @export var min_size: float = 1.0
 @export var max_size: float = 2.0
@@ -35,6 +36,7 @@ var health_bar_container: Control
 
 
 func _ready() -> void:
+	set_process(false)
 	for child in get_children():
 		if child is AnimatedSprite2D:
 			child.play()
@@ -73,10 +75,11 @@ func _setup_physics() -> void:
 	physics_material_override.friction = 0.0
 
 
-func _setup_scale() -> void:
-	var scale_rand := randf_range(min_size, max_size)
 
+
+func _setup_scale() -> void:
 	var sprite = collision.get_child(0)
+	var scale_rand := randf_range(min_size, max_size)
 
 	# IMPORTANTE: salva la scala ORIGINALE dello sprite dall'editor
 	var original_sprite_scale = sprite.scale
@@ -163,13 +166,13 @@ func _spawn_explosion() -> void:
 	explosion_red.restart()
 	explosion_red.scale = scale
 
-func play_sound_once(sound: AudioStream) -> void:
-	var player := AudioStreamPlayer2D.new()
-	player.stream = sound
-	player.global_position = global_position
-	get_tree().get_root().add_child(player)
-	player.play()
-	player.connect("finished", Callable(player, "queue_free"))
+#func play_sound_once(sound: AudioStream) -> void:
+	#var player := AudioStreamPlayer2D.new()
+	#player.stream = sound
+	#player.global_position = global_position
+	#get_tree().get_root().add_child(player)
+	#player.play()
+	#player.connect("finished", Callable(player, "queue_free"))
 
 func _spawn_energy_drop():
 	var num_drops = int(game_energy)  # Calcola quanti drop vorresti

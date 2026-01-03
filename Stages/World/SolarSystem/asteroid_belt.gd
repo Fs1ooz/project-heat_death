@@ -4,6 +4,8 @@ extends Node2D
 @export var meteoroid_scene: PackedScene
 @export var safety_margin_multiplier: float = 10_000.0  # Moltiplicatore per lo spazio di sicurezza
 
+
+
 @onready var player: Player = $Player
 @onready var sun: Light2D = $Sun
 

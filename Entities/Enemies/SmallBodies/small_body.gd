@@ -6,6 +6,17 @@ class_name SmallBody
 #@export var spin_range: float = 2.0
 #
 
+
+func _on_visible_screen_enabler_component_screen_entered() -> void:
+	print("ENTRATO")
+	show()
+
+
+func _on_visible_screen_enabler_component_screen_exited() -> void:
+	print("USCITO")
+	hide()
+
+
 #func _ready() -> void:
 
 	#super()

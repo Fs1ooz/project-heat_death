@@ -2,10 +2,10 @@ extends Camera2D
 
 @export var zoom_speed: float = 1.1
 @export_group("Zoom Limits (Base Values)")
-@export var min_zoom_base: float = 0.00005  # Limite minimo quando player.scale = 1
+@export var min_zoom_base: float = 0.005  # Limite minimo quando player.scale = 1
 @export var max_zoom_base: float = 2.0  # Limite massimo quando player.scale = 1
 @export_group("Zoom Settings")
-@export var base_zoom: Vector2 = Vector2.ONE * 0.3
+@export var base_zoom: Vector2 = Vector2.ONE * 0.25
 @export var zoom_lerp_speed := 5.0
 @export var manual_zoom_timeout := 2.0
 

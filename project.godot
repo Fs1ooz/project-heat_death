@@ -28,6 +28,7 @@ EntropyManager="*res://Commons/entropy_manager.tscn"
 
 window/size/viewport_width=960
 window/size/viewport_height=540
+window/size/always_on_top=true
 window/stretch/mode="viewport"
 window/stretch/scale_mode="integer"
 

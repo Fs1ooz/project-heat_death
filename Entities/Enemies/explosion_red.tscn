@@ -69,6 +69,6 @@ trail_sections = 2
 trail_section_subdivisions = 2
 process_material = SubResource("ParticleProcessMaterial_uqslx")
 
-[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
+[node name="AudioStreamPlayer" type="AudioStreamPlayer2D" parent="."]
 stream = SubResource("AudioStreamRandomizer_hnfga")
 autoplay = true
