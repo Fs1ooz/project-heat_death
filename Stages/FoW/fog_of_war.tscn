@@ -1,7 +1,7 @@
 [gd_scene load_steps=4 format=3 uid="uid://co2c21vi0wo1u"]
 
 [ext_resource type="Script" uid="uid://3p8fgl1m8cvy" path="res://Stages/FoW/fog_of_war.gd" id="1_ugquq"]
-[ext_resource type="Shader" uid="uid://tnlaeyxsg7m" path="res://Stages/World/SolarSystem/asteroid_belt.gdshader" id="2_mco6f"]
+[ext_resource type="Shader" uid="uid://tnlaeyxsg7m" path="res://Stages/World/SolarSystem/AsteroidBelt/asteroid_belt.gdshader" id="2_mco6f"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_4onk6"]
 shader = ExtResource("2_mco6f")

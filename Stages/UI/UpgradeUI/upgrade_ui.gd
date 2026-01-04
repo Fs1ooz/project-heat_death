@@ -17,21 +17,21 @@ func _ready() -> void:
 
 	# Popola con upgrade casuali unici
 	while visible_upgrades.size() < VISIBLE_UPGRADES:
-		var random_upgrade = upgrades[randi_range(0, upgrades.size() - 1)]
+		var random_upgrade: int = upgrades[randi_range(0, upgrades.size() - 1)]
 		if not visible_upgrades.has(random_upgrade):
 			visible_upgrades.append(random_upgrade)
 
 	_refresh_buttons()
 
 
-func _input(event: InputEvent) -> void:
+func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action_pressed("space") and EntropyManager.entropy_value >= 0:
 		upgrades_h_box_container.visible = !upgrades_h_box_container.visible
 
 
 func _create_button(upgrade_type: int) -> Button:
-	var upgrade_data = UpgradeManager.get_upgrade_data(upgrade_type)
-	var btn = Button.new()
+	var upgrade_data: Dictionary = UpgradeManager.get_upgrade_data(upgrade_type)
+	var btn: Button = Button.new()
 	btn.custom_minimum_size = Vector2(200.0, 200.0)
 	btn.text = "%s\nEnergy: %d\nlvl: %d" % [upgrade_data["name"], upgrade_data["current_cost"], upgrade_data["level"]]
 	btn.set_meta("upgrade_type", upgrade_type)  # ← Salvo il tipo nel button
@@ -41,20 +41,20 @@ func _create_button(upgrade_type: int) -> Button:
 
 func _refresh_buttons() -> void:
 	# Pulisci vecchi pulsanti
-	for child in upgrades_h_box_container.get_children():
+	for child: Button in upgrades_h_box_container.get_children():
 		child.queue_free()
 
 	# Crea nuovi pulsanti
-	for upgrade_type in visible_upgrades:
+	for upgrade_type: int in visible_upgrades:
 
-		var btn = _create_button(upgrade_type)
+		var btn: Button = _create_button(upgrade_type)
 		upgrades_h_box_container.add_child.call_deferred(btn)
 
 
 
 func _on_upgrade_pressed(button: Button) -> void:
 
-	var upgrade_type = button.get_meta("upgrade_type")  # ← Recupero il tipo
+	var upgrade_type: int = button.get_meta("upgrade_type")  # ← Recupero il tipo
 
 	# ⚠️ CONTROLLO: se apply_upgrade fallisce (energia insufficiente) esci
 	if not UpgradeManager.apply_upgrade(upgrade_type):
@@ -62,10 +62,10 @@ func _on_upgrade_pressed(button: Button) -> void:
 		return
 
 	# Sostituisci l'upgrade usato con uno nuovo
-	var upgrade_idx = visible_upgrades.find(upgrade_type)
+	var upgrade_idx: int = visible_upgrades.find(upgrade_type)
 	visible_upgrades.erase(upgrade_type)
 
-	var new_upgrade = upgrades[randi_range(0, upgrades.size() - 1)]
+	var new_upgrade: int = upgrades[randi_range(0, upgrades.size() - 1)]
 	while visible_upgrades.has(new_upgrade):  # ← Evita duplicati
 		new_upgrade = upgrades[randi_range(0, upgrades.size() - 1)]
 
@@ -86,8 +86,8 @@ func _fade_in_button(btn: Button, duration: float = 0.3) -> void:
 	btn.create_tween().tween_property(btn, "modulate:a", 1.0, duration)
 
 func _shake_button(btn: Button, duration: float = 0.1) -> void:
-	var original_pos = btn.global_position
-	var tween = btn.create_tween()
+	var original_pos: Vector2 = btn.global_position
+	var tween: Tween = btn.create_tween()
 
 	tween.tween_property(btn, "global_position", original_pos + Vector2(5, 0), duration / 4)
 	tween.tween_property(btn, "global_position", original_pos + Vector2(-5, 0), duration / 4)

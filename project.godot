@@ -14,15 +14,21 @@ config/name="Heat Death"
 config/tags=PackedStringArray("gameforge")
 run/main_scene="uid://bwqwr2e2v3rvp"
 config/features=PackedStringArray("4.5", "Forward Plus")
+run/max_fps=240
 config/icon="uid://cutmcskxym36k"
 
 [autoload]
 
-UpgradeManager="*res://Commons/upgrade_manager.tscn"
 GlobalSignals="*res://Commons/global_signals.tscn"
-UnitConversion="*res://Commons/unit_conversion.tscn"
 StreamingManager="*res://Commons/streaming_manager.tscn"
+UnitConversion="*res://Commons/unit_conversion.tscn"
+UpgradeManager="*res://Commons/upgrade_manager.tscn"
 EntropyManager="*res://Commons/entropy_manager.tscn"
+
+[debug]
+
+gdscript/warnings/untyped_declaration=1
+gdscript/warnings/inferred_declaration=1
 
 [display]
 
@@ -30,6 +36,8 @@ window/size/viewport_width=960
 window/size/viewport_height=540
 window/stretch/mode="viewport"
 window/stretch/scale_mode="integer"
+window/max_fps=240
+window/physics_interpolation=false
 
 [editor_plugins]
 

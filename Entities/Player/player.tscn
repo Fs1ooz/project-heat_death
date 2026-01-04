@@ -1,7 +1,8 @@
-[gd_scene load_steps=9 format=3 uid="uid://470x1obeipdg"]
+[gd_scene load_steps=10 format=3 uid="uid://470x1obeipdg"]
 
 [ext_resource type="Script" uid="uid://bf2nvyuinsvhu" path="res://Entities/Player/player.gd" id="1_5c2io"]
 [ext_resource type="Texture2D" uid="uid://dnffwiy1b287y" path="res://Assets/Images/isnobulo.png" id="2_5c2io"]
+[ext_resource type="PackedScene" uid="uid://0vbdasmelfef" path="res://Entities/Player/shockwave.tscn" id="5_01a4e"]
 [ext_resource type="AudioStream" uid="uid://1wfdu2dsudw4" path="res://Assets/Sounds/hit.sfxr" id="5_4wf4l"]
 [ext_resource type="Script" uid="uid://cnf8kwhvre5kg" path="res://Entities/Player/camera_2d.gd" id="5_5c2io"]
 [ext_resource type="Material" uid="uid://bvhfi1gat4c5" path="res://Entities/Player/sciaveramentegay.tres" id="6_4wf4l"]
@@ -27,19 +28,19 @@ gravity_scale = 0.0
 freeze_mode = 1
 continuous_cd = 1
 contact_monitor = true
-max_contacts_reported = 50
+max_contacts_reported = 100
 linear_damp_mode = 1
 angular_damp_mode = 1
 script = ExtResource("1_5c2io")
 collision = NodePath("Collision")
 sprite = NodePath("Collision/Sprite")
 trail = NodePath("Collision/Sprite/Trail")
-shockwave = NodePath("")
+shockwave = NodePath("Collision/Sprite/ShockwaveRenderer")
 
 [node name="PlayerCamera" type="Camera2D" parent="."]
 limit_enabled = false
 position_smoothing_enabled = true
-position_smoothing_speed = 15.0
+position_smoothing_speed = 10.0
 rotation_smoothing_speed = 20.0
 script = ExtResource("5_5c2io")
 
@@ -54,12 +55,14 @@ texture = ExtResource("2_5c2io")
 
 [node name="Trail" type="GPUParticles2D" parent="Collision/Sprite"]
 z_index = -1
-amount = 300
+amount = 500
 lifetime = 0.75
 randomness = 0.2
 trail_lifetime = 1.0
 trail_sections = 12
 process_material = ExtResource("6_4wf4l")
+
+[node name="ShockwaveRenderer" parent="Collision/Sprite" instance=ExtResource("5_01a4e")]
 
 [node name="HitAudioStreamPlayer" type="AudioStreamPlayer" parent="."]
 stream = SubResource("AudioStreamRandomizer_5c2io")

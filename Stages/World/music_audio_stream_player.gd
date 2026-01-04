@@ -1,33 +1,30 @@
 extends AudioStreamPlayer
 
 @export var min_distance: float = 2500.0
-@export var player: Player
+@onready var player: Player = get_tree().get_first_node_in_group("player")
 
 # Indici dei clip
-const CLIP_IDLE := 0
-const CLIP_MOVING := 1
-const CLIP_NEAR_BODY := 2
+const CLIP_IDLE: int = 0
+const CLIP_MOVING: int = 1
+const CLIP_NEAR_BODY: int = 2
 
-var current_clip := -1
+var current_clip: int = -1
 var music: AudioStreamPlaybackInteractive = null
 
-func _ready():
+func _ready() -> void:
 	play()  # serve per inizializzare il playback
 	music = get_stream_playback() as AudioStreamPlaybackInteractive
 	if music == null:
 		push_error("AudioStreamPlaybackInteractive non trovato! Controlla che lo stream sia AudioStreamInteractive.")
 
-
-
-func _process(_delta):
+func _process(_delta: float) -> void:
 	if not player or music == null:
 		return
-	var index := get_active_clip()
+
+	var index: int = get_active_clip()
 	if index != current_clip:
 		current_clip = index
 		music.switch_to_clip(current_clip)
-
-
 
 func get_active_clip() -> int:
 	if near_celestial_body():
@@ -37,16 +34,14 @@ func get_active_clip() -> int:
 	else:
 		return CLIP_IDLE
 
-
 func near_celestial_body() -> bool:
-	for body in get_tree().get_nodes_in_group("celestialbodies"):
-		if body is CelestialBody:
-			var to_body = body.global_position - player.global_position
-			var distance = to_body.length()
-			if distance <= min_distance:
-				var dir_to_body = to_body.normalized()
-				var facing = Vector2(cos(player.rotation), sin(player.rotation))
-				var dot = dir_to_body.dot(facing)
-				if dot > 0.7:
+	for body: CelestialBody in get_tree().get_nodes_in_group("celestialbodies"):
+		var to_body: Vector2 = body.global_position - player.global_position
+		var distance: float = to_body.length()
+		if distance <= min_distance:
+			var dir_to_body: Vector2 = to_body.normalized()
+			var facing: Vector2 = Vector2(cos(player.rotation), sin(player.rotation))
+			var dot: float = dir_to_body.dot(facing)
+			if dot > 0.7:
 					return true
 	return false

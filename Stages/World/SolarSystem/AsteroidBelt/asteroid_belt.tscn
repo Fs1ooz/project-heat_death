@@ -1,13 +1,48 @@
-[gd_scene load_steps=12 format=3 uid="uid://bwqwr2e2v3rvp"]
+[gd_scene load_steps=18 format=3 uid="uid://bwqwr2e2v3rvp"]
 
-[ext_resource type="Script" uid="uid://cyj080sf0wp5o" path="res://Stages/World/SolarSystem/asteroid_belt.gd" id="1_leih4"]
+[ext_resource type="Script" uid="uid://cyj080sf0wp5o" path="res://Stages/World/SolarSystem/AsteroidBelt/asteroid_belt.gd" id="1_leih4"]
 [ext_resource type="PackedScene" uid="uid://470x1obeipdg" path="res://Entities/Player/player.tscn" id="2_aw4pb"]
 [ext_resource type="PackedScene" uid="uid://dooqkflafelol" path="res://Entities/Enemies/SmallBodies/asteroid.tscn" id="2_dgf5r"]
 [ext_resource type="PackedScene" uid="uid://bpeudpxsbd3x2" path="res://Entities/Enemies/SmallBodies/meteoroid.tscn" id="3_0oqe1"]
+[ext_resource type="PackedScene" uid="uid://bosimyr8qkuso" path="res://Stages/World/energy_spawner.tscn" id="4_017r3"]
+[ext_resource type="PackedScene" uid="uid://bvfq3qbl7klob" path="res://Stages/World/world_environment.tscn" id="4_jug47"]
+[ext_resource type="PackedScene" uid="uid://bkljj71ppklsf" path="res://Stages/World/SolarSystem/AsteroidBelt/background_layer.tscn" id="4_leih4"]
+[ext_resource type="PackedScene" uid="uid://befachtfe40l2" path="res://Stages/World/SolarSystem/AsteroidBelt/base_background_layer.tscn" id="4_sp6ku"]
 [ext_resource type="AudioStream" uid="uid://btl310t212txn" path="res://Assets/Music/BETA - Base.mp3" id="6_gsnah"]
 [ext_resource type="AudioStream" uid="uid://cawomildbxiao" path="res://Assets/Music/BETA - Phase1.mp3" id="7_xxft0"]
 [ext_resource type="AudioStream" uid="uid://wvogywji06eb" path="res://Assets/Music/BETA - Phase2.mp3" id="8_jpv6b"]
 [ext_resource type="Script" uid="uid://cvs60xrp5qjxm" path="res://Stages/World/music_audio_stream_player.gd" id="9_4onk6"]
+[ext_resource type="PackedScene" uid="uid://byiki3druigls" path="res://Stages/UI/ui_layer.tscn" id="11_bcvjd"]
+
+[sub_resource type="Environment" id="Environment_jug47"]
+background_mode = 3
+tonemap_mode = 2
+tonemap_exposure = 1.05
+tonemap_white = 2.0
+glow_enabled = true
+glow_levels/1 = 10.0
+glow_levels/2 = 2.5
+glow_levels/4 = 3.0
+glow_levels/5 = 5.0
+glow_levels/6 = 3.0
+glow_levels/7 = 2.0
+glow_normalized = true
+glow_intensity = 7.0
+glow_strength = 1.1
+glow_blend_mode = 0
+glow_hdr_scale = 1.0
+glow_hdr_luminance_cap = 32.0
+fog_light_energy = 8.4
+fog_sun_scatter = 0.6
+fog_density = 0.5975
+fog_height = 384.0
+volumetric_fog_density = 1.0
+volumetric_fog_emission_energy = 1024.0
+volumetric_fog_gi_inject = 7.8
+volumetric_fog_length = 1024.0
+volumetric_fog_ambient_inject = 13.45
+adjustment_enabled = true
+adjustment_saturation = 1.1
 
 [sub_resource type="AudioStreamInteractive" id="AudioStreamInteractive_m4v0y"]
 clip_count = 3
@@ -44,6 +79,18 @@ script = ExtResource("1_leih4")
 asteroid_scene = ExtResource("2_dgf5r")
 meteoroid_scene = ExtResource("3_0oqe1")
 
+[node name="WorldEnvironment" parent="." instance=ExtResource("4_jug47")]
+environment = SubResource("Environment_jug47")
+
+[node name="EnergySpawner" parent="." instance=ExtResource("4_017r3")]
+
+[node name="UILayer" parent="." instance=ExtResource("11_bcvjd")]
+layer = 2
+
+[node name="BaseBackgroundLayer" parent="." instance=ExtResource("4_sp6ku")]
+
+[node name="BackgroundLayer" parent="." instance=ExtResource("4_leih4")]
+
 [node name="Regions" type="Node2D" parent="."]
 
 [node name="InnerTransition" type="Node2D" parent="Regions"]
@@ -78,7 +125,8 @@ meteoroid_scene = ExtResource("3_0oqe1")
 z_index = 2
 limit_enabled = false
 
-[node name="Player" parent="." instance=ExtResource("2_aw4pb")]
+[node name="Player" parent="." node_paths=PackedStringArray("life_bar") instance=ExtResource("2_aw4pb")]
+life_bar = NodePath("../UILayer/PlayerLifeBar")
 
 [node name="MusicAudioStreamPlayer" type="AudioStreamPlayer" parent="."]
 stream = SubResource("AudioStreamInteractive_m4v0y")

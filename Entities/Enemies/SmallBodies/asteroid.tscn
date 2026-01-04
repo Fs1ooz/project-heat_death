@@ -3,11 +3,11 @@
 [ext_resource type="Script" uid="uid://b76ax10rq762s" path="res://Entities/Enemies/SmallBodies/asteroid.gd" id="1_tefsh"]
 [ext_resource type="PackedScene" uid="uid://bgievdkpstd3t" path="res://Entities/Enemies/visible_screen_enabler_component.tscn" id="2_tefsh"]
 
-[sub_resource type="CircleShape2D" id="CircleShape2D_y0ama"]
-radius = 118.016945
-
 [sub_resource type="CircleShape2D" id="CircleShape2D_vwlwn"]
 radius = 968.16736
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_y0ama"]
+radius = 118.016945
 
 [node name="Asteroid" type="RigidBody2D" node_paths=PackedStringArray("collision", "gravity_area_collision") groups=["celestialbodies"]]
 z_index = 1
@@ -18,10 +18,18 @@ script = ExtResource("1_tefsh")
 internal_energy = 5
 game_energy = 100
 min_size = 50.0
-max_size = 100.0
+max_size = 150.0
 round_base = 10
 collision = NodePath("Collision")
 gravity_area_collision = NodePath("Gravity/GravityAreaCollision")
+
+[node name="Gravity" type="Area2D" parent="."]
+
+[node name="GravityAreaCollision" type="CollisionShape2D" parent="Gravity"]
+shape = SubResource("CircleShape2D_vwlwn")
+
+[node name="VisibleScreenEnablerComponent" parent="." instance=ExtResource("2_tefsh")]
+rect = Rect2(-984, -964, 1953, 1938)
 
 [node name="Collision" type="CollisionShape2D" parent="."]
 shape = SubResource("CircleShape2D_y0ama")
@@ -32,61 +40,17 @@ color = Color(0.43890208, 0.43890208, 0.43890208, 1)
 offset = Vector2(210.3919, -383.96265)
 polygon = PackedVector2Array(-39.37622, 154, -563.3827, 178, -835.9872, 260, -908.6817, 434, -690.59814, 558, -308.95178, 619, 163.56271, 592, 411.93567, 512, 502.60278, 378.17426, 330.15436, 219)
 
-[node name="Polygon2D2" type="Polygon2D" parent="Collision/Polygon2D"]
-position = Vector2(1368.6777, -5476.1973)
-scale = Vector2(0.6825788, 4.9166665)
-color = Color(0.26239687, 0.26239687, 0.26239687, 1)
-polygon = PackedVector2Array(-1487.944, 1135, -1778.4905, 1141, -1626.8884, 1134, -1432.3661, 1129)
-
-[node name="Polygon2D6" type="Polygon2D" parent="Collision/Polygon2D"]
-position = Vector2(1056.697, -4980.1973)
-scale = Vector2(0.87907785, 4.3846154)
-color = Color(0.26239687, 0.26239687, 0.26239687, 1)
-polygon = PackedVector2Array(-1487.944, 1135, -1515.7329, 1142, -1626.8884, 1134, -1833.6235, 1125.8071, -1432.3661, 1129)
-
-[node name="Polygon2D7" type="Polygon2D" parent="Collision/Polygon2D"]
-position = Vector2(1710.9479, -5253.1973)
-scale = Vector2(0.9583195, 4.5384617)
-color = Color(0.26239687, 0.26239687, 0.26239687, 1)
-polygon = PackedVector2Array(-1487.944, 1135, -1515.7329, 1142, -1626.8884, 1134, -1432.3661, 1129, -1460.155, 1141)
-
-[node name="Polygon2D8" type="Polygon2D" parent="Collision/Polygon2D"]
-position = Vector2(1510.9226, -5487.561)
-scale = Vector2(0.8946063, 4.818182)
-color = Color(0.26239687, 0.26239687, 0.26239687, 1)
-polygon = PackedVector2Array(-1487.944, 1135, -1515.7329, 1142, -1626.8884, 1134, -1333.8679, 1131)
-
-[node name="Polygon2D" type="Polygon2D" parent="Collision/Polygon2D"]
-position = Vector2(4733.83, -3968.1973)
-scale = Vector2(3.60207, 5.3)
-color = Color(0.15377831, 0.15377831, 0.15377831, 1)
-polygon = PackedVector2Array(-1229.3792, 750, -1187.7239, 760, -1151.026, 758, -1132.677, 754)
-
 [node name="Polygon2D3" type="Polygon2D" parent="Collision/Polygon2D"]
-position = Vector2(3034.5942, -3629.1975)
-scale = Vector2(2.8081667, 4.6666665)
-color = Color(0.15377831, 0.15377831, 0.15377831, 1)
-polygon = PackedVector2Array(-1196.8983, 751, -1187.7239, 760, -1151.026, 758, -1132.677, 754)
+position = Vector2(549.35657, -59.81328)
+scale = Vector2(5.8442187, 1.9294606)
+color = Color(0.26293245, 0.26293245, 0.26293242, 1)
+polygon = PackedVector2Array(-63, -29, -21, 0, -69, 19)
 
-[node name="Polygon2D4" type="Polygon2D" parent="Collision/Polygon2D"]
-position = Vector2(1459.5461, -1481.1974)
-scale = Vector2(0.87063116, 1.8888888)
-color = Color(0.15377831, 0.15377831, 0.15377831, 1)
-polygon = PackedVector2Array(-1196.8983, 751, -1187.7239, 760, -1151.026, 758, -1132.677, 754)
-
-[node name="Polygon2D5" type="Polygon2D" parent="Collision/Polygon2D"]
-position = Vector2(3273.8804, -7799.1978)
-scale = Vector2(2.949659, 10.444445)
-color = Color(0.15377831, 0.15377831, 0.15377831, 1)
-polygon = PackedVector2Array(-1196.8983, 751, -1187.7239, 760, -1151.026, 758, -1132.677, 754)
-
-[node name="Gravity" type="Area2D" parent="."]
-
-[node name="GravityAreaCollision" type="CollisionShape2D" parent="Gravity"]
-shape = SubResource("CircleShape2D_vwlwn")
-
-[node name="VisibleScreenEnablerComponent" parent="." instance=ExtResource("2_tefsh")]
-rect = Rect2(-126, -104, 264, 221)
+[node name="Polygon2D2" type="Polygon2D" parent="Collision/Polygon2D"]
+position = Vector2(40.90953, 57.88382)
+scale = Vector2(5.8442187, 1.9294606)
+color = Color(0.29360762, 0.21911678, 0.22660738, 1)
+polygon = PackedVector2Array(-63, -29, -21, 0, -69, 19)
 
 [connection signal="body_entered" from="." to="." method="_on_body_entered"]
 [connection signal="body_entered" from="Gravity" to="." method="_on_gravity_body_entered"]

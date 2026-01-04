@@ -1,13 +1,13 @@
 extends Camera2D
 
-@export var zoom_speed: float = 1.1
+@export var zoom_speed: float = 1.05
 @export_group("Zoom Limits (Base Values)")
-@export var min_zoom_base: float = 0.005  # Limite minimo quando player.scale = 1
+@export var min_zoom_base: float = 0.01  # Limite minimo quando player.scale = 1
 @export var max_zoom_base: float = 2.0  # Limite massimo quando player.scale = 1
 @export_group("Zoom Settings")
-@export var base_zoom: Vector2 = Vector2.ONE * 0.2
-@export var zoom_lerp_speed := 5.0
-@export var manual_zoom_timeout := 2.0
+@export var base_zoom: Vector2 = Vector2.ONE * 0.25
+@export var zoom_lerp_speed: float = 5.0
+@export var manual_zoom_timeout: float = 2.0
 
 var manual_zoom: bool = false
 var last_zoom_input_time: float = 0.0
@@ -16,14 +16,14 @@ var last_zoom_input_time: float = 0.0
 var min_zoom: float
 var max_zoom: float
 
-@onready var player = get_parent()
+@onready var player: Player = get_parent()
 
 func _ready() -> void:
 	make_current()
 
-func _process(delta):
+func _process(delta: float) -> void:
 	# Calcola i limiti di zoom dinamicamente in base alla scala del player
-	var player_scale = max(player.sprite.scale.x, 0.01)
+	var player_scale: float = max(player.sprite.scale.x, 0.01)
 	min_zoom = min_zoom_base / player_scale
 	max_zoom = max_zoom_base / player_scale
 
@@ -33,7 +33,7 @@ func _process(delta):
 
 	if not manual_zoom:
 		# Calcola target zoom e CLAMPALO
-		var target_zoom = base_zoom / player_scale
+		var target_zoom: Vector2 = base_zoom / player_scale
 		target_zoom.x = clamp(target_zoom.x, min_zoom, max_zoom)
 		target_zoom.y = clamp(target_zoom.y, min_zoom, max_zoom)
 		zoom = zoom.lerp(target_zoom, zoom_lerp_speed * delta)

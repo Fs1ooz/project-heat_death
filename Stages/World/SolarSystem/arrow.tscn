@@ -1,0 +1,7 @@
+[gd_scene load_steps=2 format=3 uid="uid://bcnmskds2ga3l"]
+
+[ext_resource type="Script" uid="uid://bewwgxfpnvdxx" path="res://Stages/World/SolarSystem/arrow.gd" id="1_bls3d"]
+
+[node name="Arrow" type="Polygon2D"]
+color = Color(1, 1, 1, 0.78431374)
+script = ExtResource("1_bls3d")

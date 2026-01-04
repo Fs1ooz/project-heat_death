@@ -1,0 +1,14 @@
+[gd_scene format=3 uid="uid://befachtfe40l2"]
+
+[node name="BaseBackgroundLayer" type="CanvasLayer"]
+layer = -3
+
+[node name="ColorRect" type="ColorRect" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+color = Color(0.003921569, 0.003921569, 0.003921569, 1)

@@ -12,7 +12,7 @@ extends Node2D
 
 
 
-const REGIONS := [
+const REGIONS: Array = [
 	# Hungaria / Transizione
 	{ "name": "InnerTransition", "min_au": 1.87, "max_au": 2.21, "asteroid_count": 5, "meteoroid_count": 150 },
 
@@ -64,18 +64,18 @@ func _ready() -> void:
 func update_player_region() -> void:
 	if not player:
 		return
-	var player_distance_pixels := player.global_position.length()
-	var player_distance_au := UnitConversion.pixels_to_au(player_distance_pixels)
+	var player_distance_pixels: float = player.global_position.length()
+	var player_distance_au: float = UnitConversion.pixels_to_au(player_distance_pixels)
 
-	var new_region := ""
-	for region_data in REGIONS:
+	var new_region: String = ""
+	for region_data: Dictionary in REGIONS:
 		if player_distance_au >= region_data["min_au"] and player_distance_au <= region_data["max_au"]:
 			new_region = region_data["name"]
 			break
 
 	if new_region != current_region and new_region != "":
 		current_region = new_region
-		var distance_km := UnitConversion.pixels_to_km(player_distance_pixels)
+		var distance_km: float = UnitConversion.pixels_to_km(player_distance_pixels)
 		print("📍 Regione: %s | Distanza: %d Mio km (%.2f AU)" % [current_region, distance_km / 1_000_000, player_distance_au])
 
 func spawn_player_in_cluster() -> void:
@@ -84,25 +84,25 @@ func spawn_player_in_cluster() -> void:
 		player.global_position = Vector2(UnitConversion.au_to_pixels(2.5), 0)
 	else:
 		# Spawn al centro del cluster con un piccolo offset
-		var offset := Vector2.from_angle(randf() * TAU) * randf_range(50, 150)
+		var offset: Vector2 = Vector2.from_angle(randf() * TAU) * randf_range(50, 150)
 		player.global_position = spawn_cluster_position + offset
 		print("🎯 Player spawnato nel cluster a %.0f, %.0f" % [spawn_cluster_position.x, spawn_cluster_position.y])
 
 func generate_belt() -> void:
 	# Scegli una regione casuale per il cluster (preferibilmente nella fascia centrale)
-	var cluster_regions := ["MiddleBelt", "InnerBelt", "EunomiaFamily"]
+	var cluster_regions: Array = ["MiddleBelt", "InnerBelt", "EunomiaFamily"]
 	var chosen_region: String = cluster_regions[randi() % cluster_regions.size()]
 
-	for region_data in REGIONS:
-		var region_node := $Regions.get_node_or_null(region_data["name"])
+	for region_data: Dictionary in REGIONS:
+		var region_node: Node2D = $Regions.get_node_or_null(region_data["name"])
 
 		if not region_node:
 			region_node = Node2D.new()
 			region_node.name = region_data["name"]
 			$Regions.add_child(region_node)
 
-		var min_pixels := UnitConversion.au_to_pixels(region_data["min_au"])
-		var max_pixels := UnitConversion.au_to_pixels(region_data["max_au"])
+		var min_pixels: float = UnitConversion.au_to_pixels(region_data["min_au"])
+		var max_pixels: float = UnitConversion.au_to_pixels(region_data["max_au"])
 
 		# Reset spazi occupati per ogni regione
 		occupied_spaces.clear()
@@ -115,7 +115,7 @@ func generate_belt() -> void:
 		spawn_ring(region_node, region_data["asteroid_count"], min_pixels, max_pixels, asteroid_scene)
 
 		# Spawn meteoroidi (piccoli)
-		spawn_ring(region_node, region_data["meteoroid_count"] * 2, min_pixels, max_pixels, meteoroid_scene)
+		spawn_ring(region_node, region_data["meteoroid_count"], min_pixels, max_pixels, meteoroid_scene)
 
 func get_object_radius(obj: RigidBody2D) -> float:
 	# Usa la massa per calcolare il raggio
@@ -129,13 +129,13 @@ func get_object_radius(obj: RigidBody2D) -> float:
 	return 50.0
 
 func create_spawn_cluster(container: Node2D, min_r: float, max_r: float) -> void:
-	# Crea un cluster di 8-12 meteoroidi vicini
-	var cluster_size := randi_range(8, 12)
-	var cluster_radius := 15_000.0  # Raggio del cluster
+	# Crea un cluster di meteoroidi vicini
+	var cluster_size: int = randi_range(10, 15)
+	var cluster_radius: float = 25_000.0  # Raggio del cluster
 
 	# Posizione centrale del cluster (nella fascia scelta)
-	var mid_r := (min_r + max_r) / 2.0
-	var angle := randf() * TAU
+	var mid_r: float = (min_r + max_r) / 2.0
+	var angle: float= randf() * TAU
 	spawn_cluster_position = Vector2(cos(angle) * mid_r, sin(angle) * mid_r)
 
 	print("🎯 Creazione cluster spawn a %.0f AU (%.0f, %.0f)" % [
@@ -145,20 +145,21 @@ func create_spawn_cluster(container: Node2D, min_r: float, max_r: float) -> void
 	])
 
 	# Spawna i meteoroidi attorno al punto centrale
-	for i in range(cluster_size):
-		var local_angle := (TAU / cluster_size) * i + randf_range(-0.3, 0.3)
-		var local_distance := randf_range(cluster_radius * 0.3, cluster_radius)
-		var local_offset := Vector2(cos(local_angle), sin(local_angle)) * local_distance
+	for i: int in range(cluster_size):
+		var local_angle: float = (TAU / cluster_size) * i + randf_range(-0.3, 0.3)
+		var local_distance: float = randf_range(cluster_radius * 0.3, cluster_radius)
+		var local_offset: Vector2 = Vector2(cos(local_angle), sin(local_angle)) * local_distance
 
-		var meteoroid_pos := spawn_cluster_position + local_offset
+		var meteoroid_pos: Vector2 = spawn_cluster_position + local_offset
 
-		var obj := meteoroid_scene.instantiate() as Node2D
+		var obj: Node2D = meteoroid_scene.instantiate()
 		obj.position = meteoroid_pos
+		obj.max_size = 3.0
 		container.add_child(obj)
 
 		# Registra gli spazi occupati dal cluster
-		var obj_radius := get_object_radius(obj)
-		var safety_radius := obj_radius * safety_margin_multiplier
+		var obj_radius: float = get_object_radius(obj)
+		var safety_radius: float = obj_radius * safety_margin_multiplier
 		occupied_spaces.append({
 			"position": meteoroid_pos,
 			"radius": safety_radius
@@ -181,37 +182,37 @@ func spawn_ring(container: Node2D, count: int, min_r: float, max_r: float, scene
 	var base_radius: float
 	var eccentricity: float = 0.01
 
-	for i in count:
+	for i: int in count:
 		# --- angolo con piccolo jitter (±25 % del passo) ---
-		var jitter  = randf_range(-0.25, 0.25) * ring_mean_separation
-		var angle   = ring_last_angle + ring_mean_separation + jitter
+		var jitter: float  = randf_range(-0.25, 0.25) * ring_mean_separation
+		var angle: float = ring_last_angle + ring_mean_separation + jitter
 		ring_last_angle = angle
 
 		# --- raggio con eccentricity (come avevi già) ---
-		var t        = pow(randf(), 0.55)
+		var t: float = pow(randf(), 0.55)
 		base_radius  = lerp(min_r, max_r, t)
-		var r  = base_radius * (1.0 + eccentricity * -1.0 if randf()<0.5 else 1.0)
+		var r: float = base_radius * (1.0 + eccentricity * -1.0 if randf()<0.5 else 1.0)
 		r = clamp(r, min_r*0.98, max_r*1.02)
 
 		# --- noise verticale ---
-		var vertical_noise = randf_range(-0.03, 0.03) * r
+		var vertical_noise: float = randf_range(-0.03, 0.03) * r
 
-		var pos := Vector2(cos(angle)*r, sin(angle)*r + vertical_noise)
+		var pos: Vector2 = Vector2(cos(angle)*r, sin(angle)*r + vertical_noise)
 
 		# --- istanzia direttamente (nessun check) ---
-		var obj := scene.instantiate() as Node2D
+		var obj: Node2D = scene.instantiate()
 		obj.position = pos
 		container.add_child(obj)
 
 
 func is_position_valid(pos: Vector2, new_object_radius: float) -> bool:
 	# Controlla se c'è sovrapposizione con altri oggetti
-	for space in occupied_spaces:
+	for space: Dictionary in occupied_spaces:
 		var occupied_pos: Vector2 = space["position"]
 		var occupied_radius: float = space["radius"]
 
 		# Distanza minima = somma dei due raggi di sicurezza
-		var min_distance := new_object_radius + occupied_radius
+		var min_distance: float = new_object_radius + occupied_radius
 
 		if pos.distance_to(occupied_pos) < min_distance:
 			return false

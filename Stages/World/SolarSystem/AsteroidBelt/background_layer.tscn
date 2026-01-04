@@ -1,0 +1,76 @@
+[gd_scene load_steps=7 format=3 uid="uid://bkljj71ppklsf"]
+
+[ext_resource type="Shader" uid="uid://dkeibheix7tve" path="res://Commons/nebulosa.gdshader" id="1_xnvbv"]
+[ext_resource type="Texture2D" uid="uid://cw7ytj1vmdret" path="res://Assets/Images/Grayscale/nebulae.png" id="2_bio74"]
+[ext_resource type="Texture2D" uid="uid://kkw2x4ldjk1m" path="res://Assets/Images/Grayscale/stars.png" id="3_bio74"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_n3etr"]
+shader = ExtResource("1_xnvbv")
+shader_parameter/color1 = Color(0.5, 0.1, 0.8, 1)
+shader_parameter/color2 = Color(0.1, 0.3, 0.9, 1)
+shader_parameter/color3 = Color(0.8, 0.2, 0.5, 1)
+shader_parameter/color_shift_speed = 0.3
+shader_parameter/gradient_scale = 2.0000000223518
+shader_parameter/pulse_speed = 0.5
+shader_parameter/pulse_intensity = 0.2
+shader_parameter/enable_shimmer = false
+shader_parameter/shimmer_speed = 2.0
+shader_parameter/alpha_intensity = 0.80000001192096
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_507dh"]
+shader = ExtResource("1_xnvbv")
+shader_parameter/color1 = Color(0.8611975, 0.20162952, 1.353256, 1)
+shader_parameter/color2 = Color(0.17545618, 0.4685975, 1.353256, 1)
+shader_parameter/color3 = Color(1.2900516, 0.5207778, 0.25912008, 1)
+shader_parameter/color_shift_speed = 0.3
+shader_parameter/gradient_scale = 2.0000000223518
+shader_parameter/pulse_speed = 0.5
+shader_parameter/pulse_intensity = 0.2
+shader_parameter/enable_shimmer = true
+shader_parameter/shimmer_speed = 2.0
+shader_parameter/alpha_intensity = 0.90000001341108
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_bio74"]
+shader = ExtResource("1_xnvbv")
+shader_parameter/color1 = Color(0.28100932, 0.7660193, 2.454227, 1)
+shader_parameter/color2 = Color(1.8247963, 1.5592736, 0.80462986, 1)
+shader_parameter/color3 = Color(1.353256, 0.25921082, 0.096936174, 1)
+shader_parameter/color_shift_speed = 0.0
+shader_parameter/gradient_scale = 4.0000000521542
+shader_parameter/pulse_speed = 0.5
+shader_parameter/pulse_intensity = 0.5
+shader_parameter/enable_shimmer = true
+shader_parameter/shimmer_speed = 2.0
+shader_parameter/alpha_intensity = 1.0
+
+[node name="BackgroundLayer" type="CanvasLayer"]
+layer = -2
+follow_viewport_enabled = true
+follow_viewport_scale = 0.5
+
+[node name="Parallax2DBottom" type="Parallax2D" parent="."]
+rotation = -3.1415925
+scale = Vector2(200, 200)
+scroll_scale = Vector2(0.001, 0.001)
+repeat_size = Vector2(2000, 1438)
+autoscroll = Vector2(0.001, 0.002)
+repeat_times = 50
+
+[node name="Nebulae" type="Sprite2D" parent="Parallax2DBottom"]
+material = SubResource("ShaderMaterial_n3etr")
+texture = ExtResource("2_bio74")
+
+[node name="Parallax2DTop" type="Parallax2D" parent="."]
+scale = Vector2(500, 500)
+scroll_scale = Vector2(0.01, 0.01)
+repeat_size = Vector2(2000, 1438)
+autoscroll = Vector2(0.01, 0.005)
+repeat_times = 25
+
+[node name="Nebulae" type="Sprite2D" parent="Parallax2DTop"]
+material = SubResource("ShaderMaterial_507dh")
+texture = ExtResource("2_bio74")
+
+[node name="Stars" type="Sprite2D" parent="Parallax2DTop"]
+material = SubResource("ShaderMaterial_bio74")
+texture = ExtResource("3_bio74")

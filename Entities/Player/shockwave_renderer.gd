@@ -4,7 +4,6 @@ var shockwaves: Array = []
 var original_pos = global_position
 
 
-
 func _ready() -> void:
 	# Initialize shader parameters with empty arrays
 	material.set_shader_parameter("shockwave_positions", [])

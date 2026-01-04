@@ -3,24 +3,18 @@
 [ext_resource type="Script" uid="uid://bdmvnvgdm1aav" path="res://Entities/Enemies/SmallBodies/meteoroid.gd" id="1_otcpb"]
 [ext_resource type="PackedScene" uid="uid://bgievdkpstd3t" path="res://Entities/Enemies/visible_screen_enabler_component.tscn" id="2_6m435"]
 
+[sub_resource type="CircleShape2D" id="CircleShape2D_6m435"]
+radius = 1000.0
+
 [sub_resource type="CircleShape2D" id="CircleShape2D_lyb38"]
 radius = 50.01
 
-[sub_resource type="CircleShape2D" id="CircleShape2D_6m435"]
-radius = 575.63354
-
 [node name="Meteoroid" type="RigidBody2D" node_paths=PackedStringArray("collision", "gravity_area_collision") groups=["celestialbodies"]]
 script = ExtResource("1_otcpb")
+max_size = 25.0
 collision = NodePath("Collision")
 gravity_area_collision = NodePath("Gravity/GravityAreaCollision")
 metadata/_custom_type_script = "uid://be8uvibib1twp"
-
-[node name="Collision" type="CollisionShape2D" parent="."]
-shape = SubResource("CircleShape2D_lyb38")
-
-[node name="Polygon2D" type="Polygon2D" parent="Collision"]
-color = Color(0.5307092, 0.4973181, 0.48928988, 1)
-polygon = PackedVector2Array(50, 0, 45, -20, 37, -34, 20, -45, 0, -50, -19, -46, -33, -37, -45, -21, -50, 0, -47, 17, -37, 34, -22, 44, 0, 50, 18, 46, 35, 36, 45, 22)
 
 [node name="Gravity" type="Area2D" parent="."]
 collision_layer = 0
@@ -30,7 +24,14 @@ position = Vector2(-1, 1)
 shape = SubResource("CircleShape2D_6m435")
 
 [node name="VisibleScreenEnablerComponent" parent="." instance=ExtResource("2_6m435")]
-rect = Rect2(-55, -49, 109, 104)
+rect = Rect2(-1031, -1002, 2053, 2087)
+
+[node name="Collision" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_lyb38")
+
+[node name="Polygon2D" type="Polygon2D" parent="Collision"]
+color = Color(0.5307092, 0.4973181, 0.48928988, 1)
+polygon = PackedVector2Array(52, 0, 38, -36, 0, -52, -39, -37, -52, 0, -39, 36, 0, 53, 38, 37)
 
 [connection signal="body_entered" from="." to="." method="_on_body_entered"]
 [connection signal="body_entered" from="Gravity" to="." method="_on_gravity_body_entered"]
