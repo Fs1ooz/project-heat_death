@@ -53,7 +53,6 @@ rotation = -1.5707964
 texture = ExtResource("2_5c2io")
 
 [node name="Trail" type="GPUParticles2D" parent="Collision/Sprite"]
-visible = false
 z_index = -1
 amount = 300
 lifetime = 0.75
@@ -71,7 +70,5 @@ bus = &"Sound"
 [node name="RegenTimer" type="Timer" parent="."]
 wait_time = 5.0
 autostart = true
-
-[node name="CanvasLayer" type="CanvasLayer" parent="."]
 
 [connection signal="timeout" from="RegenTimer" to="." method="_on_regen_timer_timeout"]

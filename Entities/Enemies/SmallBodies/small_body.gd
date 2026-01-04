@@ -8,14 +8,15 @@ class_name SmallBody
 
 
 func _on_visible_screen_enabler_component_screen_entered() -> void:
-	await get_tree().process_frame
-	print("ENTRATO: ", process_mode)
+	set_sleeping(false)
+	print("ENTRATO: ", sleeping)
 
 
 
 func _on_visible_screen_enabler_component_screen_exited() -> void:
-	await get_tree().process_frame
-	print("USCITO: ", process_mode)
+	set_sleeping(true)
+	print("USCITO: ", sleeping )
+
 
 
 

@@ -52,13 +52,14 @@ func _ready() -> void:
 	generate_belt()
 	spawn_player_in_cluster()
 
-@export var disable_all_shaders: bool = true
-
-func _process(_delta: float) -> void:
-
-	if disable_all_shaders:
-		RenderingServer.set_default_clear_color(Color.BLACK)
 	update_player_region()
+
+#@export var disable_all_shaders: bool = true
+
+#func _process(_delta: float) -> void:
+##
+	#if disable_all_shaders:
+		#RenderingServer.set_default_clear_color(Color.BLACK)
 
 func update_player_region() -> void:
 	if not player:

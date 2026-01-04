@@ -43,7 +43,6 @@ fill_to = Vector2(0, 0)
 script = ExtResource("1_leih4")
 asteroid_scene = ExtResource("2_dgf5r")
 meteoroid_scene = ExtResource("3_0oqe1")
-safety_margin_multiplier = null
 
 [node name="Regions" type="Node2D" parent="."]
 
