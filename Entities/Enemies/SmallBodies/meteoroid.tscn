@@ -30,6 +30,7 @@ position = Vector2(-1, 1)
 shape = SubResource("CircleShape2D_6m435")
 
 [node name="VisibleScreenEnablerComponent" parent="." instance=ExtResource("2_6m435")]
+rect = Rect2(-44, -41, 98, 96)
 
 [connection signal="body_entered" from="." to="." method="_on_body_entered"]
 [connection signal="body_entered" from="Gravity" to="." method="_on_gravity_body_entered"]

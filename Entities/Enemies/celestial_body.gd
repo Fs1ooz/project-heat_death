@@ -289,7 +289,7 @@ var has_orbit: bool = false
 	#_apply_orbit()
 
 func _on_entropy_changed(entropy: float):
-	if not visible:
+	if process_mode == PROCESS_MODE_DISABLED:
 		return
 
 	current_noise = base_noise + pow(entropy / 100.0, 2.0) * (100.0 - base_noise)

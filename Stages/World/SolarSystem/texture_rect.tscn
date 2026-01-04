@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://bcnmskds2ga3l"]
+
+[ext_resource type="Script" uid="uid://bewwgxfpnvdxx" path="res://Stages/World/SolarSystem/texture_rect.gd" id="1_rlhmb"]
+
+[node name="TextureRect" type="Polygon2D"]
+script = ExtResource("1_rlhmb")

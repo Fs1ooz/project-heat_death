@@ -7,7 +7,7 @@ extends Node2D
 @export var energy_scene: PackedScene = preload("res://Entities/EnergyDrop/energy_drop.tscn")
 @export var player: Node2D
 
-@export var max_energy: int = 500
+@export var max_energy: int = 300
 
 ## Spawn ring
 @export var spawn_ring_min_distance: float = 900.0

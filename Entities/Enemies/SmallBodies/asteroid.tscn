@@ -86,6 +86,7 @@ polygon = PackedVector2Array(-1196.8983, 751, -1187.7239, 760, -1151.026, 758, -
 shape = SubResource("CircleShape2D_vwlwn")
 
 [node name="VisibleScreenEnablerComponent" parent="." instance=ExtResource("2_tefsh")]
+rect = Rect2(-126, -104, 264, 221)
 
 [connection signal="body_entered" from="." to="." method="_on_body_entered"]
 [connection signal="body_entered" from="Gravity" to="." method="_on_gravity_body_entered"]

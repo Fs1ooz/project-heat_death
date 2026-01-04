@@ -9,6 +9,9 @@ extends Node2D
 @onready var player: Player = $Player
 @onready var sun: Light2D = $Sun
 
+
+
+
 const REGIONS := [
 	# Hungaria / Transizione
 	{ "name": "InnerTransition", "min_au": 1.87, "max_au": 2.21, "asteroid_count": 5, "meteoroid_count": 150 },
@@ -49,7 +52,12 @@ func _ready() -> void:
 	generate_belt()
 	spawn_player_in_cluster()
 
+@export var disable_all_shaders: bool = true
+
 func _process(_delta: float) -> void:
+
+	if disable_all_shaders:
+		RenderingServer.set_default_clear_color(Color.BLACK)
 	update_player_region()
 
 func update_player_region() -> void:

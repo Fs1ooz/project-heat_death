@@ -1,74 +1,13 @@
-[gd_scene load_steps=25 format=3 uid="uid://bwqwr2e2v3rvp"]
+[gd_scene load_steps=12 format=3 uid="uid://bwqwr2e2v3rvp"]
 
 [ext_resource type="Script" uid="uid://cyj080sf0wp5o" path="res://Stages/World/SolarSystem/asteroid_belt.gd" id="1_leih4"]
 [ext_resource type="PackedScene" uid="uid://470x1obeipdg" path="res://Entities/Player/player.tscn" id="2_aw4pb"]
 [ext_resource type="PackedScene" uid="uid://dooqkflafelol" path="res://Entities/Enemies/SmallBodies/asteroid.tscn" id="2_dgf5r"]
 [ext_resource type="PackedScene" uid="uid://bpeudpxsbd3x2" path="res://Entities/Enemies/SmallBodies/meteoroid.tscn" id="3_0oqe1"]
-[ext_resource type="PackedScene" uid="uid://dr5pxtobflhyw" path="res://Stages/UpgradeUI/upgrade_ui.tscn" id="3_dgf5r"]
-[ext_resource type="PackedScene" uid="uid://dyd3uoe8y1asi" path="res://Stages/World/game_over_screen.tscn" id="4_0oqe1"]
-[ext_resource type="Shader" uid="uid://dkeibheix7tve" path="res://Commons/nebulosa.gdshader" id="4_hiutt"]
-[ext_resource type="Texture2D" uid="uid://bb6ve2asoxg1c" path="res://Assets/Images/IMG_2207.PNG" id="4_xxft0"]
-[ext_resource type="PackedScene" uid="uid://cxcuuplyfhoxc" path="res://Entities/Player/player_life_bar.tscn" id="5_81uqy"]
 [ext_resource type="AudioStream" uid="uid://btl310t212txn" path="res://Assets/Music/BETA - Base.mp3" id="6_gsnah"]
-[ext_resource type="Texture2D" uid="uid://cpx6pvoxhj3oi" path="res://Assets/Images/IMG_2206.PNG" id="6_hiutt"]
 [ext_resource type="AudioStream" uid="uid://cawomildbxiao" path="res://Assets/Music/BETA - Phase1.mp3" id="7_xxft0"]
 [ext_resource type="AudioStream" uid="uid://wvogywji06eb" path="res://Assets/Music/BETA - Phase2.mp3" id="8_jpv6b"]
 [ext_resource type="Script" uid="uid://cvs60xrp5qjxm" path="res://Stages/World/music_audio_stream_player.gd" id="9_4onk6"]
-[ext_resource type="Script" uid="uid://bewwgxfpnvdxx" path="res://Stages/World/SolarSystem/texture_rect.gd" id="9_xxft0"]
-[ext_resource type="PackedScene" uid="uid://dnto56yr1b1ff" path="res://Commons/entropy_counter.tscn" id="11_jpv6b"]
-[ext_resource type="PackedScene" uid="uid://bosimyr8qkuso" path="res://Stages/World/energy_spawner.tscn" id="15_xxft0"]
-
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_hiutt"]
-shader = ExtResource("4_hiutt")
-shader_parameter/color1 = Color(0, 0, 0.007843138, 1)
-shader_parameter/color2 = Color(0.007843138, 0, 0.003921569, 1)
-shader_parameter/color3 = Color(0, 0, 0, 1)
-shader_parameter/color_shift_speed = 2.0
-shader_parameter/gradient_scale = 2.60000003129252
-shader_parameter/pulse_speed = 0.10000000149012
-shader_parameter/pulse_intensity = 0.0
-shader_parameter/enable_shimmer = true
-shader_parameter/shimmer_speed = 2.0
-shader_parameter/alpha_intensity = 1.0
-
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_m4v0y"]
-shader = ExtResource("4_hiutt")
-shader_parameter/color1 = Color(0.18039216, 0.105882354, 0.28627452, 1)
-shader_parameter/color2 = Color(0.2901961, 0.38039216, 0.6431373, 1)
-shader_parameter/color3 = Color(0, 0, 0, 1)
-shader_parameter/color_shift_speed = 0.10000000149012
-shader_parameter/gradient_scale = 2.10000002384192
-shader_parameter/pulse_speed = 0.20000000298024
-shader_parameter/pulse_intensity = 0.10000000149012
-shader_parameter/enable_shimmer = true
-shader_parameter/shimmer_speed = 2.0
-shader_parameter/alpha_intensity = 1.0
-
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_4onk6"]
-shader = ExtResource("4_hiutt")
-shader_parameter/color1 = Color(0.30588236, 0.015686275, 1, 1)
-shader_parameter/color2 = Color(1, 0.019607844, 0.49411765, 1)
-shader_parameter/color3 = Color(1, 0.29803923, 0.23137255, 1)
-shader_parameter/color_shift_speed = 0.3
-shader_parameter/gradient_scale = 2.0
-shader_parameter/pulse_speed = 0.5
-shader_parameter/pulse_intensity = 0.2
-shader_parameter/enable_shimmer = true
-shader_parameter/shimmer_speed = 2.0
-shader_parameter/alpha_intensity = 0.90000001341108
-
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_20qhy"]
-shader = ExtResource("4_hiutt")
-shader_parameter/color1 = Color(0.08235294, 0.5647059, 0.9372549, 1)
-shader_parameter/color2 = Color(0.7349065, 0.019321345, 0.0899399, 1)
-shader_parameter/color3 = Color(1, 0.73333335, 0.12156863, 1)
-shader_parameter/color_shift_speed = 0.0
-shader_parameter/gradient_scale = 2.70000003278264
-shader_parameter/pulse_speed = 0.80000001192096
-shader_parameter/pulse_intensity = 0.5
-shader_parameter/enable_shimmer = true
-shader_parameter/shimmer_speed = 2.0
-shader_parameter/alpha_intensity = 1.0
 
 [sub_resource type="AudioStreamInteractive" id="AudioStreamInteractive_m4v0y"]
 clip_count = 3
@@ -104,52 +43,7 @@ fill_to = Vector2(0, 0)
 script = ExtResource("1_leih4")
 asteroid_scene = ExtResource("2_dgf5r")
 meteoroid_scene = ExtResource("3_0oqe1")
-
-[node name="BaseBackgroundLayer" type="CanvasLayer" parent="."]
-layer = -1
-visible = false
-
-[node name="ColorRect" type="ColorRect" parent="BaseBackgroundLayer"]
-material = SubResource("ShaderMaterial_hiutt")
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-color = Color(0.003921569, 0.003921569, 0.003921569, 1)
-
-[node name="ParallaxBackgroundLayer" type="CanvasLayer" parent="."]
-layer = -1
-visible = false
-follow_viewport_enabled = true
-
-[node name="Parallax2D" type="Parallax2D" parent="ParallaxBackgroundLayer"]
-scale = Vector2(15, 15)
-scroll_scale = Vector2(0.01, 0.01)
-repeat_size = Vector2(2000, 1438)
-autoscroll = Vector2(0.001, 0.002)
-repeat_times = 25
-
-[node name="Img2207" type="Sprite2D" parent="ParallaxBackgroundLayer/Parallax2D"]
-material = SubResource("ShaderMaterial_m4v0y")
-texture = ExtResource("4_xxft0")
-
-[node name="Parallax2D2" type="Parallax2D" parent="ParallaxBackgroundLayer"]
-rotation = -3.1415925
-scale = Vector2(50, 50)
-scroll_scale = Vector2(0.1, 0.1)
-repeat_size = Vector2(2000, 1438)
-autoscroll = Vector2(1, 0.5)
-repeat_times = 25
-
-[node name="Img2207" type="Sprite2D" parent="ParallaxBackgroundLayer/Parallax2D2"]
-light_mask = 3
-material = SubResource("ShaderMaterial_4onk6")
-texture = ExtResource("4_xxft0")
-
-[node name="Sprite2D" type="Sprite2D" parent="ParallaxBackgroundLayer/Parallax2D2"]
-material = SubResource("ShaderMaterial_20qhy")
-texture = ExtResource("6_hiutt")
+safety_margin_multiplier = null
 
 [node name="Regions" type="Node2D" parent="."]
 
@@ -185,43 +79,13 @@ texture = ExtResource("6_hiutt")
 z_index = 2
 limit_enabled = false
 
-[node name="TextureRect" type="Polygon2D" parent="."]
-visible = false
-position = Vector2(120, 0)
-script = ExtResource("9_xxft0")
-
-[node name="Player" parent="." node_paths=PackedStringArray("life_bar") instance=ExtResource("2_aw4pb")]
-life_bar = NodePath("../UILayer/PlayerLifeBar")
-
-[node name="Shockwave" parent="Player/Collision/Sprite" index="1"]
-offset_left = -2433.0
-offset_top = -2545.0
-offset_right = 2567.0
-offset_bottom = 2455.0
-
-[node name="UILayer" type="CanvasLayer" parent="."]
-layer = 2
-
-[node name="UpgradeUI" parent="UILayer" instance=ExtResource("3_dgf5r")]
-focus_behavior_recursive = 1
-metadata/_edit_use_anchors_ = true
-
-[node name="GameOverScreen" parent="UILayer" instance=ExtResource("4_0oqe1")]
-metadata/_edit_use_anchors_ = true
-
-[node name="PlayerLifeBar" parent="UILayer" instance=ExtResource("5_81uqy")]
-metadata/_edit_use_anchors_ = true
-
-[node name="EntropyCounter" parent="UILayer" instance=ExtResource("11_jpv6b")]
+[node name="Player" parent="." instance=ExtResource("2_aw4pb")]
 
 [node name="MusicAudioStreamPlayer" type="AudioStreamPlayer" parent="."]
 stream = SubResource("AudioStreamInteractive_m4v0y")
 volume_db = -5.0
 bus = &"Music"
 script = ExtResource("9_4onk6")
-
-[node name="EnergySpawner" parent="." node_paths=PackedStringArray("player") instance=ExtResource("15_xxft0")]
-player = NodePath("../Player")
 
 [node name="Sun" type="PointLight2D" parent="."]
 position = Vector2(-53, -15)
@@ -230,4 +94,3 @@ texture = SubResource("GradientTexture2D_jpv6b")
 texture_scale = 15.48
 
 [editable path="Player"]
-[editable path="Player/Collision/Sprite/Shockwave"]
