@@ -1,6 +1,6 @@
 [gd_scene load_steps=18 format=3 uid="uid://bwqwr2e2v3rvp"]
 
-[ext_resource type="Script" uid="uid://cyj080sf0wp5o" path="res://Stages/World/SolarSystem/AsteroidBelt/asteroid_belt.gd" id="1_leih4"]
+[ext_resource type="Script" uid="uid://cyj080sf0wp5o" path="res://Stages/World/SolarSystem/AsteroidBelt/asteroid_belt_world.gd" id="1_leih4"]
 [ext_resource type="PackedScene" uid="uid://470x1obeipdg" path="res://Entities/Player/player.tscn" id="2_aw4pb"]
 [ext_resource type="PackedScene" uid="uid://dooqkflafelol" path="res://Entities/Enemies/SmallBodies/asteroid.tscn" id="2_dgf5r"]
 [ext_resource type="PackedScene" uid="uid://bpeudpxsbd3x2" path="res://Entities/Enemies/SmallBodies/meteoroid.tscn" id="3_0oqe1"]
@@ -65,12 +65,12 @@ Vector2i(-1, -1): {
 }
 }
 
-[sub_resource type="Gradient" id="Gradient_xxft0"]
+[sub_resource type="Gradient" id="Gradient_jug47"]
 offsets = PackedFloat32Array(0.47435898)
 colors = PackedColorArray(1, 1, 1, 1)
 
 [sub_resource type="GradientTexture2D" id="GradientTexture2D_jpv6b"]
-gradient = SubResource("Gradient_xxft0")
+gradient = SubResource("Gradient_jug47")
 fill_from = Vector2(1, 0.7991453)
 fill_to = Vector2(0, 0)
 
@@ -127,6 +127,9 @@ limit_enabled = false
 
 [node name="Player" parent="." node_paths=PackedStringArray("life_bar") instance=ExtResource("2_aw4pb")]
 life_bar = NodePath("../UILayer/PlayerLifeBar")
+
+[node name="ShockwaveRenderer" parent="Player/Collision/Sprite" index="1"]
+metadata/_edit_use_anchors_ = true
 
 [node name="MusicAudioStreamPlayer" type="AudioStreamPlayer" parent="."]
 stream = SubResource("AudioStreamInteractive_m4v0y")

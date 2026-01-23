@@ -20,13 +20,14 @@ func _ready() -> void:
 func gain_energy(amount: int) -> void:
 	energy += amount
 	#print("Energia attuale: ", energy)
-	emit_signal("energy_changed", energy)
+	energy_changed.emit(energy)
+
 
 
 func lose_energy(amount: int) -> void:
 	energy -= amount
 	#print("Energia attuale: ", energy)
-	emit_signal("energy_changed", energy)
+	energy_changed.emit(energy)
 
 func reset_upgrades() -> void:
 	energy = 0
@@ -54,8 +55,8 @@ var upgrades_data: Dictionary = {
 		"name": "Max Health",
 		"description": "Increases health.",
 		"level": 1,
-		"base_power": 100,
-		"current_power": 100,
+		"base_power": 150,
+		"current_power": 150,
 		"base_cost": 20,
 		"current_cost": 20,
 	},
@@ -72,8 +73,8 @@ var upgrades_data: Dictionary = {
 		"name": "Speed",
 		"description": "Increases speed.",
 		"level": 1,
-		"base_power": 750.0,
-		"current_power": 750.0,
+		"base_power": 1000.0,
+		"current_power": 1000.0,
 		"base_cost": 10,
 		"current_cost": 10,
 	},
@@ -81,8 +82,8 @@ var upgrades_data: Dictionary = {
 		"name": "Accelaration",
 		"description": "Increases Acceleration.",
 		"level": 1,
-		"base_power": 500.0,
-		"current_power": 500.0,
+		"base_power": 750.0,
+		"current_power": 750.0,
 		"base_cost": 25,
 		"current_cost": 25,
 	},
@@ -154,7 +155,6 @@ func apply_upgrade(upgrade_type: UpgradeType) -> bool:
 
 	upgrade_data["current_power"] = power
 	upgrade_data["current_cost"] = calculate_next_cost(upgrade_data)
-
 
 
 	match upgrade_type:

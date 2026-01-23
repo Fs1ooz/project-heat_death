@@ -1,6 +1,14 @@
 extends RigidBody2D
 class_name CelestialBody
 
+static var celestial_bodies: Array = []
+
+func _enter_tree() -> void:
+	celestial_bodies.append(self)
+
+func _exit_tree() -> void:
+	celestial_bodies.erase(self)
+
 
 const G: float = 6_674_300.0  # o anche * 50, * 100
 const MAX_FORCE: float = 1_000_000_000_000.0
@@ -12,13 +20,13 @@ var bodies_in_gravity: Array[RigidBody2D] = []
 @export var internal_energy: int = 1
 @export var game_energy: int = 5
 
-@export var min_size: float = 1.0
-@export var max_size: float = 10.0
 @export var round_base: int = 5
 
-
-@export var collision: CollisionShape2D
+@export var collision: Node2D
 @export var gravity_area_collision: CollisionShape2D
+
+
+@export var sprite: Sprite2D
 
 @export var base_noise: float = 5.0
 
@@ -37,13 +45,13 @@ var health_bar_container: Control
 
 
 func _ready() -> void:
+	sprite.material = load("res://Entities/smoothpixel.tres")
 	set_process(false)
 	for child: Node in get_children():
 		if child is AnimatedSprite2D:
 			child.play()
 	add_to_group("celestialbodies", true)
 	_setup_physics()
-	_setup_scale()
 	_setup_mass()
 	_setup_health()
 	_setup_health_bar()
@@ -51,6 +59,7 @@ func _ready() -> void:
 
 
 func _physics_process(_delta: float) -> void:
+	#print(celestial_bodies.size())
 	_last_velocity = linear_velocity
 	for body: RigidBody2D in bodies_in_gravity:
 		if not is_instance_valid(body):
@@ -77,42 +86,81 @@ func _setup_physics() -> void:
 
 
 
-
-func _setup_scale() -> void:
-	var sprite: Node = collision.get_child(0)
-	var scale_rand: float = randf_range(min_size, max_size)
+func _setup_scale(scale_factor: float) -> void:
 
 	# IMPORTANTE: salva la scala ORIGINALE dello sprite dall'editor
 	var original_sprite_scale: Vector2 = sprite.scale
-
 	# Applica la nuova scala RELATIVA a quella originale
-	sprite.scale = original_sprite_scale * scale_rand
+	sprite.scale = original_sprite_scale * scale_factor
 
-	# Duplica lo shape
-	var shape: Shape2D = collision.shape.duplicate() as Shape2D
-	var area: Shape2D = null
-	if gravity_area_collision:
-		area = gravity_area_collision.shape.duplicate() as Shape2D
+	# Gestisci CollisionShape2D
+	if collision is CollisionShape2D:
+		var shape: Shape2D = collision.shape.duplicate()
 
-	if shape is CircleShape2D:
-		# Scala RELATIVAMENTE al valore originale, non moltiplicare direttamente
-		var original_radius: float = collision.shape.radius  # valore dall'editor
-		shape.radius = original_radius * scale_rand
-	if area is CircleShape2D:
-		var original_radius: float = gravity_area_collision.shape.radius  # valore dall'editor
-		area.radius = original_radius * scale_rand
+		if shape is CircleShape2D:
+			var original_radius: float = collision.shape.radius
+			shape.radius = original_radius * scale_factor
 
-	collision.shape = shape
-	if gravity_area_collision:
+		collision.shape = shape
+
+	# Gestisci CollisionPolygon2D
+	elif collision is CollisionPolygon2D:
+		var original_points: PackedVector2Array = collision.polygon
+		var new_points: PackedVector2Array = PackedVector2Array()
+		for p: Vector2 in original_points:
+			new_points.append(p * scale_factor)
+		collision.polygon = new_points
+
+	# Stessa cosa per gravity_area_collision
+
+	if gravity_area_collision is CollisionShape2D:
+		var area: Shape2D = gravity_area_collision.shape.duplicate()
+
+		if area is CircleShape2D:
+			var original_radius: float = gravity_area_collision.shape.radius
+			area.radius = original_radius * scale_factor
+
 		gravity_area_collision.shape = area
 
 
 func _setup_mass() -> void:
-	var radius: float = collision.shape.radius - 50
-	var raw_mass: float = radius * mass
+	var size_metric: float = 0.0
+
+	# Calcola la metrica di dimensione in base al tipo di collisione
+	if collision is CollisionShape2D:
+		var shape: Shape2D = collision.shape
+		if shape is CircleShape2D:
+			size_metric = shape.radius
+		elif shape is RectangleShape2D:
+			# Usa la media delle dimensioni
+			size_metric = (shape.size.x + shape.size.y) / 2.0
+		elif shape is CapsuleShape2D:
+			size_metric = shape.radius + shape.height / 2.0
+
+	elif collision is CollisionPolygon2D:
+		# Calcola l'area del poligono e derivane un "raggio equivalente"
+		var area: float = _calculate_polygon_area(collision.polygon)
+		# Raggio di un cerchio con la stessa area: r = sqrt(area / PI)
+		size_metric = sqrt(area / PI)
+
+	# Applica la formula della massa
+	size_metric = max(0, size_metric - 50)
+	var raw_mass: float = size_metric * mass
 	mass = max(round_base, snappedi(raw_mass, round_base))
-	#if mass > 1000:
-		#print(get_class(), " MASSA: ", mass)
+
+
+
+func _calculate_polygon_area(points: PackedVector2Array) -> float:
+	# Formula dell'area usando il metodo dello "Shoelace"
+	var area: float = 0.0
+	var n: int = points.size()
+
+	for i: int in range(n):
+		var j: int = (i + 1) % n
+		area += points[i].x * points[j].y
+		area -= points[j].x * points[i].y
+
+	return abs(area) / 2.0
 
 func _setup_health() -> void:
 	var raw_health: float = mass * internal_energy
@@ -156,7 +204,7 @@ func die() -> void:
 #
 	printerr("Sono scattato porc")
 	bodies_in_gravity.clear()
-	GlobalSignals.emit_signal("death", self)
+	GlobalSignals.death.emit(self)
 	queue_free()
 
 
@@ -182,7 +230,7 @@ func _spawn_energy_drop() -> void:
 	# IMPORTANTE: Ogni drop ha energia totale / numero effettivo di drop
 	var energy_per_drop: float = float(game_energy) / num_drops
 
-	var spawn_radius: float = collision.shape.radius / 1.5
+	var spawn_radius: float = sprite.scale.x * 20.0
 
 	for i: int in range(num_drops):
 		var energy_drop: Node = energy_drop_scene.instantiate()
@@ -197,10 +245,10 @@ func _spawn_energy_drop() -> void:
 		if energy_drop is RigidBody2D:
 			energy_drop.linear_velocity = offset.normalized() * randf_range(30, 60)
 
-		get_parent().call_deferred("add_child", energy_drop)
+		get_parent().add_child.call_deferred(energy_drop)
 
 
-# Aggiungi questa funzione dopo _ready()
+ #Aggiungi questa funzione dopo _ready()
 func _setup_health_bar() -> void:
 	# Container per posizionare la barra
 	health_bar_container = Control.new()
@@ -209,8 +257,8 @@ func _setup_health_bar() -> void:
 
 	# ProgressBar
 	health_bar = ProgressBar.new()
-	health_bar.size = Vector2(collision.shape.radius * 2, 2)
-	health_bar.position = Vector2(-collision.shape.radius, collision.shape.radius + 15)
+	health_bar.size = Vector2(sprite.scale.x * 150, 2)
+	health_bar.position = Vector2(sprite.scale.x * -75, sprite.scale.y * 70)
 	health_bar.show_percentage = false
 	health_bar_container.add_child(health_bar)
 
@@ -250,17 +298,8 @@ func _apply_gravity(body: RigidBody2D) -> void:
 	gravity_force = G * mass * body.mass / dist_sq + SOFTENING
 	var gravity_force_vector: Vector2 = dir.normalized() * gravity_force
 
-	#if body is Player:
-		##print("DIST: ", snapped(dist_sq, 0.1), " | FORZA: ", snapped(force_magnitude, 0.1))
-		## PLAYER → custom integrator
-		##body.gravity = true
-		#body.gravity_force = force_vector
-	#else:
-		# ALTRI CELESTIAL BODY → fisica standard
 	body.apply_central_force(gravity_force_vector)
 	apply_central_force(-gravity_force_vector)
-
-	#print("I'm gravitating it: ", body.mass, " ", mass,  " ", dist_sq, " forza di g: ", force_vector.length())
 
 
 func _on_entropy_changed(entropy: float) -> void:
@@ -282,7 +321,7 @@ func get_damage() -> float:
 	#var velocity_squared = linear_velocity.length_squared()
 
 	print("massa: ", mass)
-	print("velocità: ", velocity)
+	#print("velocità: ", velocity)
 
 	#var kinetic_energy = 0.5 * mass * velocity_squared
 
@@ -290,7 +329,7 @@ func get_damage() -> float:
 	#var scaled_damage = kinetic_energy / damage_scaling
 	var scaled_damage: float = mass * (velocity * 0.005)
 
-	print("Danno originale: ", scaled_damage)
+	#print("Danno originale: ", scaled_damage)
 
 	var damage: int = maxi(snappedi(scaled_damage, round_base), 1)
 

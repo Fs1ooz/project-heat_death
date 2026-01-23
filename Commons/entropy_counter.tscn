@@ -4,6 +4,7 @@
 [ext_resource type="Script" uid="uid://btvtti3jdlg1b" path="res://Commons/entropy_counter.gd" id="1_fmoht"]
 
 [node name="EntropyCounter" type="Label"]
+texture_filter = 1
 anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5

@@ -1,59 +1,39 @@
 [gd_scene load_steps=5 format=3 uid="uid://dooqkflafelol"]
 
 [ext_resource type="Script" uid="uid://b76ax10rq762s" path="res://Entities/Enemies/SmallBodies/asteroid.gd" id="1_tefsh"]
-[ext_resource type="PackedScene" uid="uid://bgievdkpstd3t" path="res://Entities/Enemies/visible_screen_enabler_component.tscn" id="2_tefsh"]
+[ext_resource type="PackedScene" uid="uid://bgievdkpstd3t" path="res://Entities/Enemies/visible_screen_enabler_component.tscn" id="2_t88s8"]
+[ext_resource type="Texture2D" uid="uid://dy2ynx0wbwoq1" path="res://Entities/Enemies/SmallBodies/Vesta/Vesta.png" id="3_t88s8"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_vwlwn"]
 radius = 968.16736
 
-[sub_resource type="CircleShape2D" id="CircleShape2D_y0ama"]
-radius = 118.016945
-
-[node name="Asteroid" type="RigidBody2D" node_paths=PackedStringArray("collision", "gravity_area_collision") groups=["celestialbodies"]]
+[node name="Asteroid" type="RigidBody2D" node_paths=PackedStringArray("collision", "gravity_area_collision", "sprite") groups=["celestialbodies"]]
 z_index = 1
 continuous_cd = 2
 contact_monitor = true
 max_contacts_reported = 4
 script = ExtResource("1_tefsh")
-internal_energy = 5
-game_energy = 100
-min_size = 50.0
-max_size = 150.0
-round_base = 10
-collision = NodePath("Collision")
+collision = NodePath("CollisionPolygon2D")
 gravity_area_collision = NodePath("Gravity/GravityAreaCollision")
+sprite = NodePath("CollisionPolygon2D/Vesta")
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="."]
+polygon = PackedVector2Array(-117, -85, -69, -114, -20, -125, 7, -124, 58, -111, 101, -93, 123, -71, 148, -39, 153, 0, 147, 46, 118, 83, 62, 117, -6, 133, -50, 130, -89, 117, -125, 89, -140, 63, -150, 32, -151, 2, -142, -50)
+
+[node name="Vesta" type="Sprite2D" parent="CollisionPolygon2D"]
+scale = Vector2(2.5, 2.5)
+texture = ExtResource("3_t88s8")
+
+[node name="VisibleScreenEnablerComponent" parent="CollisionPolygon2D/Vesta" instance=ExtResource("2_t88s8")]
+scale = Vector2(0.39999995, 0.39999995)
+rect = Rect2(-1165.0001, -1092.0001, 2310.0002, 2210)
+enable_node_path = NodePath("../../..")
 
 [node name="Gravity" type="Area2D" parent="."]
 
 [node name="GravityAreaCollision" type="CollisionShape2D" parent="Gravity"]
 shape = SubResource("CircleShape2D_vwlwn")
 
-[node name="VisibleScreenEnablerComponent" parent="." instance=ExtResource("2_tefsh")]
-rect = Rect2(-984, -964, 1953, 1938)
-
-[node name="Collision" type="CollisionShape2D" parent="."]
-shape = SubResource("CircleShape2D_y0ama")
-
-[node name="Polygon2D" type="Polygon2D" parent="Collision"]
-scale = Vector2(0.17110927, 0.51827955)
-color = Color(0.43890208, 0.43890208, 0.43890208, 1)
-offset = Vector2(210.3919, -383.96265)
-polygon = PackedVector2Array(-39.37622, 154, -563.3827, 178, -835.9872, 260, -908.6817, 434, -690.59814, 558, -308.95178, 619, 163.56271, 592, 411.93567, 512, 502.60278, 378.17426, 330.15436, 219)
-
-[node name="Polygon2D3" type="Polygon2D" parent="Collision/Polygon2D"]
-position = Vector2(549.35657, -59.81328)
-scale = Vector2(5.8442187, 1.9294606)
-color = Color(0.26293245, 0.26293245, 0.26293242, 1)
-polygon = PackedVector2Array(-63, -29, -21, 0, -69, 19)
-
-[node name="Polygon2D2" type="Polygon2D" parent="Collision/Polygon2D"]
-position = Vector2(40.90953, 57.88382)
-scale = Vector2(5.8442187, 1.9294606)
-color = Color(0.29360762, 0.21911678, 0.22660738, 1)
-polygon = PackedVector2Array(-63, -29, -21, 0, -69, 19)
-
 [connection signal="body_entered" from="." to="." method="_on_body_entered"]
 [connection signal="body_entered" from="Gravity" to="." method="_on_gravity_body_entered"]
 [connection signal="body_exited" from="Gravity" to="." method="_on_gravity_body_exited"]
-[connection signal="screen_entered" from="VisibleScreenEnablerComponent" to="." method="_on_visible_screen_enabler_component_screen_entered"]
-[connection signal="screen_exited" from="VisibleScreenEnablerComponent" to="." method="_on_visible_screen_enabler_component_screen_exited"]

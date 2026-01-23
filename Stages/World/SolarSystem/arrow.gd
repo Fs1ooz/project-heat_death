@@ -4,7 +4,7 @@ extends Polygon2D
 @export var arrow_scale: float = 1.5
 @export var update_interval: float = 0.01  # Secondi tra aggiornamenti
 
-var _cached_bodies: Array[Node] = []
+
 var _camera: Camera2D = null
 var _viewport: Viewport = null
 var _timer_accumulator: float = 0.0
@@ -26,16 +26,7 @@ func _ready() -> void:
 	await get_tree().process_frame
 
 	_camera = _viewport.get_camera_2d()
-	_cached_bodies = get_tree().get_nodes_in_group("celestialbodies")
 
-	# Connetti segnali
-	if GlobalSignals.has_signal("death"):
-		GlobalSignals.connect("death", _on_celestial_body_death)
-
-func _on_celestial_body_death(body: Node) -> void:
-	var idx: int = _cached_bodies.find(body)
-	if idx != -1:
-		_cached_bodies.remove_at(idx)
 
 func _process(delta: float) -> void:
 	_timer_accumulator += delta
@@ -94,7 +85,7 @@ func _get_nearest_body(cam_pos: Vector2) -> Node:
 	var nearest: Node = null
 	var best_dist_sq: float = INF
 
-	for body: CelestialBody in _cached_bodies:
+	for body: CelestialBody in CelestialBody.celestial_bodies:
 		var dist_sq: float = cam_pos.distance_squared_to(body.global_position)
 		if dist_sq < best_dist_sq:
 			best_dist_sq = dist_sq

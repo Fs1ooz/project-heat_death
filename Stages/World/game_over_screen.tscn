@@ -4,6 +4,7 @@
 [ext_resource type="Theme" uid="uid://brvjefc4224hi" path="res://Assets/Themes/upgrade_ui.tres" id="1_yd1lp"]
 
 [node name="GameOverScreen" type="Control"]
+texture_filter = 1
 layout_mode = 3
 anchors_preset = 8
 anchor_left = 0.5

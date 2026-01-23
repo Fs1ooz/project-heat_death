@@ -1,12 +1,12 @@
 extends SmallBody
 class_name Meteoroid
 
-@export var min_speed: float = 1.5
-@export var max_speed: float = 3.0
+@export var min_speed: float = 1.0
+@export var max_speed: float = 1.5
 
 
 func _ready() -> void:
-	call_deferred("_kick")
+	_kick.call_deferred()
 	super()
 
 

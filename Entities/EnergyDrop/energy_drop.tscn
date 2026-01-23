@@ -4,7 +4,7 @@
 [ext_resource type="AudioStream" uid="uid://dp1e7mdwgi743" path="res://Assets/Sounds/coin.sfxr" id="2_psw32"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_psw32"]
-radius = 1525.7241
+radius = 1871.0452
 
 [sub_resource type="AudioStreamRandomizer" id="AudioStreamRandomizer_psw32"]
 random_pitch = 2.0

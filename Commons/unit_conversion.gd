@@ -5,7 +5,7 @@ const AU_IN_KM: float = 149_597_870.7
 
 # Il tuo fattore di scala globale (da km a pixel di gioco)
 # Se vuoi cambiare quanto è grande l'universo, cambi solo questo numero qui.
-const GAME_SCALE: float = 0.01
+const GAME_SCALE: float = 0.001
 
 # Converte UA -> Pixel di gioco (per posizionare gli oggetti)
 func au_to_pixels(au: float) -> float:

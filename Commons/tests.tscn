@@ -1,0 +1,17 @@
+[gd_scene load_steps=3 format=3 uid="uid://cslvpssd0qp67"]
+
+[ext_resource type="PackedScene" uid="uid://470x1obeipdg" path="res://Entities/Player/player.tscn" id="2_yer1y"]
+[ext_resource type="PackedScene" uid="uid://yor1cl12dj1i" path="res://Stages/World/celestial_bodies_spawner.tscn" id="2_yfsno"]
+
+[node name="Test" type="Node2D"]
+
+[node name="Camera2D" type="Camera2D" parent="."]
+position = Vector2(-1, 1)
+zoom = Vector2(0.02, 0.02)
+
+[node name="Player" parent="." instance=ExtResource("2_yer1y")]
+position = Vector2(-3507, 105)
+mass = 40.0
+
+[node name="CelestialBodiesSpawner" parent="." instance=ExtResource("2_yfsno")]
+position = Vector2(10344, -1583)

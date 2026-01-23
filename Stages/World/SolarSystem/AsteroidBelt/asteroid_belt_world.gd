@@ -7,7 +7,6 @@ extends Node2D
 
 
 @onready var player: Player = $Player
-@onready var sun: Light2D = $Sun
 
 
 
@@ -203,18 +202,3 @@ func spawn_ring(container: Node2D, count: int, min_r: float, max_r: float, scene
 		var obj: Node2D = scene.instantiate()
 		obj.position = pos
 		container.add_child(obj)
-
-
-func is_position_valid(pos: Vector2, new_object_radius: float) -> bool:
-	# Controlla se c'è sovrapposizione con altri oggetti
-	for space: Dictionary in occupied_spaces:
-		var occupied_pos: Vector2 = space["position"]
-		var occupied_radius: float = space["radius"]
-
-		# Distanza minima = somma dei due raggi di sicurezza
-		var min_distance: float = new_object_radius + occupied_radius
-
-		if pos.distance_to(occupied_pos) < min_distance:
-			return false
-
-	return true

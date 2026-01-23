@@ -11,4 +11,4 @@ grow_horizontal = 2
 grow_vertical = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-color = Color(0.003921569, 0.003921569, 0.003921569, 1)
+color = Color(0, 0, 0, 1)

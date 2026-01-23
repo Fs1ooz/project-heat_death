@@ -4,6 +4,7 @@
 [ext_resource type="Script" uid="uid://otgbhiinw4yu" path="res://Stages/UI/UpgradeUI/upgrade_ui.gd" id="1_qb0g1"]
 
 [node name="UpgradeUI" type="Control"]
+texture_filter = 1
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0

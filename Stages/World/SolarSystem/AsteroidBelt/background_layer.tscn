@@ -49,6 +49,7 @@ follow_viewport_enabled = true
 follow_viewport_scale = 0.5
 
 [node name="Parallax2DBottom" type="Parallax2D" parent="."]
+texture_filter = 1
 rotation = -3.1415925
 scale = Vector2(200, 200)
 scroll_scale = Vector2(0.001, 0.001)
@@ -61,6 +62,7 @@ material = SubResource("ShaderMaterial_n3etr")
 texture = ExtResource("2_bio74")
 
 [node name="Parallax2DTop" type="Parallax2D" parent="."]
+texture_filter = 1
 scale = Vector2(500, 500)
 scroll_scale = Vector2(0.01, 0.01)
 repeat_size = Vector2(2000, 1438)

@@ -1,0 +1,46 @@
+[gd_scene load_steps=6 format=3 uid="uid://uf4irjwjm6pd"]
+
+[ext_resource type="Script" uid="uid://d4h8dit0lt11l" path="res://Entities/Enemies/SmallBodies/gas.gd" id="1_ehlfa"]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_sx8h3"]
+radius = 64.0
+height = 900.0
+
+[sub_resource type="Curve" id="Curve_ehlfa"]
+_limits = [0.0, 30.0, 0.0, 1.0]
+_data = [Vector2(0, 0), 0.0, 30.000002, 0, 1, Vector2(1, 30), 30.000002, 0.0, 1, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_r0wkb"]
+curve = SubResource("Curve_ehlfa")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_ehlfa"]
+particle_flag_disable_z = true
+direction = Vector3(0, -1, 0)
+spread = 0.0
+initial_velocity_min = 512.0
+initial_velocity_max = 512.0
+gravity = Vector3(0, 0, 0)
+scale_min = 12.0
+scale_max = 12.0
+scale_curve = SubResource("CurveTexture_r0wkb")
+color = Color(1, 1, 1, 0.3764706)
+
+[node name="Gas" type="Area2D"]
+show_behind_parent = true
+script = ExtResource("1_ehlfa")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(-1, -451)
+shape = SubResource("CapsuleShape2D_sx8h3")
+
+[node name="GasParticles" type="GPUParticles2D" parent="."]
+position = Vector2(-4, -2)
+amount = 15
+lifetime = 2.0
+visibility_rect = Rect2(0, -1026, 2.001, 1026)
+trail_enabled = true
+process_material = SubResource("ParticleProcessMaterial_ehlfa")
+
+[connection signal="body_entered" from="." to="." method="_on_body_entered"]
+[connection signal="body_exited" from="." to="." method="_on_body_exited"]

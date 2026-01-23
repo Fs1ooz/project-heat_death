@@ -1,59 +1,102 @@
 extends Node2D
 
-const PLACEHOLDER_PLANET = preload("res://Entities/Enemies/placeholder_planet.tscn")
-@onready var sun := $Sun/Collision
 
-# Scala separata per distanze e dimensioni
-const DISTANCE_SCALE = 500000.0  # 1 pixel = 500,000 km (distanze più compatte)
-const SIZE_SCALE = 2000.0  # 1 pixel = 2,000 km (corpi celesti più visibili)
+# Sistema Solare completo con dati NASA/JPL accurati
+const SOLAR_SYSTEM: Dictionary = {
+	"Sun": { "au": 0.0, "desc": "Il Sole" },
 
-# Dati reali del sistema solare
-const SUN_RADIUS = 696000  # km
-const PLANET_DATA = {
-	"Mercurio": {"distance": 57900000, "radius": 2439.7},
-	"Venere": {"distance": 108200000, "radius": 6051.8},
-	"Terra": {"distance": 149600000, "radius": 6371.0},
-	"Marte": {"distance": 227900000, "radius": 3389.5},
-	"Giove": {"distance": 778500000, "radius": 69911},
-	"Saturno": {"distance": 1434000000, "radius": 58232},
-	"Urano": {"distance": 2871000000, "radius": 25362},
-	"Nettuno": {"distance": 4495000000, "radius": 24622}
+	"InnerSystem": {
+		"au_min": 0.39, "au_max": 1.52,
+		"desc": "Pianeti Rocciosi",
+		"planets": {
+			"Mercury": { "au": 0.39, "asteroids": 0, "meteoroids": 5 },
+			"Venus": { "au": 0.72, "asteroids": 0, "meteoroids": 8 },
+			"Earth": { "au": 1.0, "asteroids": 0, "meteoroids": 15 },
+			"Mars": { "au": 1.52, "asteroids": 2, "meteoroids": 20 }
+		}
+	},
+
+	"AsteroidBelt": {
+		"au_min": 1.78, "au_max": 4.0,
+		"desc": "Fascia Principale",
+		"spawn_zone": true,
+		"regions": {
+			"InnerTransition": {
+				"au_min": 1.78, "au_max": 2.06,
+				"asteroids": 5, "meteoroids": 75
+			},
+			"InnerBelt": {
+				"au_min": 2.06, "au_max": 2.5,
+				"asteroids": 25, "meteoroids": 225,
+				"families": {
+					"Flora": { "au_min": 2.15, "au_max": 2.35, "asteroids": 15, "meteoroids": 300 }
+				}
+			},
+			"Gap3to1": {
+				"au_min": 2.48, "au_max": 2.52,
+				"asteroids": 2, "meteoroids": 35
+			},
+			"MiddleBelt": {
+				"au_min": 2.52, "au_max": 2.82,
+				"asteroids": 40, "meteoroids": 325,
+				"default_spawn": true,
+				"families": {
+					"Eunomia": { "au_min": 2.52, "au_max": 2.72, "asteroids": 15, "meteoroids": 250 }
+				}
+			},
+			"Gap5to2": {
+				"au_min": 2.79, "au_max": 2.85,
+				"asteroids": 1, "meteoroids": 50
+			},
+			"OuterBelt": {
+				"au_min": 2.85, "au_max": 3.28,
+				"asteroids": 60, "meteoroids": 600,
+				"families": {
+					"Koronis": { "au_min": 2.82, "au_max": 2.95, "asteroids": 12, "meteoroids": 110 },
+					"Themis": { "au_min": 3.08, "au_max": 3.24, "asteroids": 20, "meteoroids": 190 },
+					"Hygiea": { "au_min": 3.06, "au_max": 3.24, "asteroids": 18, "meteoroids": 160 }
+				}
+			},
+			"Gap2to1": {
+				"au_min": 3.27, "au_max": 3.29,
+				"asteroids": 0, "meteoroids": 20
+			},
+			"OuterEdge": {
+				"au_min": 3.29, "au_max": 4.0,
+				"asteroids": 35, "meteoroids": 300,
+				"groups": {
+					"Cybele": { "au_min": 3.3, "au_max": 3.5, "asteroids": 20, "meteoroids": 175 },
+					"Hilda": { "au_min": 3.7, "au_max": 4.0, "asteroids": 15, "meteoroids": 125 }
+				}
+			}
+		}
+	},
+
+	"OuterSystem": {
+		"au_min": 5.2, "au_max": 30.1,
+		"desc": "Giganti Gassosi",
+		"planets": {
+			"Jupiter": { "au": 5.2, "asteroids": 10, "meteoroids": 100 },
+			"Saturn": { "au": 9.58, "asteroids": 8, "meteoroids": 80 },
+			"Uranus": { "au": 19.22, "asteroids": 5, "meteoroids": 50 },
+			"Neptune": { "au": 30.07, "asteroids": 5, "meteoroids": 50 }
+		}
+	},
+
+	"KuiperBelt": {
+		"au_min": 30.0, "au_max": 50.0,
+		"desc": "Fascia di Kuiper",
+		"regions": {
+			"InnerKuiper": { "au_min": 30.0, "au_max": 40.0, "asteroids": 30, "meteoroids": 500 },
+			"OuterKuiper": { "au_min": 40.0, "au_max": 50.0, "asteroids": 20, "meteoroids": 300 }
+		}
+	}
 }
 
-var planets = []
 
-func _ready() -> void:
-	setup_solar_system()
-
-func setup_solar_system() -> void:
-	# Imposta la dimensione del Sole
-	var sun_diameter = (SUN_RADIUS * 2) / SIZE_SCALE
-	sun.scale = Vector2(sun_diameter, sun_diameter)
-
-	# Posiziona il Sole al centro dello schermo
-	sun.position = get_viewport_rect().size / 2
-
-	# Crea i pianeti
-	for planet_name in PLANET_DATA.keys():
-		var data = PLANET_DATA[planet_name]
-		create_planet(planet_name, data.distance, data.radius)
-
-	print("Sistema solare creato!")
-	print("Sole: diametro %.1f pixels" % sun_diameter)
-
-func create_planet(planet_name: String, distance_km: float, radius_km: float) -> void:
-	var planet = PLACEHOLDER_PLANET.instantiate()
-	add_child(planet)
-
-	# Calcola distanza e dimensione con scale separate
-	var distance_pixels = distance_km / DISTANCE_SCALE
-	var planet_diameter = (radius_km * 2) / SIZE_SCALE
-
-	# Posiziona il pianeta alla giusta distanza dal Sole (a destra per semplicità)
-	planet.position = sun.position + Vector2(distance_pixels, 0)
-	planet.scale = Vector2(planet_diameter, planet_diameter)
-	planet.name = planet_name
-
-	planets.append(planet)
-
-	print("%s: distanza %.1f px, diametro %.2f px" % [planet_name, distance_pixels, planet_diameter])
+#func _ready() -> void:
+	#_recenter_world()
+#
+#func _recenter_world() -> void:
+	#await get_tree().create_timer(1).timeout
+	#global_position = %Player.global_position

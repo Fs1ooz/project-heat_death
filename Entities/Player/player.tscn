@@ -1,7 +1,8 @@
-[gd_scene load_steps=10 format=3 uid="uid://470x1obeipdg"]
+[gd_scene load_steps=14 format=3 uid="uid://470x1obeipdg"]
 
 [ext_resource type="Script" uid="uid://bf2nvyuinsvhu" path="res://Entities/Player/player.gd" id="1_5c2io"]
-[ext_resource type="Texture2D" uid="uid://dnffwiy1b287y" path="res://Assets/Images/isnobulo.png" id="2_5c2io"]
+[ext_resource type="Shader" uid="uid://bt4erkhma4laf" path="res://Entities/Player/playersprite.gdshader" id="3_01a4e"]
+[ext_resource type="Texture2D" uid="uid://ciqotnndblj2m" path="res://Assets/Images/isnobulino.png" id="4_7a1se"]
 [ext_resource type="PackedScene" uid="uid://0vbdasmelfef" path="res://Entities/Player/shockwave.tscn" id="5_01a4e"]
 [ext_resource type="AudioStream" uid="uid://1wfdu2dsudw4" path="res://Assets/Sounds/hit.sfxr" id="5_4wf4l"]
 [ext_resource type="Script" uid="uid://cnf8kwhvre5kg" path="res://Entities/Player/camera_2d.gd" id="5_5c2io"]
@@ -15,6 +16,23 @@ bounce = 0.5
 radius = 39.0
 height = 118.0
 
+[sub_resource type="Gradient" id="Gradient_01a4e"]
+colors = PackedColorArray(1, 1, 1, 1, 0.5609549, 0.5609549, 0.5609549, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_01a4e"]
+gradient = SubResource("Gradient_01a4e")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_lub02"]
+shader = ExtResource("3_01a4e")
+shader_parameter/resolution = Vector2(94, 128)
+shader_parameter/gradient_tex = SubResource("GradientTexture1D_01a4e")
+shader_parameter/frequency = 1.0
+shader_parameter/speed = 1.0
+shader_parameter/brightness = 20.0
+shader_parameter/balance = 0.0
+shader_parameter/octaves = 1.0
+shader_parameter/pixel_size = 256.0
+
 [sub_resource type="AudioStreamRandomizer" id="AudioStreamRandomizer_5c2io"]
 random_pitch = 1.1
 streams_count = 1
@@ -22,7 +40,6 @@ stream_0/stream = ExtResource("5_4wf4l")
 
 [node name="Player" type="RigidBody2D" node_paths=PackedStringArray("collision", "sprite", "trail", "shockwave") groups=["player"]]
 collision_mask = 2
-mass = 5.0
 physics_material_override = SubResource("PhysicsMaterial_5c2io")
 gravity_scale = 0.0
 freeze_mode = 1
@@ -50,8 +67,9 @@ shape = SubResource("CapsuleShape2D_3uyv8")
 
 [node name="Sprite" type="Sprite2D" parent="Collision"]
 z_index = 1
+material = SubResource("ShaderMaterial_lub02")
 rotation = -1.5707964
-texture = ExtResource("2_5c2io")
+texture = ExtResource("4_7a1se")
 
 [node name="Trail" type="GPUParticles2D" parent="Collision/Sprite"]
 z_index = -1

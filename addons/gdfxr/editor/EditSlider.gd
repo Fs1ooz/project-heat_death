@@ -121,7 +121,7 @@ func set_value(v: float) -> void:
 	if is_equal_approx(v, value):
 		return
 	value = v
-	emit_signal("value_changed", value)
+	value_changed.emit(value)
 	queue_redraw()
 
 

@@ -1,7 +1,7 @@
 [gd_scene load_steps=4 format=3 uid="uid://0vbdasmelfef"]
 
-[ext_resource type="Shader" path="res://Entities/Player/shockwave.gdshader" id="1_v8dji"]
-[ext_resource type="Script" path="res://Entities/Player/shockwave_renderer.gd" id="2_gdfje"]
+[ext_resource type="Shader" uid="uid://dcm1nuuualb2i" path="res://Entities/Player/shockwave.gdshader" id="1_v8dji"]
+[ext_resource type="Script" uid="uid://bxp1hoj87t5u7" path="res://Entities/Player/shockwave_renderer.gd" id="2_gdfje"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_7a1se"]
 shader = ExtResource("1_v8dji")
@@ -15,6 +15,7 @@ shader_parameter/shockwave_progresses = PackedFloat32Array(0, 0, 0, 0, 0, 0, 0, 
 shader_parameter/shockwave_count = 0
 
 [node name="ShockwaveRenderer" type="ColorRect"]
+show_behind_parent = true
 top_level = true
 material = SubResource("ShaderMaterial_7a1se")
 custom_minimum_size = Vector2(960, 960)

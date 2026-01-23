@@ -15,7 +15,7 @@ func _ready() -> void:
 	if width_curve:
 		width_curve = width_curve.duplicate()
 
-	call_deferred("_resize_trail")
+	_resize_trail.call_deferred()
 
 
 func _physics_process(_delta: float) -> void:

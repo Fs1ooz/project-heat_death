@@ -1,7 +1,6 @@
-[gd_scene load_steps=3 format=3 uid="uid://cslvpssd0qp67"]
+[gd_scene load_steps=2 format=3 uid="uid://cslvpssd0qp67"]
 
 [ext_resource type="PackedScene" uid="uid://dooqkflafelol" path="res://Entities/Enemies/SmallBodies/asteroid.tscn" id="1_hpy1x"]
-[ext_resource type="PackedScene" uid="uid://470x1obeipdg" path="res://Entities/Player/player.tscn" id="2_ytvmi"]
 
 [node name="GravitySimulation" type="Node2D"]
 
@@ -9,11 +8,13 @@
 position = Vector2(-1, 1)
 zoom = Vector2(0.065, 0.065)
 
-[node name="Asteroid" parent="." instance=ExtResource("1_hpy1x")]
-position = Vector2(28589, -79)
-internal_energy = 1
-game_energy = 10
-max_size = 50.0
-round_base = 5
+[node name="Asteroid2" parent="." instance=ExtResource("1_hpy1x")]
+base_noise = null
+layers_2d_physics = null
+masks_2d_physics = null
 
-[node name="Player" parent="." instance=ExtResource("2_ytvmi")]
+[node name="Asteroid" parent="." instance=ExtResource("1_hpy1x")]
+position = Vector2(5949, 0)
+base_noise = null
+layers_2d_physics = null
+masks_2d_physics = null

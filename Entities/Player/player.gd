@@ -8,9 +8,10 @@ extends RigidBody2D
 @export var life_bar: ProgressBar = null
 @export var alignment_safe_zone: float = 0.8
 @export var collision: CollisionShape2D
+
 ## Configurazione movimento
-@export var max_hp: int = 100
-@export var hp: int = 100
+@export var max_hp: int = int(UpgradeManager.get_current_power(UpgradeManager.UpgradeType.MAX_HEALTH))  ## Velocità massima (pixel/sec)
+@export var hp: int = max_hp
 
 @export var speed: float = UpgradeManager.get_current_power(UpgradeManager.UpgradeType.SPEED)  ## Velocità massima (pixel/sec)
 @export var acceleration: float = UpgradeManager.get_current_power(UpgradeManager.UpgradeType.ACCELERATION)  ## Accelerazione lineare (pixel/sec²)
@@ -20,7 +21,7 @@ extends RigidBody2D
 
 @export var shockwave: Node
 
-var rotation_responsiveness: float = 10.0
+var rotation_responsiveness: float = 8.0
 
 var regen_tick: float = 3.0
 var auto_revive: bool = true
@@ -54,7 +55,6 @@ func _ready() -> void:
 	initial_radius = collision.shape.radius
 	initial_height = collision.shape.height
 	initial_scale = sprite.scale
-
 	initial_particle_scale = Vector2(mat.scale_min, mat.scale_max)
 	#global_position.x = 2_900_000
 
@@ -64,8 +64,8 @@ func _ready() -> void:
 	await get_tree().create_timer(5).timeout
 
 
-
 #region Movement
+
 
 
 func _physics_process(delta: float) -> void:
@@ -75,10 +75,12 @@ func _physics_process(delta: float) -> void:
 		apply_entropy(delta)  # applica caos
 
 	_handle_movement()
-	#_handle_rotation()
+
+
 
 func _input(event: InputEvent) -> void:
 	if event.is_action_pressed("space") and EntropyManager.entropy_value < 0:
+		# Trigger shockwave usando la posizione modificata
 		shockwave.trigger_shockwave(global_position, 3)
 		EntropyManager.change_entropy(abs(EntropyManager.entropy_value) * 2)
 		get_viewport().set_input_as_handled()
@@ -92,13 +94,14 @@ func _integrate_forces(state: PhysicsDirectBodyState2D) -> void:
 func _handle_rotation(state: PhysicsDirectBodyState2D) -> void:
 	var mouse_pos: Vector2 = get_global_mouse_position()
 	var dir: Vector2 = mouse_pos - global_position
+
 	if dir.length_squared() < 1.0:
 		state.angular_velocity = 0.0
 		return
+
 	var target_angle: float = dir.angle()
 	var angle_diff: float = wrapf(target_angle - rotation, -PI, PI)
 	state.angular_velocity = angle_diff * rotation_responsiveness
-
 
 
 var oscillation_speed: float = 1000.0   # Intensità della forza
@@ -154,7 +157,7 @@ func _handle_collision_resistance(state: PhysicsDirectBodyState2D) -> void:
 				max_resistance = 1.0
 				print("💥 BULLDOZER MODE vs ", collider.name)
 				break
-			elif mass_ratio > 0.3:
+			elif mass_ratio > 0.15:
 				var resistance: float = smoothstep(1.0, 3.0, mass_ratio)
 				max_resistance = max(max_resistance, resistance)
 				print("⚡ Resistenza: %.0f%% vs %s" % [resistance * 100, collider.name])
@@ -164,69 +167,16 @@ func _handle_collision_resistance(state: PhysicsDirectBodyState2D) -> void:
 
 
 #
-#func _handle_rotation() -> void:
-	#var mouse_pos = get_global_mouse_position()
-	#var dir = mouse_pos - global_position
-#
-	#if dir.length_squared() < 1.0:
-		#angular_velocity = 0.0
-		#return
-#
-	#var target_angle = dir.angle()
-	#var angle_diff = wrapf(target_angle - rotation, -PI, PI)
-#
-	## PD controller semplice
-	#var torque = angle_diff * rotation_responsiveness - angular_velocity * damping
-#
-	#apply_torque(torque)
-#
 func _handle_movement() -> void:
-	var dir: Vector2 = _handle_mouse_input() if _handle_mouse_input().length() > 0.1 else get_input()
+	var mouse_dir: Vector2 = _handle_mouse_input()
+	var dir: Vector2 = mouse_dir if mouse_dir.length() > 0.2 else get_input()
 
-	if dir.length() > 0.1:
+	if dir.length() > 0.2:
 		apply_central_force(dir.normalized() * acceleration * mass)
 
 	linear_velocity = linear_velocity.limit_length(speed)
 
-# Aggiungi questa variabile in cima alla classe Player
 
-#var do_print := false
-
-# E poi modifica la funzione così:
-#func _handle_gravity(state: PhysicsDirectBodyState2D) -> void:
-	##_debug_timer += state.step
-##
-##if _debug_timer >= DEBUG_INTERVAL:
-		##_debug_timer = 0.0
-		##do_print = true
-	## ===== GRAVITÀ =====
-	#var gravity_accel: Vector2 = gravity_force / mass
-	#var gravity_delta_v := gravity_accel * state.step
-#
-	#state.linear_velocity += gravity_delta_v  # ← applica direttamente
-#
-	## ===== MOVEMENT (STEERING) =====
-	#var input_dir := get_input()
-	#var mouse_dir := _handle_mouse_input()
-	#var dir := mouse_dir if mouse_dir.length() > 0.1 else input_dir
-#
-	## rimuovi la componente di gravità dalla velocità
-	#var planar_velocity := state.linear_velocity - gravity_delta_v
-#
-	#if dir.length() > 0.1:
-		#planar_velocity += dir.normalized() * acceleration * state.step
-#
-	## clamp SOLO il movimento
-	#planar_velocity = planar_velocity.limit_length(speed)
-#
-	## ricombina
-	#state.linear_velocity = planar_velocity + gravity_delta_v
-#
-	##if do_print:
-		##print("---- DEBUG ----")
-		##print("Planar velocity:", planar_velocity.length())
-		##print("Gravity Δv:", gravity_delta_v.length())
-		##print("FINAL velocity:", state.linear_velocity.length())
 
 func get_input() -> Vector2:
 	return Input.get_vector("left", "right", "up", "down")
@@ -238,27 +188,28 @@ func get_damage() -> float:
 	var velocity: Vector2 = linear_velocity
 	#var velocity_squared = linear_velocity.length_squared()
 
-	print("massa: ", mass)
-	print("velocità: ", velocity.length())
+	#print("massa: ", mass)
+	#print("velocità: ", velocity.length())
 
 	#var kinetic_energy = 0.5 * mass * velocity_squared
 
 	#var damage_scaling = 1000.0
 	#var scaled_damage = kinetic_energy / damage_scaling
-	var scaled_damage: float = mass * (velocity.length() * 0.005)
+	var scaled_damage: float = mass * (velocity.length() * 0.1)
 
 	var round_base: int = 5
-	print("Danno originale: ", scaled_damage)
+	#print("Danno originale: ", scaled_damage)
 
 	var damage: int = maxi(snappedi(scaled_damage, round_base), 1)
 
-	print("Danno finale: ", damage)
+	#print("Danno finale: ", damage)
 
 	return damage
 
 var lvl: int = 0
 
 func change_size(amount: float) -> void:
+	sprite.material.set_shader_parameter("frequency", sprite.material.get_shader_parameter("frequency") * amount)
 	change_mass(amount)
 	change_scale(amount)
 	lvl += 1
@@ -327,7 +278,7 @@ func take_damage(amount: int) -> void:
 
 
 func game_over() -> void:
-	GlobalSignals.emit_signal("game_over")
+	GlobalSignals.game_over.emit()
 	queue_free()
 
 

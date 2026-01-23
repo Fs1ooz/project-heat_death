@@ -1,20 +1,35 @@
-[gd_scene load_steps=5 format=3 uid="uid://bpeudpxsbd3x2"]
+[gd_scene load_steps=7 format=3 uid="uid://bpeudpxsbd3x2"]
 
 [ext_resource type="Script" uid="uid://bdmvnvgdm1aav" path="res://Entities/Enemies/SmallBodies/meteoroid.gd" id="1_otcpb"]
-[ext_resource type="PackedScene" uid="uid://bgievdkpstd3t" path="res://Entities/Enemies/visible_screen_enabler_component.tscn" id="2_6m435"]
-
-[sub_resource type="CircleShape2D" id="CircleShape2D_6m435"]
-radius = 1000.0
+[ext_resource type="PackedScene" uid="uid://bgievdkpstd3t" path="res://Entities/Enemies/visible_screen_enabler_component.tscn" id="2_pnclo"]
+[ext_resource type="Texture2D" uid="uid://0yxs2q0xu2iy" path="res://Entities/Enemies/SmallBodies/Ceres/Ceres.png" id="3_otcpb"]
+[ext_resource type="Material" uid="uid://iypu8q4l7r2p" path="res://Entities/smoothpixel.tres" id="3_pnclo"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_lyb38"]
-radius = 50.01
+radius = 57.00877
 
-[node name="Meteoroid" type="RigidBody2D" node_paths=PackedStringArray("collision", "gravity_area_collision") groups=["celestialbodies"]]
+[sub_resource type="CircleShape2D" id="CircleShape2D_6m435"]
+radius = 740.2979
+
+[node name="Meteoroid" type="RigidBody2D" node_paths=PackedStringArray("collision", "gravity_area_collision", "sprite") groups=["celestialbodies"]]
 script = ExtResource("1_otcpb")
-max_size = 25.0
 collision = NodePath("Collision")
 gravity_area_collision = NodePath("Gravity/GravityAreaCollision")
+sprite = NodePath("Collision/Ceres")
 metadata/_custom_type_script = "uid://be8uvibib1twp"
+
+[node name="Collision" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_lyb38")
+
+[node name="Ceres" type="Sprite2D" parent="Collision"]
+texture_filter = 2
+material = ExtResource("3_pnclo")
+texture = ExtResource("3_otcpb")
+
+[node name="VisibleScreenEnablerComponent" parent="Collision/Ceres" instance=ExtResource("2_pnclo")]
+position = Vector2(25, -9)
+rect = Rect2(-808, -786, 1560, 1615)
+enable_node_path = NodePath("../../..")
 
 [node name="Gravity" type="Area2D" parent="."]
 collision_layer = 0
@@ -23,18 +38,6 @@ collision_layer = 0
 position = Vector2(-1, 1)
 shape = SubResource("CircleShape2D_6m435")
 
-[node name="VisibleScreenEnablerComponent" parent="." instance=ExtResource("2_6m435")]
-rect = Rect2(-1031, -1002, 2053, 2087)
-
-[node name="Collision" type="CollisionShape2D" parent="."]
-shape = SubResource("CircleShape2D_lyb38")
-
-[node name="Polygon2D" type="Polygon2D" parent="Collision"]
-color = Color(0.5307092, 0.4973181, 0.48928988, 1)
-polygon = PackedVector2Array(52, 0, 38, -36, 0, -52, -39, -37, -52, 0, -39, 36, 0, 53, 38, 37)
-
 [connection signal="body_entered" from="." to="." method="_on_body_entered"]
 [connection signal="body_entered" from="Gravity" to="." method="_on_gravity_body_entered"]
 [connection signal="body_exited" from="Gravity" to="." method="_on_gravity_body_exited"]
-[connection signal="screen_entered" from="VisibleScreenEnablerComponent" to="." method="_on_visible_screen_enabler_component_screen_entered"]
-[connection signal="screen_exited" from="VisibleScreenEnablerComponent" to="." method="_on_visible_screen_enabler_component_screen_exited"]

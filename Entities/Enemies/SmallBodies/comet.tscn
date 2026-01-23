@@ -1,4 +1,4 @@
-[gd_scene load_steps=6 format=3 uid="uid://8aj1dylerrl1"]
+[gd_scene load_steps=7 format=3 uid="uid://8aj1dylerrl1"]
 
 [ext_resource type="Script" uid="uid://bt7gni3m0ejos" path="res://Entities/Enemies/SmallBodies/comet.gd" id="1_2xb01"]
 [ext_resource type="Material" uid="uid://b78knkhv3e2ad" path="res://Assets/Shaders/comet_process_material.tres" id="2_qk7d4"]
@@ -8,9 +8,15 @@
 [sub_resource type="CircleShape2D" id="CircleShape2D_tmuj1"]
 radius = 130.0
 
-[node name="Comet" type="RigidBody2D" groups=["celestialbodies"]]
+[sub_resource type="CircleShape2D" id="CircleShape2D_qk7d4"]
+radius = 968.16736
+
+[node name="Comet" type="RigidBody2D" node_paths=PackedStringArray("collision", "gravity_area_collision", "sprite") groups=["celestialbodies"]]
 mass = 60.0
 script = ExtResource("1_2xb01")
+collision = NodePath("Collision")
+gravity_area_collision = NodePath("Gravity/GravityAreaCollision")
+sprite = NodePath("Collision/Icon")
 metadata/_custom_type_script = "uid://be8uvibib1twp"
 
 [node name="Timer" type="Timer" parent="."]
@@ -31,6 +37,11 @@ lifetime = 5.0
 preprocess = 0.1
 visibility_rect = Rect2(-1000000000, -1000000000, 1000000000, 1000000000)
 process_material = ExtResource("2_qk7d4")
+
+[node name="Gravity" type="Area2D" parent="."]
+
+[node name="GravityAreaCollision" type="CollisionShape2D" parent="Gravity"]
+shape = SubResource("CircleShape2D_qk7d4")
 
 [connection signal="body_entered" from="." to="." method="_on_body_entered"]
 [connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]
