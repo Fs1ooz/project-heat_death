@@ -1,13 +1,11 @@
-[gd_scene load_steps=17 format=3 uid="uid://b82imh4wvcljk"]
+[gd_scene load_steps=15 format=3 uid="uid://b82imh4wvcljk"]
 
 [ext_resource type="Script" uid="uid://cx41k1qt88o8g" path="res://Stages/World/SolarSystem/solar_system.gd" id="1_56jnl"]
 [ext_resource type="PackedScene" uid="uid://bvfq3qbl7klob" path="res://Stages/World/world_environment.tscn" id="2_3u0hu"]
-[ext_resource type="PackedScene" uid="uid://dooqkflafelol" path="res://Entities/Enemies/SmallBodies/asteroid.tscn" id="2_l0eld"]
+[ext_resource type="PackedScene" uid="uid://b45rkwvpqpxtu" path="res://Stages/World/SolarSystem/AsteroidBelt/asteroid_belt.tscn" id="2_niy7f"]
 [ext_resource type="PackedScene" uid="uid://bosimyr8qkuso" path="res://Stages/World/energy_spawner.tscn" id="3_niy7f"]
-[ext_resource type="PackedScene" uid="uid://bpeudpxsbd3x2" path="res://Entities/Enemies/SmallBodies/meteoroid.tscn" id="3_qs46f"]
 [ext_resource type="AudioStream" uid="uid://btl310t212txn" path="res://Assets/Music/BETA - Base.mp3" id="4_00fk0"]
 [ext_resource type="PackedScene" uid="uid://byiki3druigls" path="res://Stages/UI/ui_layer.tscn" id="4_l0eld"]
-[ext_resource type="Script" uid="uid://coh2apbgc0mok" path="res://Stages/World/SolarSystem/asteroid_belt.gd" id="4_qs46f"]
 [ext_resource type="AudioStream" uid="uid://cawomildbxiao" path="res://Assets/Music/BETA - Phase1.mp3" id="5_3u0hu"]
 [ext_resource type="PackedScene" uid="uid://befachtfe40l2" path="res://Stages/World/SolarSystem/AsteroidBelt/base_background_layer.tscn" id="5_qs46f"]
 [ext_resource type="PackedScene" uid="uid://bkljj71ppklsf" path="res://Stages/World/SolarSystem/AsteroidBelt/background_layer.tscn" id="6_bfis2"]
@@ -71,10 +69,7 @@ script = ExtResource("1_56jnl")
 
 [node name="Regions" type="Node2D" parent="."]
 
-[node name="AsteroidBelt" type="Node2D" parent="Regions"]
-script = ExtResource("4_qs46f")
-asteroid_scene = ExtResource("2_l0eld")
-meteoroid_scene = ExtResource("3_qs46f")
+[node name="AsteroidBelt" parent="Regions" instance=ExtResource("2_niy7f")]
 
 [node name="WorldEnvironment" parent="." instance=ExtResource("2_3u0hu")]
 environment = SubResource("Environment_lnrn1")
