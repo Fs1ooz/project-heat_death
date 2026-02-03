@@ -1,11 +1,11 @@
-[gd_scene load_steps=2 format=3 uid="uid://bosimyr8qkuso"]
+[gd_scene format=3 uid="uid://bosimyr8qkuso"]
 
 [ext_resource type="Script" uid="uid://dr2170l1koy61" path="res://Stages/World/energy_spawner.gd" id="1_bcird"]
 
-[node name="EnergySpawner" type="Node2D"]
+[node name="EnergySpawner" type="Node2D" unique_id=587223433]
 script = ExtResource("1_bcird")
 
-[node name="Timer" type="Timer" parent="."]
+[node name="Timer" type="Timer" parent="." unique_id=155202137]
 wait_time = 0.1
 autostart = true
 

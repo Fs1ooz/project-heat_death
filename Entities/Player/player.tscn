@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=3 uid="uid://470x1obeipdg"]
+[gd_scene format=3 uid="uid://470x1obeipdg"]
 
 [ext_resource type="Script" uid="uid://bf2nvyuinsvhu" path="res://Entities/Player/player.gd" id="1_5c2io"]
 [ext_resource type="Shader" uid="uid://bt4erkhma4laf" path="res://Entities/Player/playersprite.gdshader" id="3_01a4e"]
@@ -38,7 +38,7 @@ random_pitch = 1.1
 streams_count = 1
 stream_0/stream = ExtResource("5_4wf4l")
 
-[node name="Player" type="RigidBody2D" node_paths=PackedStringArray("collision", "sprite", "trail", "shockwave") groups=["player"]]
+[node name="Player" type="RigidBody2D" unique_id=952817380 node_paths=PackedStringArray("collision", "sprite", "trail", "shockwave") groups=["player"]]
 collision_mask = 2
 physics_material_override = SubResource("PhysicsMaterial_5c2io")
 gravity_scale = 0.0
@@ -54,24 +54,24 @@ sprite = NodePath("Collision/Sprite")
 trail = NodePath("Collision/Sprite/Trail")
 shockwave = NodePath("Collision/Sprite/ShockwaveRenderer")
 
-[node name="PlayerCamera" type="Camera2D" parent="."]
+[node name="PlayerCamera" type="Camera2D" parent="." unique_id=511109393]
 limit_enabled = false
 position_smoothing_enabled = true
 position_smoothing_speed = 10.0
 rotation_smoothing_speed = 20.0
 script = ExtResource("5_5c2io")
 
-[node name="Collision" type="CollisionShape2D" parent="."]
+[node name="Collision" type="CollisionShape2D" parent="." unique_id=1021464206]
 rotation = 1.5707964
 shape = SubResource("CapsuleShape2D_3uyv8")
 
-[node name="Sprite" type="Sprite2D" parent="Collision"]
+[node name="Sprite" type="Sprite2D" parent="Collision" unique_id=1510216970]
 z_index = 1
 material = SubResource("ShaderMaterial_lub02")
 rotation = -1.5707964
 texture = ExtResource("4_7a1se")
 
-[node name="Trail" type="GPUParticles2D" parent="Collision/Sprite"]
+[node name="Trail" type="GPUParticles2D" parent="Collision/Sprite" unique_id=636758913]
 z_index = -1
 amount = 500
 lifetime = 0.75
@@ -80,15 +80,15 @@ trail_lifetime = 1.0
 trail_sections = 12
 process_material = ExtResource("6_4wf4l")
 
-[node name="ShockwaveRenderer" parent="Collision/Sprite" instance=ExtResource("5_01a4e")]
+[node name="ShockwaveRenderer" parent="Collision/Sprite" unique_id=230247213 instance=ExtResource("5_01a4e")]
 
-[node name="HitAudioStreamPlayer" type="AudioStreamPlayer" parent="."]
+[node name="HitAudioStreamPlayer" type="AudioStreamPlayer" parent="." unique_id=1490258230]
 stream = SubResource("AudioStreamRandomizer_5c2io")
 pitch_scale = 0.9
 max_polyphony = 5
 bus = &"Sound"
 
-[node name="RegenTimer" type="Timer" parent="."]
+[node name="RegenTimer" type="Timer" parent="." unique_id=867875092]
 wait_time = 5.0
 autostart = true
 

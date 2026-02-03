@@ -186,23 +186,12 @@ func get_input() -> Vector2:
 ## Calcola e restituisce il danno del giocatore usando la legge dell'energia cinetica (E = 1/2 mv^2), scherzo, usando la quantità di moto (p = m * v)
 func get_damage() -> float:
 	var velocity: Vector2 = linear_velocity
-	#var velocity_squared = linear_velocity.length_squared()
-
-	#print("massa: ", mass)
-	#print("velocità: ", velocity.length())
-
-	#var kinetic_energy = 0.5 * mass * velocity_squared
-
-	#var damage_scaling = 1000.0
-	#var scaled_damage = kinetic_energy / damage_scaling
-	var scaled_damage: float = mass * (velocity.length() * 0.1)
+	var scaled_damage: float = mass * (velocity.length() * 0.5)
 
 	var round_base: int = 5
 	#print("Danno originale: ", scaled_damage)
 
 	var damage: int = maxi(snappedi(scaled_damage, round_base), 1)
-
-	#print("Danno finale: ", damage)
 
 	return damage
 
