@@ -10,6 +10,7 @@ class_name SmallBody
 #
 func _ready() -> void:
 	rotation = randf_range(0.0, TAU)
+	angular_velocity = randf_range(0.0, 0.1)
 	_setup_random_scale()
 	super()
 	#visible_on_screen_notifier.position = visible_on_screen_notifier.rect.position

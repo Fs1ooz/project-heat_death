@@ -42,15 +42,14 @@ func _kick() -> void:
 
 
 
-
 func _spawn_trail_drop() -> void:
 	if game_energy <= 0: return
-	var energy_drop = energy_drop_scene.instantiate()
+	var energy_drop: EnergyDrop = energy_drop_scene.instantiate()
 	energy_drop.energy = energy_per_drop
 	energy_drop.global_position = global_position + (-linear_velocity.normalized() * 20.0)
 	get_parent().call_deferred("add_child", energy_drop)
 	game_energy = max(0, game_energy - energy_per_drop)
-	var energy_ratio = float(game_energy) / float(initial_game_energy)
+	var energy_ratio: float = float(game_energy) / float(initial_game_energy)
 	collision.scale = initial_scale * energy_ratio
 	if mass > 0:
 		mass = initial_mass * energy_ratio

@@ -9,7 +9,7 @@ uniform vec3 color3 : source_color = vec3(0.8, 0.2, 0.5); // rosa
 uniform float color_shift_speed : hint_range(0.0, 2.0, 0.1) = 0.3;
 uniform float gradient_scale : hint_range(0.5, 5.0, 0.1) = 2.0;
 uniform float pulse_speed : hint_range(0.0, 3.0, 0.1) = 0.5;
-uniform float pulse_intensity : hint_range(0.0, 0.5, 0.05) = 0.2;
+uniform float pulse_intensity : hint_range(0.0, 2.0, 0.05) = 0.2;
 
 // Effetti aggiuntivi
 uniform bool enable_shimmer = true;
@@ -40,7 +40,7 @@ void fragment() {
     }
     
     // Effetto pulsazione (respiro della nebulosa)
-    float pulse = sin(TIME * pulse_speed) * pulse_intensity + 1.0;
+    float pulse = sin(TIME * pulse_speed) * pulse_intensity + pulse_intensity + 0.5;
     color *= pulse;
     
     // Shimmer (scintillio locale)

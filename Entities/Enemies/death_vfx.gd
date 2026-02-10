@@ -1,0 +1,43 @@
+extends Node2D
+class_name DeathVFX
+
+@onready var anim_player: AnimationPlayer = $AnimationPlayer
+@onready var explosion_red: GPUParticles2D = $ExplosionRed
+@onready var shockwave: GPUParticles2D = $Shockwave
+
+@onready var explosion_red_initial_scale: Vector2 = Vector2(explosion_red.process_material.scale_min, explosion_red.process_material.scale_max)
+@onready var shockwave_initial_scale: Vector2 = Vector2(shockwave.process_material.scale_min, shockwave.process_material.scale_max)
+
+#@onready var explosion_red_initial_velocity: Vector2 = Vector2(explosion_red.process_material.initial_velocity_min, explosion_red.process_material.initial_velocity_max)
+#@onready var shockwave_initial_velocity: Vector2 = Vector2(shockwave.process_material.initial_velocity_min, shockwave.process_material.initial_velocity_min)
+
+@onready var explosion_red_initial_trail_lifetime: float = explosion_red.trail_lifetime
+
+func _ready() -> void:
+	anim_player.play("explosion")
+
+
+func scale_explosion(scale_factor: float) -> void:
+	scale *= scale_factor
+
+	explosion_red.process_material = explosion_red.process_material.duplicate()
+
+	explosion_red.process_material.scale_min = explosion_red_initial_scale.x * scale_factor
+	explosion_red.process_material.scale_max = explosion_red_initial_scale.y * scale_factor
+	#explosion_red.process_material.initial_velocity_min = explosion_red_initial_velocity.x * scale_factor
+	#explosion_red.process_material.initial_velocity_max = explosion_red_initial_velocity.y * scale_factor
+
+
+	#explosion_red.trail_lifetime = explosion_red_initial_trail_lifetime * scale_factor
+
+
+	shockwave.process_material = shockwave.process_material.duplicate()
+	shockwave.process_material.scale_min = shockwave_initial_scale.y * scale_factor
+	shockwave.process_material.scale_max = shockwave_initial_scale.y * scale_factor
+	#shockwave.process_material.initial_velocity_min = shockwave_initial_velocity.x * scale_factor
+	#shockwave.process_material.initial_velocity_max = shockwave_initial_velocity.y * scale_factor
+
+# Questo segnale deve essere collegato dal pannello "Nodi" dell'AnimationPlayer
+func _on_animation_player_animation_finished(anim_name: StringName) -> void:
+	if anim_name == "explosion":
+		queue_free()

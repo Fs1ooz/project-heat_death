@@ -1,4 +1,4 @@
-[gd_resource type="ShaderMaterial" load_steps=2 format=3 uid="uid://iypu8q4l7r2p"]
+[gd_resource type="ShaderMaterial" format=3 uid="uid://iypu8q4l7r2p"]
 
 [ext_resource type="Shader" uid="uid://bj6kjixcams5n" path="res://Entities/smoothpixel.gdshader" id="1_s4qol"]
 

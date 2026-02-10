@@ -5,8 +5,8 @@ extends Camera2D
 @export var min_zoom_base: float = 0.001  # Limite minimo quando player.scale = 1
 @export var max_zoom_base: float = 2.0  # Limite massimo quando player.scale = 1
 @export_group("Zoom Settings")
-@export var base_zoom: Vector2 = Vector2.ONE * 0.35
-@export var zoom_lerp_speed: float = 2.0
+@export var base_zoom: Vector2 = Vector2.ONE * 0.5
+@export var zoom_lerp_speed: float = 2.15
 @export var manual_zoom_timeout: float = 2.0
 
 var manual_zoom: bool = false
@@ -16,6 +16,8 @@ var last_zoom_input_time: float = 0.0
 var min_zoom: float
 var max_zoom: float
 var forward_offset: float = 200.0
+
+var zoom_value_multiplier: float = 0.5
 
 
 @onready var player: Player = get_parent()
@@ -45,7 +47,7 @@ func _process(delta: float) -> void:
 		# SE C'È INPUT DI MOVIMENTO: Dezooma (riduciamo il valore di zoom)
 		if dir.length() > 0.1:
 			# Se vuoi che dezoomi di più, usa un numero più piccolo (es. 0.5)
-			target_zoom_value *= 0.75
+			target_zoom_value *= zoom_value_multiplier
 
 		# Applichiamo lo zoom in modo fluido
 		# zoom_lerp_speed controlla quanto è "morbida" la transizione (prova 2.0 o 3.0)

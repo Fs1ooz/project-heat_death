@@ -6,7 +6,7 @@
 [ext_resource type="PackedScene" uid="uid://0vbdasmelfef" path="res://Entities/Player/shockwave.tscn" id="5_01a4e"]
 [ext_resource type="AudioStream" uid="uid://1wfdu2dsudw4" path="res://Assets/Sounds/hit.sfxr" id="5_4wf4l"]
 [ext_resource type="Script" uid="uid://cnf8kwhvre5kg" path="res://Entities/Player/camera_2d.gd" id="5_5c2io"]
-[ext_resource type="Material" uid="uid://bvhfi1gat4c5" path="res://Entities/Player/sciaveramentegay.tres" id="6_4wf4l"]
+[ext_resource type="PackedScene" uid="uid://b0myyk17i84k7" path="res://Entities/Player/trail.tscn" id="5_7a1se"]
 
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_5c2io"]
 friction = 0.0
@@ -71,16 +71,9 @@ material = SubResource("ShaderMaterial_lub02")
 rotation = -1.5707964
 texture = ExtResource("4_7a1se")
 
-[node name="Trail" type="GPUParticles2D" parent="Collision/Sprite" unique_id=636758913]
-z_index = -1
-amount = 500
-lifetime = 0.75
-randomness = 0.2
-trail_lifetime = 1.0
-trail_sections = 12
-process_material = ExtResource("6_4wf4l")
-
 [node name="ShockwaveRenderer" parent="Collision/Sprite" unique_id=230247213 instance=ExtResource("5_01a4e")]
+
+[node name="Trail" parent="Collision/Sprite" unique_id=961780176 instance=ExtResource("5_7a1se")]
 
 [node name="HitAudioStreamPlayer" type="AudioStreamPlayer" parent="." unique_id=1490258230]
 stream = SubResource("AudioStreamRandomizer_5c2io")

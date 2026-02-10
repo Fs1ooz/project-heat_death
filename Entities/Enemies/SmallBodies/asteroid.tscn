@@ -1,4 +1,4 @@
-[gd_scene load_steps=5 format=3 uid="uid://dooqkflafelol"]
+[gd_scene format=3 uid="uid://dooqkflafelol"]
 
 [ext_resource type="Script" uid="uid://b76ax10rq762s" path="res://Entities/Enemies/SmallBodies/asteroid.gd" id="1_tefsh"]
 [ext_resource type="PackedScene" uid="uid://bgievdkpstd3t" path="res://Entities/Enemies/visible_screen_enabler_component.tscn" id="2_t88s8"]
@@ -7,7 +7,7 @@
 [sub_resource type="CircleShape2D" id="CircleShape2D_vwlwn"]
 radius = 968.16736
 
-[node name="Asteroid" type="RigidBody2D" node_paths=PackedStringArray("collision", "gravity_area_collision", "sprite") groups=["celestialbodies"]]
+[node name="Asteroid" type="RigidBody2D" unique_id=1561733638 node_paths=PackedStringArray("collision", "gravity_area_collision", "sprite") groups=["celestialbodies"]]
 z_index = 1
 continuous_cd = 2
 contact_monitor = true
@@ -17,22 +17,22 @@ collision = NodePath("CollisionPolygon2D")
 gravity_area_collision = NodePath("Gravity/GravityAreaCollision")
 sprite = NodePath("CollisionPolygon2D/Vesta")
 
-[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="."]
-polygon = PackedVector2Array(-117, -85, -69, -114, -20, -125, 7, -124, 58, -111, 101, -93, 123, -71, 148, -39, 153, 0, 147, 46, 118, 83, 62, 117, -6, 133, -50, 130, -89, 117, -125, 89, -140, 63, -150, 32, -151, 2, -142, -50)
+[node name="Gravity" type="Area2D" parent="." unique_id=1329953899]
 
-[node name="Vesta" type="Sprite2D" parent="CollisionPolygon2D"]
-scale = Vector2(2.5, 2.5)
+[node name="GravityAreaCollision" type="CollisionShape2D" parent="Gravity" unique_id=1242594090]
+shape = SubResource("CircleShape2D_vwlwn")
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="." unique_id=747712959]
+polygon = PackedVector2Array(-30, -44, -3, -49, 20, -44, 43, -34, 60, -15, 59, 11, 44, 37, 9, 51, -22, 53, -52, 35, -61, 3, -51, -30)
+
+[node name="Vesta" type="Sprite2D" parent="CollisionPolygon2D" unique_id=309182808]
 texture = ExtResource("3_t88s8")
 
-[node name="VisibleScreenEnablerComponent" parent="CollisionPolygon2D/Vesta" instance=ExtResource("2_t88s8")]
+[node name="VisibleScreenEnablerComponent" parent="CollisionPolygon2D/Vesta" unique_id=1944736001 instance=ExtResource("2_t88s8")]
+position = Vector2(2.8, -30.400002)
 scale = Vector2(0.39999995, 0.39999995)
 rect = Rect2(-1165.0001, -1092.0001, 2310.0002, 2210)
 enable_node_path = NodePath("../../..")
-
-[node name="Gravity" type="Area2D" parent="."]
-
-[node name="GravityAreaCollision" type="CollisionShape2D" parent="Gravity"]
-shape = SubResource("CircleShape2D_vwlwn")
 
 [connection signal="body_entered" from="." to="." method="_on_body_entered"]
 [connection signal="body_entered" from="Gravity" to="." method="_on_gravity_body_entered"]

@@ -8,24 +8,24 @@ const STAGE_CONFIG: Dictionary = {
 	SizeStage.LARGE: {
 		"next_stage": SizeStage.MEDIUM,
 		"fragments": 3,
-		"min_size": 35.0,
-		"max_size": 50.0,
+		"min_size": 80.0,
+		"max_size": 90.0,
 		"internal_energy": 2,
 		"impulse": 3000,
 	},
 	SizeStage.MEDIUM: {
 		"next_stage": SizeStage.SMALL,
 		"fragments": 2,
-		"min_size": 15.0,
-		"max_size": 20.0,
+		"min_size": 40.0,
+		"max_size": 45.0,
 		"internal_energy": 1,
 		"impulse": 1500,
 	},
 	SizeStage.SMALL: {
 		"next_stage": SizeStage.METEOROID, # Ora punta a meteoroid
 		"fragments": 4, # Magari ne spawna tanti piccoli
-		"min_size": 5.0,
-		"max_size": 7.5,
+		"min_size": 20.0,
+		"max_size": 21.5,
 		"internal_energy": 1,
 		"impulse": 400,
 	},
@@ -39,9 +39,8 @@ const ASTEROID_SCENE_PATH: String = "res://Entities/Enemies/SmallBodies/Asteroid
 const METEOROID_SCENE_PATH: String = "res://Entities/Enemies/SmallBodies/Meteoroid.tscn"
 const GAS_SCENE_PATH: String = "res://Entities/Enemies/SmallBodies/gas.tscn"
 const FRAGMENT_SPAWN_OFFSET: float = 75.0
-const GAS_SCALE_MULTIPLIER: float = 10.0
-const GAS_OFFSET: float = 50.0
-const OUTGASSING_IMPULSE: float = 200.0
+const GAS_SCALE_MULTIPLIER: float = 2.0
+const OUTGASSING_IMPULSE: float = 300.0
 
 
 @export var current_stage: SizeStage = SizeStage.LARGE
@@ -66,7 +65,8 @@ func _load_scenes() -> void:
 	_gas_scene = preload(GAS_SCENE_PATH)
 
 func _initialize_random_stage() -> void:
-	current_stage = randi_range(0, 2) as SizeStage
+	current_stage = SizeStage.LARGE
+	#current_stage = randi_range(0, 2) as SizeStage
 
 func _apply_stage_configuration() -> void:
 	var config: Dictionary = STAGE_CONFIG[current_stage]
@@ -75,25 +75,81 @@ func _apply_stage_configuration() -> void:
 	internal_energy = config.get("internal_energy", 0)
 
 
-func _outgassing() -> void:
+const ENTROPY_THRESHOLD: float = 5.0
+var spawn_points: Array[float] = [10.0, 20.0, 30.0, 45.0, 60.0, 75.0]
+
+var last_spawn_index: int = 0
+
+func _on_entropy_changed(entropy: float) -> void:
+	if entropy < ENTROPY_THRESHOLD:
+		last_spawn_index = 0
+		_stop_outgassing()
+		return
+
+	var current_index: int = 0
+
+	for spawn_point: float in spawn_points:
+		if entropy > spawn_point:
+			current_index += 1
+
+	if current_index > last_spawn_index:
+		for i: int in range(current_index - last_spawn_index):
+			_spawn_gas()
+
+	last_spawn_index = current_index
+
+
+func _spawn_gas() -> void:
 	if not _gas_scene:
 		return
 
-	var gas: Node2D = _gas_scene.instantiate()
+	var gas: Gas = _gas_scene.instantiate()
 	var angle: float = randf_range(0.0, TAU)
 	var direction: Vector2 = Vector2.RIGHT.rotated(angle)
 
-	_configure_gas(gas, direction, angle)
-	add_child(gas)
-	apply_impulse(-direction * OUTGASSING_IMPULSE)
+	sprite.add_child(gas)
 
-func _configure_gas(gas: Node2D, direction: Vector2, angle: float) -> void:
-	gas.scale *= sprite.scale * GAS_SCALE_MULTIPLIER
-	gas.global_position = global_position + direction * GAS_OFFSET
+	var scale_factor: float = sprite.scale.x
+
+	var offset: float = scale_factor - 10
+
+	gas.global_position = global_position
+	gas.position = direction * offset
 	gas.rotation = angle
 
-	if gas.has_node("mat"):
-		gas.mat.scale *= sprite.scale * GAS_SCALE_MULTIPLIER
+	apply_force(-direction.rotated(sprite.rotation) * OUTGASSING_IMPULSE)
+
+	if gas.process_material:
+		gas.process_material = gas.process_material.duplicate()
+		print("prima:", gas.process_material.scale_min)
+		gas.process_material.scale_min = gas.initial_particle_scale.x * scale_factor
+		print("dopo:", gas.process_material.scale_min)
+		gas.process_material.scale_max = gas.initial_particle_scale.y * scale_factor
+		#gas.process_material.initial_velocity_min = gas.initial_particle_velocity.x
+		#gas.process_material.initial_velocity_max = gas.initial_particle_velocity.y
+	#if gas.gas_area:
+		#gas.gas_area.scale = Vector2.ONE * scale_factor
+
+	#printerr(scale_factor)
+#
+	#gas.amount *= int(scale_factor)
+	#gas.lifetime *= scale_factor
+
+
+
+
+func _stop_outgassing() -> void:
+	for child: Node in _get_gas_children():
+		child.queue_free()
+
+
+func _get_gas_children() -> Array:
+	var gas_children: Array = []
+	for child: Node in sprite.get_children():
+		if child is Gas:
+			gas_children.append(child)
+	return gas_children
+
 
 func die() -> void:
 	var config: Dictionary = STAGE_CONFIG[current_stage]

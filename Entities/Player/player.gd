@@ -50,6 +50,7 @@ var mass_percentage: float = 1.0
 @onready var initial_particle_scale: Vector2
 @onready var mat: ParticleProcessMaterial = trail.process_material
 
+
 func _ready() -> void:
 	initial_mass = mass
 	initial_radius = collision.shape.radius
@@ -67,15 +68,62 @@ func _ready() -> void:
 #region Movement
 
 
+# Aggiungi queste variabili
+#@export_group("Squash & Stretch")
+#@export var squash_strength: float = 0.55  # Intensità dell'effetto
+#@export var squash_speed_threshold: float = 10.0  # Velocità minima
+#@export var squash_smoothing: float = 12.0  # Velocità di interpolazione
+
+var base_scale: Vector2 = Vector2.ONE
 
 func _physics_process(delta: float) -> void:
 	_last_velocity = linear_velocity
 
-	if EntropyManager.entropy_value < 0:  # se entropia negativa
-		apply_entropy(delta)  # applica caos
+	if EntropyManager.entropy_value < 0:
+		apply_entropy(delta)
 
 	_handle_movement()
 
+
+var current_tween: Tween
+
+func _handle_movement() -> void:
+	var mouse_dir: Vector2 = _handle_mouse_input()
+	var dir: Vector2 = mouse_dir if mouse_dir.length() > 0.2 else get_input()
+
+	if dir.length() > 0.2:
+		apply_central_force(dir.normalized() * acceleration * mass)
+		# Passiamo true perché stiamo accelerando
+		_animate_stretch(true)
+	else:
+		# Passiamo false perché siamo in inerzia/frenata
+		_animate_stretch(false)
+
+	linear_velocity = linear_velocity.limit_length(speed)
+
+var is_stretched: bool = false
+
+func _animate_stretch(is_accelerating: bool) -> void:
+	# Anima SOLO quando c'è un cambio di stato
+	if is_accelerating == is_stretched:
+		return  # Già nello stato corretto
+
+	if current_tween:
+		current_tween.kill()
+
+	is_stretched = is_accelerating
+	current_tween = create_tween()
+
+	if is_accelerating:
+		var target: Vector2 = base_scale * Vector2(1.15, 0.85)
+		current_tween.tween_property(sprite, "scale", target, 3)\
+			.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	else:
+		var release_target: Vector2 = base_scale * Vector2(0.95, 1.05)
+		current_tween.tween_property(sprite, "scale", release_target, 0.12)\
+			.set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+		current_tween.tween_property(sprite, "scale", base_scale, 0.18)\
+			.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
 
 
 func _input(event: InputEvent) -> void:
@@ -102,7 +150,6 @@ func _handle_rotation(state: PhysicsDirectBodyState2D) -> void:
 	var target_angle: float = dir.angle()
 	var angle_diff: float = wrapf(target_angle - rotation, -PI, PI)
 	state.angular_velocity = angle_diff * rotation_responsiveness
-
 
 var oscillation_speed: float = 1000.0   # Intensità della forza
 var oscillation_frequency: float = 2.0  # Quante oscillazioni al secondo
@@ -147,7 +194,7 @@ func apply_entropy(delta: float) -> void:
 
 func _handle_collision_resistance(state: PhysicsDirectBodyState2D) -> void:
 	var max_resistance: float = 0.0
-
+	var min_res_ratio: float = 0.3
 	for i: int in range(state.get_contact_count()):
 		var collider: CelestialBody = state.get_contact_collider_object(i)
 		if collider is CelestialBody:
@@ -157,24 +204,13 @@ func _handle_collision_resistance(state: PhysicsDirectBodyState2D) -> void:
 				max_resistance = 1.0
 				print("💥 BULLDOZER MODE vs ", collider.name)
 				break
-			elif mass_ratio > 0.15:
-				var resistance: float = smoothstep(1.0, 3.0, mass_ratio)
+			elif mass_ratio > min_res_ratio:
+				var resistance: float = smoothstep(min_res_ratio, 3.0, mass_ratio)
 				max_resistance = max(max_resistance, resistance)
 				print("⚡ Resistenza: %.0f%% vs %s" % [resistance * 100, collider.name])
 
 	if max_resistance > 0.0:
 		state.linear_velocity = state.linear_velocity.lerp(_last_velocity, max_resistance)
-
-
-#
-func _handle_movement() -> void:
-	var mouse_dir: Vector2 = _handle_mouse_input()
-	var dir: Vector2 = mouse_dir if mouse_dir.length() > 0.2 else get_input()
-
-	if dir.length() > 0.2:
-		apply_central_force(dir.normalized() * acceleration * mass)
-
-	linear_velocity = linear_velocity.limit_length(speed)
 
 
 
@@ -201,6 +237,7 @@ func change_size(amount: float) -> void:
 	sprite.material.set_shader_parameter("frequency", sprite.material.get_shader_parameter("frequency") * amount)
 	change_mass(amount)
 	change_scale(amount)
+
 	lvl += 1
 	# Emetti il segnale con i nuovi valori
 	energy_threshold *= amount
@@ -211,8 +248,9 @@ func change_mass(amount: float) -> void:
 	mass_percentage = mass / old_mass
 
 
+
 func change_scale(amount: float) -> void:
-	var scale_change: Vector2 = sprite.scale * amount
+	var scale_change: Vector2 = base_scale * amount
 	collision.shape.radius = initial_radius * scale_change.x
 	collision.shape.height = initial_height * scale_change.x
 
@@ -228,6 +266,7 @@ func change_scale(amount: float) -> void:
 		mat.set("emission_shape_offset", Vector3(initial_x * amount, 0.0, 0.0))
 
 	sprite.scale = scale_change
+	base_scale = sprite.scale
 
 	#var tween = create_tween()
 	#tween.set_parallel(true)

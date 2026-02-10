@@ -1,0 +1,10 @@
+[gd_scene format=3 uid="uid://b0myyk17i84k7"]
+
+[ext_resource type="Material" uid="uid://bvhfi1gat4c5" path="res://Entities/Player/sciaveramentegay.tres" id="1_6afsu"]
+
+[node name="Trail" type="GPUParticles2D" unique_id=961780176]
+z_index = -1
+amount = 800
+lifetime = 0.75
+fixed_fps = 0
+process_material = ExtResource("1_6afsu")

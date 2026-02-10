@@ -1,19 +1,34 @@
-extends Area2D
+extends GPUParticles2D
+class_name Gas
 
-		# Lista dei player dentro il gas
-var bodies_inside: Array[Player] = []
+var player_inside: Player = null
+var damage_time: float = 5.0
+var timer: float = 0.0
 
-@onready var mat: ParticleProcessMaterial = $GasParticles.process_material
+@onready var initial_particle_scale: Vector2 = Vector2(process_material.scale_min, process_material.scale_max)
+#@onready var initial_par	ticle_velocity: Vector2 = Vector2(process_material.initial_velocity_min, process_material.initial_velocity_max)
 
 
-func _on_body_entered(body: Node2D) -> void:
-	if body is Player:
-		bodies_inside.append(body)
+@onready var gas_area: Area2D = $GasArea
 
-func _on_body_exited(body: Node2D) -> void:
-	if body is Player:
-		bodies_inside.erase(body)
 
 func _process(delta: float) -> void:
-	for body: Node2D in bodies_inside:
-		body.take_damage(body.get_damage() * delta)
+	if player_inside != null:
+		timer += delta
+		if timer >= damage_time:
+			player_inside.take_damage(int(player_inside.get_damage()))
+			timer = 0.0
+
+
+func _on_gas_body_entered(body: Node2D) -> void:
+	if body is Player:
+		player_inside = body
+		timer = 0.0
+		print("Player entered gas")
+
+
+func _on_gas_body_exited(body: Node2D) -> void:
+	if body is Player and player_inside == body:
+		player_inside = null
+		timer = 0.0
+		print("Player exited gas")

@@ -95,7 +95,7 @@ func generate_regions() -> void:
 		spawn_region(region_node, region_data["meteoroid_count"] / 10, min_pixels, max_pixels, asteroid_scene)
 		spawn_meteoroid_clusters(region_node, region_data["meteoroid_count"], min_pixels, max_pixels)
 
-		printerr(total_bodies)
+		#printerr(total_bodies)
 
 @export var cluster_radius: float = 35_000.0
 

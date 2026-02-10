@@ -33,7 +33,7 @@ var bodies_in_gravity: Array[RigidBody2D] = []
 var current_noise: float = 0.0
 var entropy_force: Vector2 = Vector2.ZERO
 var health: float
-var explosion_red_scene: PackedScene = preload("uid://dvg5n5eu3oyde")
+var death_vfx_scene: PackedScene = preload("uid://dvg5n5eu3oyde")
 var energy_drop_scene: PackedScene = preload("uid://ctismywjnvljg")
 
 var _last_velocity: Vector2 = Vector2.ZERO
@@ -123,6 +123,8 @@ func _setup_scale(scale_factor: float) -> void:
 		gravity_area_collision.shape = area
 
 
+var density: float = 0.1
+
 func _setup_mass() -> void:
 	var size_metric: float = 0.0
 
@@ -145,7 +147,7 @@ func _setup_mass() -> void:
 
 	# Applica la formula della massa
 	size_metric = max(0, size_metric - 50)
-	var raw_mass: float = size_metric * mass
+	var raw_mass: float = size_metric * density
 	mass = max(round_base, snappedi(raw_mass, round_base))
 
 
@@ -209,19 +211,12 @@ func die() -> void:
 
 
 func _spawn_explosion() -> void:
-	var explosion_red: Node = explosion_red_scene.instantiate()
-	explosion_red.global_position = global_position
-	get_parent().add_child(explosion_red)
-	explosion_red.restart()
-	explosion_red.scale = scale
+	var death_vfx: DeathVFX = death_vfx_scene.instantiate()
+	death_vfx.global_position = global_position
+	get_parent().add_child(death_vfx)
+	death_vfx.scale_explosion(sprite.scale.x * 0.9)
 
-#func play_sound_once(sound: AudioStream) -> void:
-	#var player := AudioStreamPlayer2D.new()
-	#player.stream = sound
-	#player.global_position = global_position
-	#get_tree().get_root().add_child(player)
-	#player.play()
-	#player.connect("finished", Callable(player, "queue_free"))
+
 
 func _spawn_energy_drop() -> void:
 	var num_drops: int = int(game_energy)  # Calcola quanti drop vorresti
