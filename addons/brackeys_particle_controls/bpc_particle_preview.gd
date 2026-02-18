@@ -60,7 +60,7 @@ func change_property(prop_name: String, value) -> void:
 
 func can_skip_property(prop_name: String) -> bool:
 	# For some reason Godot throws errors if we try to get these properties
-	# when the number of draw passes is lower 
+	# when the number of draw passes is lower
 	if prop_name == "draw_pass_2" and original.draw_passes < 2:
 		return true
 	if prop_name == "draw_pass_3" and original.draw_passes < 3:
@@ -101,7 +101,6 @@ func scrub_to(t: float):
 
 func get_total_sim_time() -> float:
 	if original.speed_scale == 0:
-		return 999999 
+		return 999999
 	var max_emission_time = original.lifetime * (1.0 - original.explosiveness)
 	return (max_emission_time + original.lifetime - original.preprocess) / original.speed_scale
-

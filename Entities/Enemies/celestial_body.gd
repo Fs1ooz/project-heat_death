@@ -1,5 +1,5 @@
-extends RigidBody2D
 class_name CelestialBody
+extends RigidBody2D
 
 static var celestial_bodies: Array = []
 
@@ -9,26 +9,26 @@ func _enter_tree() -> void:
 func _exit_tree() -> void:
 	celestial_bodies.erase(self)
 
-
 const G: float = 6_674_300.0  # o anche * 50, * 100
 const MAX_FORCE: float = 1_000_000_000_000.0
 const SOFTENING: float = 10.0
 var bodies_in_gravity: Array[RigidBody2D] = []
 
-
 # Proprietà comuni
 @export var internal_energy: int = 1
-@export var game_energy: int = 5
+@export var game_energy: int = 50
 
 @export var round_base: int = 5
 
 @export var collision: Node2D
 @export var gravity_area_collision: CollisionShape2D
 
-
 @export var sprite: Sprite2D
 
 @export var base_noise: float = 5.0
+
+@export var animation_player: AnimationPlayer
+
 
 var current_noise: float = 0.0
 var entropy_force: Vector2 = Vector2.ZERO
@@ -45,8 +45,6 @@ var health_bar_container: Control
 
 
 func _ready() -> void:
-	sprite.material = load("res://Entities/smoothpixel.tres")
-	set_process(false)
 	for child: Node in get_children():
 		if child is AnimatedSprite2D:
 			child.play()
@@ -83,7 +81,6 @@ func _setup_physics() -> void:
 	physics_material_override = PhysicsMaterial.new()
 	physics_material_override.bounce = 0.0
 	physics_material_override.friction = 0.0
-
 
 
 func _setup_scale(scale_factor: float) -> void:
@@ -172,7 +169,7 @@ func _setup_health() -> void:
 
 # Gestione collisioni
 func _on_body_entered(body: Node) -> void:
-	var dmg_mult: float = 0.001
+	var dmg_mult: float = 0.0075
 	var rel_vel: float = (linear_velocity - body._last_velocity).length() * dmg_mult
 	var mass_ratio: float =  mass / body.mass
 	var damage_to_player: float = rel_vel * snappedf(mass_ratio, dmg_mult)
@@ -186,25 +183,27 @@ func _on_body_entered(body: Node) -> void:
 	else:
 		take_damage(body.get_damage())
 
+
 # Gestione danno
 func take_damage(damage: float) -> void:
 	health -= damage
 	if health_bar:
 		health_bar.value = health
 	print("Vita attuale: ", health)
+	if animation_player:
+		animation_player.play("hit_flash")
 	if health <= 0:
 		die()
 
 # Morte e esplosione
 func die() -> void:
+	await get_tree().create_timer(0.05).timeout
 	_spawn_energy_drop()
 	_spawn_explosion()
 	for body: RigidBody2D in bodies_in_gravity:
 		if body is Player:
 			var death_entropy: float = - max(1.0, (50.0 * mass)/(mass + 1000.0))
 			EntropyManager.change_entropy(death_entropy)
-#
-	printerr("Sono scattato porc")
 	bodies_in_gravity.clear()
 	GlobalSignals.death.emit(self)
 	queue_free()
@@ -217,33 +216,33 @@ func _spawn_explosion() -> void:
 	death_vfx.scale_explosion(sprite.scale.x * 0.9)
 
 
-
 func _spawn_energy_drop() -> void:
-	var num_drops: int = int(game_energy)  # Calcola quanti drop vorresti
-	num_drops = clamp(num_drops, 5, 100)  # Limita tra 5 e 100
+	var spawn_radius: float = sprite.scale.x * 25.0
+	var energy_spawned: int = 0
+	var energy_to_spawn: int = int(game_energy * randf_range(1.0, 1.8))
 
-	# IMPORTANTE: Ogni drop ha energia totale / numero effettivo di drop
-	var energy_per_drop: float = float(game_energy) / num_drops
+	while energy_spawned < energy_to_spawn:
+		# Weighted random - valori bassi più probabili
+		var random_factor: float = pow(randf(), 3.0)  # Bias verso 0
+		var energy_value: int = max(1, int(random_factor * energy_to_spawn))
 
-	var spawn_radius: float = sprite.scale.x * 20.0
+		var energy_drop: Exp = energy_drop_scene.instantiate()
+		energy_drop.energy = energy_value
 
-	for i: int in range(num_drops):
-		var energy_drop: Node = energy_drop_scene.instantiate()
-		energy_drop.energy = int(energy_per_drop)  # Distribuisci l'energia equamente
-
-		var angle: float = (TAU / num_drops) * i + randf_range(-0.3, 0.3)
-		var distance: float = randf_range(spawn_radius * 0.5, spawn_radius)
-		var offset: Vector2 = Vector2(cos(angle), sin(angle)) * distance
-
-		energy_drop.global_position = global_position + offset
-
-		if energy_drop is RigidBody2D:
-			energy_drop.linear_velocity = offset.normalized() * randf_range(30, 60)
+		var angle: float = randf() * TAU
+		var distance: float = randf_range(spawn_radius * 1.2, spawn_radius * 1.2)
+		energy_drop.global_position = global_position + Vector2(cos(angle), sin(angle)) * distance
 
 		get_parent().add_child.call_deferred(energy_drop)
+		energy_spawned += energy_value
 
 
- #Aggiungi questa funzione dopo _ready()
+# Opzionale: per debug
+# print("Target: %d | Ottenuto: %d | Differenza: %d" % [target_energy, current_total, abs(target_energy - current_total)])
+
+
+
+# Aggiungi questa funzione dopo _ready()
 func _setup_health_bar() -> void:
 	# Container per posizionare la barra
 	health_bar_container = Control.new()

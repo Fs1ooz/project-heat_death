@@ -1,9 +1,9 @@
-[gd_scene load_steps=3 format=3 uid="uid://dr5pxtobflhyw"]
+[gd_scene format=3 uid="uid://dr5pxtobflhyw"]
 
 [ext_resource type="Theme" uid="uid://brvjefc4224hi" path="res://Assets/Themes/upgrade_ui.tres" id="1_mnd61"]
 [ext_resource type="Script" uid="uid://otgbhiinw4yu" path="res://Stages/UI/UpgradeUI/upgrade_ui.gd" id="1_qb0g1"]
 
-[node name="UpgradeUI" type="Control"]
+[node name="UpgradeUI" type="Control" unique_id=174511511]
 texture_filter = 1
 layout_mode = 3
 anchors_preset = 15
@@ -14,7 +14,7 @@ grow_vertical = 2
 theme = ExtResource("1_mnd61")
 script = ExtResource("1_qb0g1")
 
-[node name="UpgradesHBoxContainer" type="HBoxContainer" parent="."]
+[node name="UpgradesHBoxContainer" type="HBoxContainer" parent="." unique_id=1315539730]
 unique_name_in_owner = true
 layout_mode = 1
 anchors_preset = 8
@@ -30,35 +30,19 @@ grow_horizontal = 2
 grow_vertical = 2
 alignment = 1
 
-[node name="Speed" type="Button" parent="UpgradesHBoxContainer"]
+[node name="Speed" type="Button" parent="UpgradesHBoxContainer" unique_id=346856658]
 visible = false
 custom_minimum_size = Vector2(200.69, 200.69)
 layout_mode = 2
 text = "Upgrade Speed"
 
-[node name="Mass" type="Button" parent="UpgradesHBoxContainer"]
+[node name="Mass" type="Button" parent="UpgradesHBoxContainer" unique_id=1263690118]
 visible = false
 layout_mode = 2
 text = "Upgrade Mass"
 
-[node name="UpgradesVBoxContainer" type="VBoxContainer" parent="."]
-unique_name_in_owner = true
+[node name="ExpHboxContainer" type="HBoxContainer" parent="." unique_id=618956585]
 visible = false
-layout_mode = 0
-offset_right = 106.0
-offset_bottom = 76.0
-
-[node name="Speed" type="Button" parent="UpgradesVBoxContainer"]
-visible = false
-layout_mode = 2
-text = "Upgrade Speed"
-
-[node name="Mass" type="Button" parent="UpgradesVBoxContainer"]
-visible = false
-layout_mode = 2
-text = "Upgrade Mass"
-
-[node name="ExpHboxContainer" type="HBoxContainer" parent="."]
 layout_mode = 1
 anchors_preset = 1
 anchor_left = 1.0
@@ -67,9 +51,9 @@ offset_left = -56.0
 offset_bottom = 20.0
 grow_horizontal = 0
 
-[node name="EnergyLabel" type="Label" parent="ExpHboxContainer"]
+[node name="EnergyLabel" type="Label" parent="ExpHboxContainer" unique_id=1122081585]
 layout_mode = 2
 text = "Energy:"
 
-[node name="CJLabel" type="Label" parent="ExpHboxContainer"]
+[node name="CJLabel" type="Label" parent="ExpHboxContainer" unique_id=74663788]
 layout_mode = 2

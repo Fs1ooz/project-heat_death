@@ -1,5 +1,5 @@
-extends Node2D
 class_name DeathVFX
+extends Node2D
 
 @onready var anim_player: AnimationPlayer = $AnimationPlayer
 @onready var explosion_red: GPUParticles2D = $ExplosionRed

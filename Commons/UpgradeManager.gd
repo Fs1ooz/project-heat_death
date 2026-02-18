@@ -6,28 +6,43 @@ extends Node
 
 const e: float = 2.71828182845904523536028747135266249775724709369995
 
-var energy: int = 0
+
+@onready var player: Player = get_tree().get_first_node_in_group("player")
+var energy: float = 0
+var max_energy: float = 100
+var level: int = 1
 
 var growth_factor: float = 1.2
 
+signal tier_changed()
+signal energy_changed(current: float, max: float, level: int)
 
-signal energy_changed(new_energy: int)
+var tiers: Array = [5, 10, 15, 20, 40]
+
+func gain_energy(value: float) -> void:
+	energy += value
+	while energy >= max_energy:
+		printerr("LEVELUP!!!!!!")
+		energy -= max_energy
+		level += 1
+		level_up()
+		max_energy *= growth_factor
+	emit_signal("energy_changed", energy, max_energy, level)
+
+
+func level_up() -> void:
+	player.change_size(1.25)
+	player.max_hp = int(player.max_hp * 1.25)
+	player.speed *= 1.25
+	player.acceleration *= 1.25
+	if level in tiers:
+		printerr("tier cangiato")
+		tier_changed.emit()
 
 
 func _ready() -> void:
 	GlobalSignals.connect("game_over", reset_upgrades)
 
-func gain_energy(amount: int) -> void:
-	energy += amount
-	#print("Energia attuale: ", energy)
-	energy_changed.emit(energy)
-
-
-
-func lose_energy(amount: int) -> void:
-	energy -= amount
-	#print("Energia attuale: ", energy)
-	energy_changed.emit(energy)
 
 func reset_upgrades() -> void:
 	energy = 0
@@ -36,8 +51,8 @@ func reset_upgrades() -> void:
 		upgrade["level"] = 0
 		if "base_power" in upgrade:
 			upgrade["current_power"] = upgrade["base_power"]
-		if "current_cost" in upgrade:
-			upgrade["current_cost"] = upgrade["base_cost"]
+		#if "current_cost" in upgrade:
+			#upgrade["current_cost"] = upgrade["base_cost"]
 
 
 enum UpgradeType {
@@ -57,8 +72,6 @@ var upgrades_data: Dictionary = {
 		"level": 1,
 		"base_power": 150,
 		"current_power": 150,
-		"base_cost": 20,
-		"current_cost": 20,
 	},
 	UpgradeType.REGENERATION: {
 		"name": "Regeneration",
@@ -66,8 +79,6 @@ var upgrades_data: Dictionary = {
 		"level": 1,
 		"base_power": 2.0,
 		"current_power": 2.0,
-		"base_cost": 30,
-		"current_cost": 30,
 	},
 	UpgradeType.SPEED: {
 		"name": "Speed",
@@ -75,8 +86,6 @@ var upgrades_data: Dictionary = {
 		"level": 1,
 		"base_power": 1000.0,
 		"current_power": 1000.0,
-		"base_cost": 10,
-		"current_cost": 10,
 	},
 	UpgradeType.ACCELERATION: {
 		"name": "Accelaration",
@@ -84,8 +93,6 @@ var upgrades_data: Dictionary = {
 		"level": 1,
 		"base_power": 750.0,
 		"current_power": 750.0,
-		"base_cost": 25,
-		"current_cost": 25,
 	},
 	UpgradeType.MASS: {
 		"name": "Mass",
@@ -93,8 +100,6 @@ var upgrades_data: Dictionary = {
 		"level": 1,
 		"base_power": 1.0,
 		"current_power": 1.0,
-		"base_cost": 30,
-		"current_cost": 30,
 	},
 #
 	#UpgradeType.DENSITY: {
@@ -128,13 +133,15 @@ func get_current_power(type: UpgradeType) -> float:
 
 func apply_upgrade(upgrade_type: UpgradeType) -> bool:
 	var upgrade_data: Dictionary = upgrades_data[upgrade_type]
-	var player: Player = get_tree().get_first_node_in_group("player")
 
-	if energy < upgrade_data["current_cost"]:
-		print("Non abbastanza energia!")
-		return false
 
-	lose_energy(upgrade_data["current_cost"])
+
+	printerr("sto facendo 1")
+	#if energy < upgrade_data["current_cost"]:
+		#print("Non abbastanza energia!")
+		#return false
+
+	#lose_energy(upgrade_data["current_cost"])
 
 	upgrade_data["level"] += 1
 	var power: float
@@ -150,35 +157,37 @@ func apply_upgrade(upgrade_type: UpgradeType) -> bool:
 		UpgradeType.MASS:
 			power = 1.25
 
+
 		#UpgradeType.DENSITY:
 			#power = upgrade_data["current_power"] + upgrade_data["level"] * 1.1
 
 	upgrade_data["current_power"] = power
 	upgrade_data["current_cost"] = calculate_next_cost(upgrade_data)
 
-
+	printerr("sto facendo 2")
 	match upgrade_type:
+
 		UpgradeType.MAX_HEALTH:
 			player.life_bar.max_value = power
 			player._update_life_bar()
-			player.max_hp = int(power)
+			player.max_hp += int(power)
 		UpgradeType.REGENERATION:
 			player.regen_tick = power
 		UpgradeType.SPEED:
-			player.speed = power
+			player.speed += power
 		UpgradeType.ACCELERATION:
-			player.acceleration = power
+			player.acceleration += power
 		UpgradeType.MASS:
 			player.change_size(power)
 		#UpgradeType.DENSITY:
 			#player.change_size(-1.05)
 
-
+	printerr("sto facendo 3")
 	#upgrade_applied.emit(upgrade_type, power)
 	return true
 
 func calculate_next_cost(upgrade_data: Dictionary) -> int:
 	var base_cost: int = upgrade_data.get("base_cost", 10)
-	var level: int = upgrade_data["level"]
+	var upgrade_level: int = upgrade_data["level"]
 
-	return int(base_cost * pow(growth_factor, level))
+	return int(base_cost * pow(growth_factor, upgrade_level))

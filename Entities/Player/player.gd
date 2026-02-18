@@ -20,10 +20,11 @@ extends RigidBody2D
 @export var trail: GPUParticles2D
 
 @export var shockwave: Node
+@onready var player_camera: PlayerCamera = $PlayerCamera
 
 var rotation_responsiveness: float = 8.0
 
-var regen_tick: float = 3.0
+var regen_tick: float = 2.0
 var auto_revive: bool = true
 var _last_velocity: Vector2 = Vector2.ZERO
 
@@ -52,28 +53,20 @@ var mass_percentage: float = 1.0
 
 
 func _ready() -> void:
+	UpgradeManager.tier_changed.connect(_on_tier_changed)
 	initial_mass = mass
 	initial_radius = collision.shape.radius
 	initial_height = collision.shape.height
 	initial_scale = sprite.scale
 	initial_particle_scale = Vector2(mat.scale_min, mat.scale_max)
-	#global_position.x = 2_900_000
 
 	if life_bar:
 		life_bar.value = max_hp
 
-	await get_tree().create_timer(5).timeout
+	await get_tree().create_timer(2).timeout
 
 
 #region Movement
-
-
-# Aggiungi queste variabili
-#@export_group("Squash & Stretch")
-#@export var squash_strength: float = 0.55  # Intensità dell'effetto
-#@export var squash_speed_threshold: float = 10.0  # Velocità minima
-#@export var squash_smoothing: float = 12.0  # Velocità di interpolazione
-
 var base_scale: Vector2 = Vector2.ONE
 
 func _physics_process(delta: float) -> void:
@@ -94,17 +87,17 @@ func _handle_movement() -> void:
 	if dir.length() > 0.2:
 		apply_central_force(dir.normalized() * acceleration * mass)
 		# Passiamo true perché stiamo accelerando
-		_animate_stretch(true)
+		_animate_player(true)
 	else:
 		# Passiamo false perché siamo in inerzia/frenata
-		_animate_stretch(false)
+		_animate_player(false)
 
 	linear_velocity = linear_velocity.limit_length(speed)
 
+
 var is_stretched: bool = false
 
-func _animate_stretch(is_accelerating: bool) -> void:
-	# Anima SOLO quando c'è un cambio di stato
+func _animate_player(is_accelerating: bool) -> void:
 	if is_accelerating == is_stretched:
 		return  # Già nello stato corretto
 
@@ -115,15 +108,17 @@ func _animate_stretch(is_accelerating: bool) -> void:
 	current_tween = create_tween()
 
 	if is_accelerating:
-		var target: Vector2 = base_scale * Vector2(1.15, 0.85)
-		current_tween.tween_property(sprite, "scale", target, 3)\
-			.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
-	else:
-		var release_target: Vector2 = base_scale * Vector2(0.95, 1.05)
-		current_tween.tween_property(sprite, "scale", release_target, 0.12)\
+		var release_target: Vector2 = base_scale * Vector2(0.8, 1.2)
+		current_tween.tween_property(sprite, "scale", release_target, 0.1)\
 			.set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
-		current_tween.tween_property(sprite, "scale", base_scale, 0.18)\
-			.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+		current_tween.tween_property(sprite, "scale", base_scale, 0.4)\
+			.set_trans(Tween.TRANS_ELASTIC).set_ease(Tween.EASE_OUT)
+	else:
+		var release_target: Vector2 = base_scale * Vector2(0.9, 1.1)
+		current_tween.tween_property(sprite, "scale", release_target, 0.15)\
+			.set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+		current_tween.tween_property(sprite, "scale", base_scale, 0.3)\
+			.set_trans(Tween.TRANS_QUART).set_ease(Tween.EASE_OUT)
 
 
 func _input(event: InputEvent) -> void:
@@ -169,7 +164,6 @@ func apply_entropy(delta: float) -> void:
 	var world_dir: Vector2 = local_dir.rotated(rotation)
 	apply_central_force(world_dir * entropy * oscillation_speed * mass)
 
-
 	# 2. IMPULSI IMPROVVISI
 	if entropy > 10.0 and randf() < 0.01:  # aggiungi probabilità per non sparare ogni frame
 		var rands_vec: Vector2 = Vector2(randf_range(-1.0, 1.0), randf_range(-1.0, 1.0)).normalized()
@@ -180,7 +174,6 @@ func apply_entropy(delta: float) -> void:
 	if entropy > 30.0:
 		apply_torque(randf_range(-1.0, 1.0) * entropy * 0.05)
 
-
 	## 4. VISUAL
 	#if randf() < entropy:
 		#sprite.modulate = Color(
@@ -189,57 +182,56 @@ func apply_entropy(delta: float) -> void:
 			#randf_range(0.7, 1.3)
 		#)
 		#sprite.scale = initial_scale * randf_range(0.9, 1.1)
-#
-#
+
 
 func _handle_collision_resistance(state: PhysicsDirectBodyState2D) -> void:
 	var max_resistance: float = 0.0
-	var min_res_ratio: float = 0.3
+	var min_res_ratio: float = 0.8
 	for i: int in range(state.get_contact_count()):
 		var collider: CelestialBody = state.get_contact_collider_object(i)
-		if collider is CelestialBody:
-			var mass_ratio: float = mass / collider.mass
-
-			if mass_ratio >= 5.0:
-				max_resistance = 1.0
-				print("💥 BULLDOZER MODE vs ", collider.name)
-				break
-			elif mass_ratio > min_res_ratio:
-				var resistance: float = smoothstep(min_res_ratio, 3.0, mass_ratio)
-				max_resistance = max(max_resistance, resistance)
-				print("⚡ Resistenza: %.0f%% vs %s" % [resistance * 100, collider.name])
+		if collider is not CelestialBody:
+			return
+		var mass_ratio: float = mass / collider.mass
+		player_camera.apply_shake(1.0/mass_ratio, 0.75)
+		_animate_player(false)
+		if mass_ratio >= 5.0:
+			max_resistance = 1.0
+			print("💥 BULLDOZER MODE vs ", collider.name)
+			break
+		elif mass_ratio > min_res_ratio:
+			var resistance: float = smoothstep(min_res_ratio, 3.0, mass_ratio)
+			max_resistance = max(max_resistance, resistance)
+			print("⚡ Resistenza: %.0f%% vs %s" % [resistance * 100, collider.name])
 
 	if max_resistance > 0.0:
 		state.linear_velocity = state.linear_velocity.lerp(_last_velocity, max_resistance)
 
 
-
 func get_input() -> Vector2:
 	return Input.get_vector("left", "right", "up", "down")
-
 #endregion
 
 ## Calcola e restituisce il danno del giocatore usando la legge dell'energia cinetica (E = 1/2 mv^2), scherzo, usando la quantità di moto (p = m * v)
 func get_damage() -> float:
 	var velocity: Vector2 = linear_velocity
 	var scaled_damage: float = mass * (velocity.length() * 0.5)
-
 	var round_base: int = 5
 	#print("Danno originale: ", scaled_damage)
-
 	var damage: int = maxi(snappedi(scaled_damage, round_base), 1)
 
 	return damage
 
-var lvl: int = 0
+
+
+func _on_tier_changed()-> void:
+	sprite.material.set_shader_parameter("frequency", sprite.material.get_shader_parameter("frequency") * 1.2)
+
 
 func change_size(amount: float) -> void:
-	sprite.material.set_shader_parameter("frequency", sprite.material.get_shader_parameter("frequency") * amount)
+
 	change_mass(amount)
 	change_scale(amount)
 
-	lvl += 1
-	# Emetti il segnale con i nuovi valori
 	energy_threshold *= amount
 
 func change_mass(amount: float) -> void:
@@ -248,8 +240,8 @@ func change_mass(amount: float) -> void:
 	mass_percentage = mass / old_mass
 
 
-
 func change_scale(amount: float) -> void:
+	printerr("cambio? essì")
 	var scale_change: Vector2 = base_scale * amount
 	collision.shape.radius = initial_radius * scale_change.x
 	collision.shape.height = initial_height * scale_change.x
@@ -265,12 +257,10 @@ func change_scale(amount: float) -> void:
 		var initial_x: float = -25.0
 		mat.set("emission_shape_offset", Vector3(initial_x * amount, 0.0, 0.0))
 
-	sprite.scale = scale_change
-	base_scale = sprite.scale
 
-	#var tween = create_tween()
-	#tween.set_parallel(true)
-	#tween.tween_property(sprite, "scale", scale_change, 0.3).set_trans(Tween.TRANS_BOUNCE).set_ease(Tween.EASE_OUT)
+	var tween: Tween = create_tween()
+	tween.tween_property(sprite, "scale", scale_change, 1.0).set_trans(Tween.TRANS_BOUNCE).set_ease(Tween.EASE_OUT)
+	base_scale = scale_change
 
 
 
@@ -320,7 +310,6 @@ func _on_regen_timer_timeout() -> void:
 		return
 
 	hp = min(hp + int(max_hp * 0.15), max_hp)
-
 	_update_life_bar()
 
 	regen_timer.wait_time = regen_tick

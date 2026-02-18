@@ -71,9 +71,23 @@ repeat_times = 25
 
 [node name="Nebulae" type="Sprite2D" parent="Parallax2DTop" unique_id=836743018]
 material = SubResource("ShaderMaterial_507dh")
+position = Vector2(-183.296, -101.88801)
 texture = ExtResource("2_bio74")
 
 [node name="Stars" type="Sprite2D" parent="Parallax2DTop" unique_id=641259670]
+modulate = Color(1.8247963, 1.8247963, 1.8247963, 1)
+material = SubResource("ShaderMaterial_bio74")
+texture = ExtResource("3_bio74")
+
+[node name="Parallax2DTop2" type="Parallax2D" parent="." unique_id=1249018939]
+texture_filter = 1
+scale = Vector2(15, 15)
+scroll_scale = Vector2(0.1, 0.1)
+repeat_size = Vector2(2000, 1438)
+autoscroll = Vector2(0.01, 0.005)
+repeat_times = 25
+
+[node name="Stars" type="Sprite2D" parent="Parallax2DTop2" unique_id=1600889675]
 modulate = Color(1.8247963, 1.8247963, 1.8247963, 1)
 material = SubResource("ShaderMaterial_bio74")
 texture = ExtResource("3_bio74")

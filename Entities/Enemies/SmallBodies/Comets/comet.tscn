@@ -1,0 +1,70 @@
+[gd_scene format=3 uid="uid://8aj1dylerrl1"]
+
+[ext_resource type="Script" uid="uid://bt7gni3m0ejos" path="res://Entities/Enemies/SmallBodies/Comets/comet.gd" id="1_2xb01"]
+[ext_resource type="Shader" uid="uid://cbkoxa5ctkt57" path="res://Assets/Shaders/pixelate.gdshader" id="2_dnr8b"]
+[ext_resource type="PackedScene" uid="uid://ciw3nqqg2o5l6" path="res://Entities/Enemies/SmallBodies/Comets/comet_trail.tscn" id="4_qk7d4"]
+[ext_resource type="PackedScene" uid="uid://bgievdkpstd3t" path="res://Entities/Enemies/visible_screen_enabler_component.tscn" id="5_i1p0e"]
+[ext_resource type="Script" uid="uid://b5dsgsl5q46xm" path="res://Commons/Components/kick_component.gd" id="5_k4k26"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_tmuj1"]
+radius = 19.924858
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_k4k26"]
+shader = ExtResource("2_dnr8b")
+shader_parameter/pixel_scale = 128.0
+
+[sub_resource type="Gradient" id="Gradient_dnr8b"]
+offsets = PackedFloat32Array(0.2102102, 0.44744745, 0.5915916, 1)
+colors = PackedColorArray(1, 1, 1, 1, 0.8701033, 0.9698003, 1, 1.0544506, 0.7303257, 0.93730325, 0.99999994, 1, 1, 1, 1, 0)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_k4k26"]
+gradient = SubResource("Gradient_dnr8b")
+fill = 1
+fill_from = Vector2(0.5, 0.5)
+fill_to = Vector2(0.8418803, 0.13675214)
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_qk7d4"]
+radius = 955.0
+
+[node name="Comet" type="RigidBody2D" unique_id=1624827841 node_paths=PackedStringArray("collision", "gravity_area_collision", "sprite") groups=["celestialbodies"]]
+script = ExtResource("1_2xb01")
+min_size = 400.0
+max_size = 512.0
+game_energy = 1000
+collision = NodePath("Collision")
+gravity_area_collision = NodePath("Gravity/GravityAreaCollision")
+sprite = NodePath("Collision/Sprite")
+metadata/_custom_type_script = "uid://be8uvibib1twp"
+
+[node name="Camera2D" type="Camera2D" parent="." unique_id=734451567]
+
+[node name="Collision" type="CollisionShape2D" parent="." unique_id=1584294630]
+shape = SubResource("CircleShape2D_tmuj1")
+
+[node name="Sprite" type="Sprite2D" parent="Collision" unique_id=997724321]
+material = SubResource("ShaderMaterial_k4k26")
+texture = SubResource("GradientTexture2D_k4k26")
+
+[node name="CometTrail" parent="Collision/Sprite" unique_id=724905405 instance=ExtResource("4_qk7d4")]
+unique_name_in_owner = true
+
+[node name="VisibleScreenEnablerComponent" parent="Collision/Sprite" unique_id=928764482 instance=ExtResource("5_i1p0e")]
+rect = Rect2(-944, -939, 1899, 1869)
+enable_node_path = NodePath("../../..")
+
+[node name="Gravity" type="Area2D" parent="." unique_id=459998803]
+
+[node name="GravityAreaCollision" type="CollisionShape2D" parent="Gravity" unique_id=147357477]
+shape = SubResource("CircleShape2D_qk7d4")
+
+[node name="KickComponent" type="Node" parent="." unique_id=1062954655 node_paths=PackedStringArray("body")]
+unique_name_in_owner = true
+script = ExtResource("5_k4k26")
+body = NodePath("..")
+min_speed = 30.0
+max_speed = 50.0
+metadata/_custom_type_script = "uid://b5dsgsl5q46xm"
+
+[connection signal="body_entered" from="." to="." method="_on_body_entered"]
+
+[editable path="Collision/Sprite/CometTrail"]

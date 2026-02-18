@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://catvrmy1v2q6g"
-path="res://.godot/imported/805329917.png-0c2a3c220e8116b3ad76250247d3bd84.ctex"
+uid="uid://btchbwywg6jwu"
+path="res://.godot/imported/Meteoroid1.png-df17eff6a94af7b536093c9143a6c1c5.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Entities/Enemies/805329917.png"
-dest_files=["res://.godot/imported/805329917.png-0c2a3c220e8116b3ad76250247d3bd84.ctex"]
+source_file="res://Entities/Enemies/SmallBodies/Meteoroids/Meteoroid1.png"
+dest_files=["res://.godot/imported/Meteoroid1.png-df17eff6a94af7b536093c9143a6c1c5.ctex"]
 
 [params]
 

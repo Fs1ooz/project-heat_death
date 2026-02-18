@@ -1,27 +1,28 @@
 [gd_resource type="ParticleProcessMaterial" format=3 uid="uid://bvhfi1gat4c5"]
 
 [sub_resource type="Curve" id="Curve_d4ywq"]
-_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), -3.042092, 0.0, 0, 0]
 point_count = 2
 
 [sub_resource type="CurveTexture" id="CurveTexture_88gdh"]
 curve = SubResource("Curve_d4ywq")
 
 [sub_resource type="Gradient" id="Gradient_88gdh"]
-offsets = PackedFloat32Array(0, 0.17171717)
-colors = PackedColorArray(0.59717584, 0.59717625, 0.5971761, 1, 0.98039216, 0.98039216, 0.98039216, 1)
+interpolation_mode = 1
+offsets = PackedFloat32Array(0.34948096, 0.8650519)
+colors = PackedColorArray(0.98039216, 0.98039216, 0.98039216, 1, 0.7539839, 0.75398386, 0.75398386, 1)
 
 [sub_resource type="GradientTexture1D" id="GradientTexture1D_jx0wn"]
 gradient = SubResource("Gradient_88gdh")
 
 [sub_resource type="Gradient" id="Gradient_d4ywq"]
-colors = PackedColorArray(1, 1, 1, 1, 0.629675, 0.6296747, 0.6296747, 0.9019608)
+colors = PackedColorArray(1, 1, 1, 1, 0.70980394, 0.70980394, 0.70980394, 0.9411765)
 
-[sub_resource type="GradientTexture1D" id="GradientTexture1D_88gdh"]
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_d4ywq"]
 gradient = SubResource("Gradient_d4ywq")
 
 [sub_resource type="Curve" id="Curve_4wf4l"]
-_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 0.1), -1.9756172, 0.0, 0, 0]
+_data = [Vector2(0, 1), 0.0, -1.0, 0, 1, Vector2(1, 0), -1.0, 0.0, 1, 0]
 point_count = 2
 metadata/_snap_enabled = true
 
@@ -30,14 +31,14 @@ curve = SubResource("Curve_4wf4l")
 
 [resource]
 lifetime_randomness = 0.1
-emission_shape_offset = Vector3(-15, 0, 0)
+emission_shape_offset = Vector3(-20, 0, 0)
 emission_shape = 2
-emission_sphere_radius = 21.0
+emission_sphere_radius = 22.0
 gravity = Vector3(0, 0, 0)
 attractor_interaction_enabled = false
 scale_min = 15.0
 scale_max = 20.0
 scale_curve = SubResource("CurveTexture_4wf4l")
-color_ramp = SubResource("GradientTexture1D_88gdh")
+color_ramp = SubResource("GradientTexture1D_d4ywq")
 color_initial_ramp = SubResource("GradientTexture1D_jx0wn")
 alpha_curve = SubResource("CurveTexture_88gdh")

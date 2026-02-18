@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=3 uid="uid://ctismywjnvljg"]
+[gd_scene format=3 uid="uid://ctismywjnvljg"]
 
 [ext_resource type="Script" uid="uid://xy3bkvisvinm" path="res://Entities/EnergyDrop/energy_drop.gd" id="1_nnvmk"]
 [ext_resource type="AudioStream" uid="uid://dp1e7mdwgi743" path="res://Assets/Sounds/coin.sfxr" id="2_psw32"]
@@ -27,24 +27,24 @@ use_hdr = true
 fill = 1
 fill_from = Vector2(0.5, 0.5)
 
-[node name="EnergyDrop" type="Area2D" groups=["energy"]]
+[node name="EnergyDrop" type="Area2D" unique_id=300791633 groups=["energy"]]
 script = ExtResource("1_nnvmk")
 
-[node name="Range" type="Area2D" parent="."]
+[node name="Range" type="Area2D" parent="." unique_id=596080526]
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Range"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Range" unique_id=2005566635]
 shape = SubResource("CircleShape2D_psw32")
 
-[node name="EnergyAudioStreamPlayer" type="AudioStreamPlayer" parent="."]
+[node name="EnergyAudioStreamPlayer" type="AudioStreamPlayer" parent="." unique_id=1085185809]
 stream = SubResource("AudioStreamRandomizer_psw32")
 volume_db = -5.0
 max_polyphony = 6
 bus = &"Sound"
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1790535492]
 shape = SubResource("CircleShape2D_rdhfw")
 
-[node name="Sprite2D" type="Sprite2D" parent="CollisionShape2D"]
+[node name="Sprite2D" type="Sprite2D" parent="CollisionShape2D" unique_id=865159995]
 scale = Vector2(4, 4)
 texture = SubResource("GradientTexture2D_mersp")
 region_rect = Rect2(1.655, 0, 0, 0)

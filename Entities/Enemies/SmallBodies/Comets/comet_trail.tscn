@@ -1,0 +1,11 @@
+[gd_scene format=3 uid="uid://ciw3nqqg2o5l6"]
+
+[ext_resource type="Material" uid="uid://dogqm4dot5man" path="res://Assets/Shaders/sciaebrea.tres" id="1_ko06l"]
+
+[node name="CometTrail" type="GPUParticles2D" unique_id=724905405]
+amount = 800
+lifetime = 2.0
+randomness = 0.1
+fixed_fps = 0
+visibility_rect = Rect2(-376.132, -109.143, 396.737, 202.22)
+process_material = ExtResource("1_ko06l")

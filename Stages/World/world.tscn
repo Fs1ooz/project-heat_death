@@ -1,4 +1,4 @@
-[gd_scene load_steps=19 format=3 uid="uid://6r1e66kx2qgb"]
+[gd_scene format=3 uid="uid://6r1e66kx2qgb"]
 
 [ext_resource type="PackedScene" uid="uid://470x1obeipdg" path="res://Entities/Player/player.tscn" id="1_0co0n"]
 [ext_resource type="Script" uid="uid://siuls68q6og5" path="res://Stages/World/world.gd" id="1_mt616"]
@@ -8,7 +8,7 @@
 [ext_resource type="PackedScene" uid="uid://bpeudpxsbd3x2" path="res://Entities/Enemies/SmallBodies/meteoroid.tscn" id="5_kuj1q"]
 [ext_resource type="PackedScene" uid="uid://dr5pxtobflhyw" path="res://Stages/UI/UpgradeUI/upgrade_ui.tscn" id="5_qmwgx"]
 [ext_resource type="PackedScene" uid="uid://ctismywjnvljg" path="res://Entities/EnergyDrop/energy_drop.tscn" id="6_ypext"]
-[ext_resource type="PackedScene" uid="uid://8aj1dylerrl1" path="res://Entities/Enemies/SmallBodies/comet.tscn" id="7_bylmi"]
+[ext_resource type="PackedScene" uid="uid://8aj1dylerrl1" path="res://Entities/Enemies/SmallBodies/Comets/comet.tscn" id="7_bylmi"]
 [ext_resource type="PackedScene" uid="uid://dooqkflafelol" path="res://Entities/Enemies/SmallBodies/asteroid.tscn" id="8_42vvj"]
 [ext_resource type="PackedScene" uid="uid://dyd3uoe8y1asi" path="res://Stages/World/game_over_screen.tscn" id="9_5t5yv"]
 [ext_resource type="PackedScene" uid="uid://cxcuuplyfhoxc" path="res://Entities/Player/player_life_bar.tscn" id="10_syafc"]

@@ -1,8 +1,15 @@
-class_name EnergyDrop
+class_name Exp
 extends Area2D
 
-static var starting_threshold: float = 500.0
-@onready var energy: int = 1
+var starting_threshold: float = 500.0
+
+var energy: int = 1:
+	set(value):
+		energy = value
+		if is_node_ready():  # Evita errori se chiamato prima di _ready()
+			printerr("dopo")
+			update_color()
+
 @onready var player: Player = get_tree().get_first_node_in_group("player")
 @onready var sfx: AudioStreamPlayer = $EnergyAudioStreamPlayer
 @onready var collision_shape_2d: CollisionShape2D = $CollisionShape2D
@@ -21,10 +28,11 @@ var _is_in_range: bool = false  # Flag per tracciare se è nel range
 
 func _ready() -> void:
 	_spawn_time = Time.get_unix_time_from_system()
-	energy = weighted_random_energy(100, 3.0)
 	update_color()
 
+
 @export var energy_per_cycle: float = 100.0
+
 
 func update_color() -> void:
 	if energy <= 0:
@@ -37,11 +45,6 @@ func update_color() -> void:
 	sprite.modulate = colors[i].lerp(colors[next_i], f) * Color(1,1,1,0.7)
 	sprite.scale *= scale_factor
 
-func weighted_random_energy(max_energy: int, weight_power: float) -> int:
-	var r: float = randf()
-	var weighted: float = pow(r, weight_power)
-	return int(1 + weighted * (max_energy - 1))
-
 
 func _physics_process(delta: float) -> void:
 	if not _is_in_range or not player:
@@ -52,17 +55,16 @@ func _physics_process(delta: float) -> void:
 
 	# Calcola velocità con un minimo garantito
 	var normalized_distance: float = clamp(distance / active_threshold, 0.0, 1.0)
-	var speed: float = lerp(1000.0, 50.0, normalized_distance) * delta  # velocità da 200 a 50
+	var speed: float = lerp(500.0, 100.0, normalized_distance) * delta  # velocità da 200 a 50
 
 	global_position = global_position.move_toward(player.global_position, speed)
+
 
 func _on_body_entered(body: Node2D) -> void:
 	if body is Player:
 		sfx.reparent(body)
 		sfx.play()
 		sfx.connect("finished", queue_free)
-		var amount: float = 1.0 + (0.1 / (body.mass + 1))
-		body.change_size(amount)
 		UpgradeManager.gain_energy(energy)
 		queue_free()
 

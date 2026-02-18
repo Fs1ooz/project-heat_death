@@ -1,2 +1,2 @@
-extends CelestialBody
 class_name RockyPlanet
+extends CelestialBody

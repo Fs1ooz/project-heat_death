@@ -1,6 +1,4 @@
-[gd_scene load_steps=4 format=3 uid="uid://cxcuuplyfhoxc"]
-
-[ext_resource type="Script" uid="uid://dnhefpxe7f5vp" path="res://Entities/Player/player_life_bar.gd" id="1_u0tjt"]
+[gd_scene format=3 uid="uid://cxcuuplyfhoxc"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_dv5b2"]
 bg_color = Color(1, 0.8289137, 0.8289137, 0.245)
@@ -21,7 +19,7 @@ corner_detail = 5
 anti_aliasing = false
 anti_aliasing_size = 0.913
 
-[node name="PlayerLifeBar" type="ProgressBar"]
+[node name="PlayerLifeBar" type="ProgressBar" unique_id=1169983918]
 anchors_preset = 7
 anchor_left = 0.5
 anchor_top = 1.0
@@ -39,4 +37,3 @@ value = 83.0
 rounded = true
 allow_lesser = true
 show_percentage = false
-script = ExtResource("1_u0tjt")

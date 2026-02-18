@@ -12,10 +12,9 @@ var _timer_accumulator: float = 0.0
 func _ready() -> void:
 	# Forma della freccia
 	polygon = PackedVector2Array([
-		Vector2(10, 0),
-		Vector2(-10, -8),
-		Vector2(-6, 0),
-		Vector2(-10, 8)
+		Vector2(8, 0),
+		Vector2(-8, -5),
+		Vector2(-8, 5)
 	])
 	scale = Vector2(arrow_scale, arrow_scale)
 

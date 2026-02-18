@@ -1,6 +1,6 @@
-[gd_scene load_steps=2 format=3 uid="uid://yor1cl12dj1i"]
+[gd_scene format=3 uid="uid://yor1cl12dj1i"]
 
 [ext_resource type="Script" uid="uid://nvvneenfy5k7" path="res://Stages/World/celestial_bodies_spawner.gd" id="1_i7ib1"]
 
-[node name="CelestialBodiesSpawner" type="Node2D"]
+[node name="CelestialBodiesSpawner" type="Node2D" unique_id=2107359407]
 script = ExtResource("1_i7ib1")

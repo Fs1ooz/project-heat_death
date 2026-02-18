@@ -2,14 +2,21 @@
 
 [ext_resource type="Script" uid="uid://bdmvnvgdm1aav" path="res://Entities/Enemies/SmallBodies/meteoroid.gd" id="1_otcpb"]
 [ext_resource type="PackedScene" uid="uid://bgievdkpstd3t" path="res://Entities/Enemies/visible_screen_enabler_component.tscn" id="2_pnclo"]
-[ext_resource type="Texture2D" uid="uid://0yxs2q0xu2iy" path="res://Entities/Enemies/SmallBodies/Ceres/Ceres.png" id="3_otcpb"]
-[ext_resource type="Material" uid="uid://iypu8q4l7r2p" path="res://Entities/smoothpixel.tres" id="3_pnclo"]
-
-[sub_resource type="CircleShape2D" id="CircleShape2D_lyb38"]
-radius = 57.00877
+[ext_resource type="Shader" uid="uid://bj6kjixcams5n" path="res://Entities/celestialbodies.gdshader" id="2_xu417"]
+[ext_resource type="Texture2D" uid="uid://btchbwywg6jwu" path="res://Entities/Enemies/SmallBodies/Meteoroids/Meteoroid1.png" id="3_pnclo"]
+[ext_resource type="Script" uid="uid://b5dsgsl5q46xm" path="res://Commons/Components/kick_component.gd" id="5_xu417"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_6m435"]
 radius = 789.2053
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_lyb38"]
+radius = 63.03174
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_qufua"]
+resource_local_to_scene = true
+shader = ExtResource("2_xu417")
+shader_parameter/flash_color = Color(1, 1, 1, 1)
+shader_parameter/flash_value = 0.0
 
 [sub_resource type="Curve" id="Curve_d4ywq"]
 _data = [Vector2(0, 0.8), 0.0, -0.13285534, 0, 0, Vector2(1, 0), -1.0819256, 0.0, 0, 0]
@@ -53,26 +60,39 @@ color_ramp = SubResource("GradientTexture1D_88gdh")
 alpha_curve = SubResource("CurveTexture_88gdh")
 emission_curve = SubResource("CurveTexture_jx0wn")
 
-[node name="Meteoroid" type="RigidBody2D" unique_id=1905325980 node_paths=PackedStringArray("collision", "gravity_area_collision", "sprite") groups=["celestialbodies"]]
+[sub_resource type="Animation" id="Animation_xu417"]
+length = 0.001
+
+[sub_resource type="Animation" id="Animation_pnclo"]
+resource_name = "hit_flash"
+length = 0.2
+step = 0.01
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Collision/Sprite:material:shader_parameter/flash_value")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.049999997, 0.2),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [0.0, 1.0, 0.0]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_xu417"]
+_data = {
+&"RESET": SubResource("Animation_xu417"),
+&"hit_flash": SubResource("Animation_pnclo")
+}
+
+[node name="Meteoroid" type="RigidBody2D" unique_id=1905325980 node_paths=PackedStringArray("collision", "gravity_area_collision", "sprite", "animation_player") groups=["celestialbodies"]]
 script = ExtResource("1_otcpb")
-max_speed = 15.0
 collision = NodePath("Collision")
 gravity_area_collision = NodePath("Gravity/GravityAreaCollision")
-sprite = NodePath("Collision/Ceres")
+sprite = NodePath("Collision/Sprite")
+animation_player = NodePath("AnimationPlayer")
 metadata/_custom_type_script = "uid://be8uvibib1twp"
-
-[node name="Collision" type="CollisionShape2D" parent="." unique_id=360425180]
-shape = SubResource("CircleShape2D_lyb38")
-
-[node name="Ceres" type="Sprite2D" parent="Collision" unique_id=370080315]
-texture_filter = 2
-material = ExtResource("3_pnclo")
-texture = ExtResource("3_otcpb")
-
-[node name="VisibleScreenEnablerComponent" parent="Collision/Ceres" unique_id=1920965672 instance=ExtResource("2_pnclo")]
-position = Vector2(25, -9)
-rect = Rect2(-808, -786, 1560, 1615)
-enable_node_path = NodePath("../../..")
 
 [node name="Gravity" type="Area2D" parent="." unique_id=4395370]
 collision_layer = 0
@@ -80,12 +100,35 @@ collision_layer = 0
 [node name="GravityAreaCollision" type="CollisionShape2D" parent="Gravity" unique_id=403031620]
 shape = SubResource("CircleShape2D_6m435")
 
+[node name="Collision" type="CollisionShape2D" parent="." unique_id=360425180]
+shape = SubResource("CircleShape2D_lyb38")
+
+[node name="Sprite" type="Sprite2D" parent="Collision" unique_id=370080315]
+texture_filter = 2
+material = SubResource("ShaderMaterial_qufua")
+position = Vector2(0.5, 0)
+texture = ExtResource("3_pnclo")
+
+[node name="VisibleScreenEnablerComponent" parent="Collision/Sprite" unique_id=1920965672 instance=ExtResource("2_pnclo")]
+position = Vector2(25, -9)
+rect = Rect2(-808, -786, 1560, 1615)
+enable_node_path = NodePath("../../..")
+
 [node name="Trail" type="GPUParticles2D" parent="." unique_id=1372681417]
 z_index = -1
 amount = 50
 lifetime = 2.0
 randomness = 0.2
 process_material = SubResource("ParticleProcessMaterial_pnclo")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=965719063]
+libraries/ = SubResource("AnimationLibrary_xu417")
+
+[node name="KickComponent" type="Node" parent="." unique_id=1366482448 node_paths=PackedStringArray("body")]
+unique_name_in_owner = true
+script = ExtResource("5_xu417")
+body = NodePath("..")
+metadata/_custom_type_script = "uid://b5dsgsl5q46xm"
 
 [connection signal="body_entered" from="." to="." method="_on_body_entered"]
 [connection signal="body_entered" from="Gravity" to="." method="_on_gravity_body_entered"]

@@ -1,20 +1,20 @@
-[gd_scene load_steps=6 format=3 uid="uid://byiki3druigls"]
+[gd_scene format=3 uid="uid://byiki3druigls"]
 
 [ext_resource type="PackedScene" uid="uid://dnto56yr1b1ff" path="res://Commons/entropy_counter.tscn" id="1_bhpt4"]
 [ext_resource type="PackedScene" uid="uid://dr5pxtobflhyw" path="res://Stages/UI/UpgradeUI/upgrade_ui.tscn" id="1_hli8u"]
 [ext_resource type="PackedScene" uid="uid://bcnmskds2ga3l" path="res://Stages/World/SolarSystem/arrow.tscn" id="1_l25jl"]
 [ext_resource type="PackedScene" uid="uid://dyd3uoe8y1asi" path="res://Stages/World/game_over_screen.tscn" id="2_bhpt4"]
-[ext_resource type="PackedScene" uid="uid://cxcuuplyfhoxc" path="res://Entities/Player/player_life_bar.tscn" id="3_l25jl"]
+[ext_resource type="PackedScene" uid="uid://byiufddhmby2s" path="res://Stages/UI/UpgradeUI/progress_bars.tscn" id="5_l25jl"]
 
-[node name="UILayer" type="CanvasLayer"]
+[node name="UILayer" type="CanvasLayer" unique_id=1973272501]
 
-[node name="EntropyCounter" parent="." instance=ExtResource("1_bhpt4")]
+[node name="EntropyCounter" parent="." unique_id=1222725892 instance=ExtResource("1_bhpt4")]
 
-[node name="UpgradeUI" parent="." instance=ExtResource("1_hli8u")]
+[node name="UpgradeUI" parent="." unique_id=1006905132 instance=ExtResource("1_hli8u")]
 focus_behavior_recursive = 1
 
-[node name="GameOverScreen" parent="." instance=ExtResource("2_bhpt4")]
+[node name="GameOverScreen" parent="." unique_id=1128077076 instance=ExtResource("2_bhpt4")]
 
-[node name="PlayerLifeBar" parent="." instance=ExtResource("3_l25jl")]
+[node name="Arrow" parent="." unique_id=328836627 instance=ExtResource("1_l25jl")]
 
-[node name="Arrow" parent="." instance=ExtResource("1_l25jl")]
+[node name="ProgressBars" parent="." unique_id=845535328 instance=ExtResource("5_l25jl")]

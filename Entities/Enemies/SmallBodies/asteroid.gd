@@ -1,5 +1,5 @@
-extends SmallBody
 class_name Asteroid
+extends SmallBody
 
 enum SizeStage { LARGE, MEDIUM, SMALL, METEOROID }
 
@@ -7,25 +7,25 @@ enum SizeStage { LARGE, MEDIUM, SMALL, METEOROID }
 const STAGE_CONFIG: Dictionary = {
 	SizeStage.LARGE: {
 		"next_stage": SizeStage.MEDIUM,
-		"fragments": 3,
-		"min_size": 80.0,
-		"max_size": 90.0,
-		"internal_energy": 2,
+		"fragments": 2,
+		"min_size": 100.0,
+		"max_size": 128.0,
+		"internal_energy": 3,
 		"impulse": 3000,
 	},
 	SizeStage.MEDIUM: {
 		"next_stage": SizeStage.SMALL,
 		"fragments": 2,
-		"min_size": 40.0,
-		"max_size": 45.0,
-		"internal_energy": 1,
+		"min_size": 45.5,
+		"max_size": 50.0,
+		"internal_energy": 2,
 		"impulse": 1500,
 	},
 	SizeStage.SMALL: {
 		"next_stage": SizeStage.METEOROID, # Ora punta a meteoroid
 		"fragments": 4, # Magari ne spawna tanti piccoli
 		"min_size": 20.0,
-		"max_size": 21.5,
+		"max_size": 22.5,
 		"internal_energy": 1,
 		"impulse": 400,
 	},
@@ -34,11 +34,12 @@ const STAGE_CONFIG: Dictionary = {
 		"fragments": 0,
 	},
 }
+@onready var kick_component: KickComponent = %KickComponent
 
 const ASTEROID_SCENE_PATH: String = "res://Entities/Enemies/SmallBodies/Asteroid.tscn"
 const METEOROID_SCENE_PATH: String = "res://Entities/Enemies/SmallBodies/Meteoroid.tscn"
 const GAS_SCENE_PATH: String = "res://Entities/Enemies/SmallBodies/gas.tscn"
-const FRAGMENT_SPAWN_OFFSET: float = 75.0
+const FRAGMENT_SPAWN_OFFSET: float = 100.0
 const GAS_SCALE_MULTIPLIER: float = 2.0
 const OUTGASSING_IMPULSE: float = 300.0
 
@@ -58,6 +59,8 @@ func _ready() -> void:
 		_initialize_random_stage()
 	_apply_stage_configuration()
 	super()
+	kick_component.kick_position()
+	kick_component.kick_rotation()
 
 func _load_scenes() -> void:
 	_asteroid_scene = load(ASTEROID_SCENE_PATH)
@@ -65,8 +68,7 @@ func _load_scenes() -> void:
 	_gas_scene = preload(GAS_SCENE_PATH)
 
 func _initialize_random_stage() -> void:
-	current_stage = SizeStage.LARGE
-	#current_stage = randi_range(0, 2) as SizeStage
+	current_stage = randi_range(0, 2) as SizeStage
 
 func _apply_stage_configuration() -> void:
 	var config: Dictionary = STAGE_CONFIG[current_stage]
@@ -76,7 +78,7 @@ func _apply_stage_configuration() -> void:
 
 
 const ENTROPY_THRESHOLD: float = 5.0
-var spawn_points: Array[float] = [10.0, 20.0, 30.0, 45.0, 60.0, 75.0]
+var spawn_points: Array[float] = [10.0, 30.0, 50.0, 80.0, 100.0]
 
 var last_spawn_index: int = 0
 
@@ -120,7 +122,6 @@ func _spawn_gas() -> void:
 	apply_force(-direction.rotated(sprite.rotation) * OUTGASSING_IMPULSE)
 
 	if gas.process_material:
-		gas.process_material = gas.process_material.duplicate()
 		print("prima:", gas.process_material.scale_min)
 		gas.process_material.scale_min = gas.initial_particle_scale.x * scale_factor
 		print("dopo:", gas.process_material.scale_min)
@@ -136,12 +137,9 @@ func _spawn_gas() -> void:
 	#gas.lifetime *= scale_factor
 
 
-
-
 func _stop_outgassing() -> void:
 	for child: Node in _get_gas_children():
 		child.queue_free()
-
 
 func _get_gas_children() -> Array:
 	var gas_children: Array = []
@@ -150,8 +148,12 @@ func _get_gas_children() -> Array:
 			gas_children.append(child)
 	return gas_children
 
+var _has_died: bool = false
 
 func die() -> void:
+	if _has_died:
+		return
+	_has_died = true
 	var config: Dictionary = STAGE_CONFIG[current_stage]
 
 	if _should_spawn_fragments(config):

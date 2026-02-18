@@ -1,23 +1,26 @@
-extends GPUParticles2D
 class_name Gas
+extends GPUParticles2D
 
 var player_inside: Player = null
 var damage_time: float = 5.0
 var timer: float = 0.0
 
 @onready var initial_particle_scale: Vector2 = Vector2(process_material.scale_min, process_material.scale_max)
-#@onready var initial_par	ticle_velocity: Vector2 = Vector2(process_material.initial_velocity_min, process_material.initial_velocity_max)
-
 
 @onready var gas_area: Area2D = $GasArea
 
+func _ready() -> void:
+	if process_material:
+		process_material = process_material.duplicate()
 
 func _process(delta: float) -> void:
-	if player_inside != null:
-		timer += delta
-		if timer >= damage_time:
-			player_inside.take_damage(int(player_inside.get_damage()))
-			timer = 0.0
+	if player_inside == null:
+		return
+	timer += delta
+	if timer >= damage_time:
+		printerr("sto danneggiando")
+		player_inside.take_damage(int(player_inside.get_damage()))
+		timer = 0.0
 
 
 func _on_gas_body_entered(body: Node2D) -> void:

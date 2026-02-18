@@ -96,7 +96,7 @@ func un_pause():
 
 func scrub_to(t: float):
 	sel_preview.scrub_to(t)
-	
+
 	if affect_neighbors:
 		for p in sel_neighbor_previews:
 			p.scrub_to(t)
@@ -174,7 +174,7 @@ func create_previews():
 	sel_preview = BPC_ParticlePreview.new(sel_particles)
 	sel_preview.property_changed.connect(_on_property_changed)
 	add_child(sel_preview)
-	
+
 	if affect_neighbors:
 		create_neighbor_previews()
 	if affect_children:

@@ -7,21 +7,17 @@ extends Node2D
 @export var spawn_config: Array[Dictionary] = [
 	{
 		"scene": preload("res://Entities/Enemies/SmallBodies/meteoroid.tscn"),
-		"weight": 90.0,
 		"radius": 500.0 # 'R' (distanza minima Poisson)
 	},
 	{
 		"scene": preload("res://Entities/Enemies/SmallBodies/asteroid.tscn"),
-		"weight": 9.99999,
 		"radius": 35_000.0
 	},
 	{
-		"scene": preload("res://Entities/Enemies/SmallBodies/comet.tscn"),
-		"weight": 0.00001,
-		"radius": 200_000.0
+		"scene":preload("uid://8aj1dylerrl1"),
+		"radius": 75_000.0
 	}
 ]
-
 
 ## =========================
 ## CONFIGURAZIONE AREA (RETTANGOLARE)
@@ -29,14 +25,14 @@ extends Node2D
 
 @export_group("Area di Spawn")
 @export var spawn_margin_inner: float = 1000.0  # Distanza minima dal bordo schermo
-@export var spawn_margin_outer: float = 100_000.0 # Spessore della "cornice" di spawn
+@export var spawn_margin_outer: float = 75_000.0 # Spessore della "cornice" di spawn
 
 @export var despawn_buffer: float = 10000.0     # Quanto oltre la cornice distruggere l'oggetto
 
 @export_group("Parametri Poisson")
-@export var max_attempts: int = 5             # Il valore 'k' del video
-@export var target_object_count: int = 200
-@export var max_objects: int = target_object_count + 100
+@export var max_attempts: int = 3             # Il valore 'k' del video
+@export var target_object_count: int = 150
+@export var max_objects: int = target_object_count + 50
 
 @onready var player: Node2D = get_tree().get_first_node_in_group("player") as Player
 
@@ -44,6 +40,9 @@ var spawned_objects: Array = []
 
 var spawn_interval: float = 0.01
 var spawn_timer: float = spawn_interval
+
+func _ready() -> void:
+	UpgradeManager.tier_changed.connect(next_game_stage)
 
 
 func _process(delta: float) -> void:
@@ -56,8 +55,6 @@ func _process(delta: float) -> void:
 func _on_timer_timeout() -> void:
 	if not is_instance_valid(player):
 		return
-
-	update_game_stage()
 	cleanup_objects()
 	var current_count: int = spawned_objects.size()
 	if current_count < target_object_count:
@@ -65,56 +62,69 @@ func _on_timer_timeout() -> void:
 		for i: int in range(to_spawn):
 			spawn_object_poisson()
 
-
 ## =========================
 ## CONFIGURAZIONE STADI (MATCH MASSA)
 ## =========================
 
 # Definiamo i pesi per ogni stadio basati sulla massa del player
 # Formato: massa_minima: [peso_meteoroid, peso_asteroid, peso_comet]
-enum GameStage { METEROIDS, ASTEROIDS, SATELLITES, PLANETS, STARS }
-var current_stage: GameStage = GameStage.METEROIDS
-
-## Ritorna i pesi per [Meteoroidi, Asteroidi, Comete]
-func get_weights_for_current_stage() -> Array[float]:
-	match current_stage:
-		GameStage.METEROIDS:  return [90.0, 10.0, 0.0]  # Solo polvere
-		GameStage.ASTEROIDS:  return [54.0, 45.0, 1.0]  # Iniziano i primi asteroidi
-		GameStage.SATELLITES: return [0.0, 60.0, 10.0] # Comete/Satelliti diventano visibili
-		GameStage.PLANETS:    return [0.0, 20.0, 20.0] # Predominanza di oggetti grandi
-		GameStage.STARS:      return [0.0, 10.0, 10.0]  # Quasi solo oggetti massicci
-		_: return [1.0, 0.0, 0.0]
 
 
+# 1. Definiamo l'Enum (I nomi devono essere coerenti)
+enum GameStage {
+	METEROIDS_1,
+	METEROIDS_2,
+	METEROIDS_3,
+	ASTEROIDS_1,
+	ASTEROIDS_2,
+	ASTEROIDS_3,
+	ASTEROIDS_4,
+	ASTEROIDS_5,
+	ASTEROIDS_6,
+	ASTEROIDS_7,
+}
 
-## Ritorna i pesi per [Meteoroidi, Asteroidi, Comete]
-## NOTA: Se la somma < 100, il resto è probabilità di NON spawn
+# 2. Il "Dizionario-Corpo" (Sostituisce la logica Java)
+const STAGE_DATA: Dictionary = {
+	GameStage.METEROIDS_1: {
+		"weights": [100.0, 0.0, 0.0],
+		"label": "Polvere Spaziale"
+	},
+	GameStage.METEROIDS_2: {
+		"weights": [80.0, 20.0, 0.0],
+		"label": "Piccoli Detriti"
+	},
+	GameStage.METEROIDS_3: {
+		"weights": [60.0, 40.0, 0.0],
+		"label": "Fascia di Meteoroidi"
+	},
+	GameStage.ASTEROIDS_1: {
+		"weights": [40.0, 59.0, 0.5],
+		"label": "Primi Asteroidi"
+	},
+	GameStage.ASTEROIDS_2: {
+		"weights": [0.0, 95.0, 1.0],
+		"label": "Pioggia Rocciosa"
+	},
+	GameStage.ASTEROIDS_3: {
+		"weights": [0.0, 95.0, 5.0],
+		"label": "Pericolo Impatto"
+	}
+}
 
-func update_game_stage() -> void:
+
+var current_stage: GameStage = GameStage.METEROIDS_1
+
+func get_weights_for_current_stage() -> Array:
+	# Invece del match, fai un accesso diretto al "finto enum"
+	return STAGE_DATA[current_stage]["weights"]
+
+
+
+func next_game_stage() -> void:
 	if not is_instance_valid(player): return
-
-	var m: float = player.mass
-	var old_stage: GameStage = current_stage
-
-	# Soglie di massa (modifica i numeri in base al tuo bilanciamento)
-	if m < 20:
-		current_stage = GameStage.METEROIDS
-	elif m < 500:
-		current_stage = GameStage.ASTEROIDS
-	elif m < 2000:
-		current_stage = GameStage.SATELLITES
-	elif m < 10000:
-		current_stage = GameStage.PLANETS
-	else:
-		current_stage = GameStage.STARS
-
-	if old_stage != current_stage:
-		_on_stage_changed()
-
-func _on_stage_changed() -> void:
+	current_stage = (current_stage + 1) as GameStage
 	print("EVOLUZIONE: ", GameStage.keys()[current_stage])
-	# Qui puoi aggiungere effetti: zoom camera, cambio musica, ecc.
-
 
 
 ## =========================

@@ -12,9 +12,14 @@
 friction = 0.0
 bounce = 0.5
 
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_01a4e"]
+noise_type = 0
+frequency = 1.0
+fractal_type = 0
+
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_3uyv8"]
 radius = 39.0
-height = 118.0
+height = 120.0
 
 [sub_resource type="Gradient" id="Gradient_01a4e"]
 colors = PackedColorArray(1, 1, 1, 1, 0.5609549, 0.5609549, 0.5609549, 1)
@@ -22,9 +27,19 @@ colors = PackedColorArray(1, 1, 1, 1, 0.5609549, 0.5609549, 0.5609549, 1)
 [sub_resource type="GradientTexture1D" id="GradientTexture1D_01a4e"]
 gradient = SubResource("Gradient_01a4e")
 
+[sub_resource type="Gradient" id="Gradient_7a1se"]
+colors = PackedColorArray(0.8217887, 0.82178867, 0.82178867, 1, 0.19793725, 0.19793722, 0.19793722, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_lub02"]
+gradient = SubResource("Gradient_7a1se")
+
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_lub02"]
 shader = ExtResource("3_01a4e")
-shader_parameter/resolution = Vector2(94, 128)
+shader_parameter/outline_gradient = SubResource("GradientTexture1D_lub02")
+shader_parameter/outline_width = 0.0
+shader_parameter/pattern = 0
+shader_parameter/inside = false
+shader_parameter/add_margins = true
 shader_parameter/gradient_tex = SubResource("GradientTexture1D_01a4e")
 shader_parameter/frequency = 1.0
 shader_parameter/speed = 1.0
@@ -32,6 +47,7 @@ shader_parameter/brightness = 20.0
 shader_parameter/balance = 0.0
 shader_parameter/octaves = 1.0
 shader_parameter/pixel_size = 256.0
+shader_parameter/spiral_aspect_ratio = 0.75000003236512
 
 [sub_resource type="AudioStreamRandomizer" id="AudioStreamRandomizer_5c2io"]
 random_pitch = 1.1
@@ -60,6 +76,7 @@ position_smoothing_enabled = true
 position_smoothing_speed = 10.0
 rotation_smoothing_speed = 20.0
 script = ExtResource("5_5c2io")
+noise = SubResource("FastNoiseLite_01a4e")
 
 [node name="Collision" type="CollisionShape2D" parent="." unique_id=1021464206]
 rotation = 1.5707964
@@ -82,7 +99,7 @@ max_polyphony = 5
 bus = &"Sound"
 
 [node name="RegenTimer" type="Timer" parent="." unique_id=867875092]
-wait_time = 5.0
+wait_time = 2.0
 autostart = true
 
 [connection signal="timeout" from="RegenTimer" to="." method="_on_regen_timer_timeout"]

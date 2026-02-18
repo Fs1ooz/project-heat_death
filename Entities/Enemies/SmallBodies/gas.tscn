@@ -41,7 +41,7 @@ gravity = Vector3(0, 0, 0)
 scale_min = 80.0
 scale_max = 100.0
 scale_curve = SubResource("CurveTexture_r0wkb")
-color = Color(1, 1, 1, 0.078431375)
+color = Color(1, 1, 1, 0.05882353)
 color_ramp = SubResource("GradientTexture1D_612ub")
 color_initial_ramp = SubResource("GradientTexture1D_r0wkb")
 alpha_curve = SubResource("CurveTexture_n83y6")
@@ -51,7 +51,7 @@ radius = 8.0
 height = 618.0
 
 [node name="GasParticles" type="GPUParticles2D" unique_id=30725598]
-amount = 300
+amount = 128
 lifetime = 6.0
 speed_scale = 7.0
 fixed_fps = 0
