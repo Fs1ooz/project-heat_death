@@ -8,26 +8,26 @@ const STAGE_CONFIG: Dictionary = {
 	SizeStage.LARGE: {
 		"next_stage": SizeStage.MEDIUM,
 		"fragments": 2,
-		"min_size": 100.0,
-		"max_size": 128.0,
-		"internal_energy": 3,
-		"impulse": 3000,
+		"min_size": 123.0,
+		"max_size": 125.0,
+		"internal_energy": 1,
+		"impulse": 10000,
 	},
 	SizeStage.MEDIUM: {
 		"next_stage": SizeStage.SMALL,
 		"fragments": 2,
-		"min_size": 45.5,
-		"max_size": 50.0,
-		"internal_energy": 2,
-		"impulse": 1500,
+		"min_size": 57.5,
+		"max_size": 60.0,
+		"internal_energy": 1,
+		"impulse": 4000,
 	},
 	SizeStage.SMALL: {
 		"next_stage": SizeStage.METEOROID, # Ora punta a meteoroid
 		"fragments": 4, # Magari ne spawna tanti piccoli
-		"min_size": 20.0,
-		"max_size": 22.5,
+		"min_size": 25.0,
+		"max_size": 30.0,
 		"internal_energy": 1,
-		"impulse": 400,
+		"impulse": 1000,
 	},
 	SizeStage.METEOROID: {
 		"next_stage": null,
@@ -39,9 +39,8 @@ const STAGE_CONFIG: Dictionary = {
 const ASTEROID_SCENE_PATH: String = "res://Entities/Enemies/SmallBodies/Asteroid.tscn"
 const METEOROID_SCENE_PATH: String = "res://Entities/Enemies/SmallBodies/Meteoroid.tscn"
 const GAS_SCENE_PATH: String = "res://Entities/Enemies/SmallBodies/gas.tscn"
-const FRAGMENT_SPAWN_OFFSET: float = 100.0
-const GAS_SCALE_MULTIPLIER: float = 2.0
-const OUTGASSING_IMPULSE: float = 300.0
+const FRAGMENT_SPAWN_OFFSET: float = 50.0
+const OUTGASSING_IMPULSE: float = 1000.0
 
 
 @export var current_stage: SizeStage = SizeStage.LARGE
@@ -53,6 +52,9 @@ var _gas_scene: PackedScene = null
 var _meteoroid_scene: PackedScene = null
 
 
+# Sostituisci gasses: Array con un array tipizzato
+var gasses: Array[Gas] = []
+
 func _ready() -> void:
 	_load_scenes()
 	if randomize_stage:
@@ -61,6 +63,57 @@ func _ready() -> void:
 	super()
 	kick_component.kick_position()
 	kick_component.kick_rotation()
+	_prespawn_gasses()  # <-- spawna tutti i gas nascosti
+
+# Crea tutti i gas subito, ma li tiene nascosti
+func _prespawn_gasses() -> void:
+	if not _gas_scene:
+		return
+
+	# Spawn un gas per ogni spawn_point (o quanti ne vuoi)
+	for i: int in range(spawn_points.size()):
+		var gas: Gas = _gas_scene.instantiate()
+		var angle: float = randf_range(0.0, TAU)
+		var direction: Vector2 = Vector2.RIGHT.rotated(angle)
+
+		sprite.add_child(gas)
+
+		var scale_factor: float = sprite.scale.x
+		var offset: float = scale_factor - 10
+
+		gas.global_position = global_position
+		gas.position = direction * offset
+		gas.rotation = angle
+
+		if gas.process_material:
+			gas.process_material.scale_min = gas.initial_particle_scale.x * scale_factor
+			gas.process_material.scale_max = gas.initial_particle_scale.y * scale_factor
+
+		# Memorizza direzione per usarla dopo nell'impulso
+		gas.set_meta("direction", direction)
+
+		# Nasconde e mette in pausa le particelle
+		gas.emitting = false
+		gas.visible = false
+
+		gasses.append(gas)
+
+
+func _activate_outgassing() -> void:
+	# Attiva il prossimo gas non ancora attivo
+	for gas: Gas in gasses:
+		if not gas.emitting:
+			gas.visible = true
+			gas.emitting = true
+			var direction: Vector2 = gas.get_meta("direction", Vector2.RIGHT)
+			apply_force(-direction.rotated(sprite.rotation) * OUTGASSING_IMPULSE)
+			break
+
+
+func _stop_outgassing() -> void:
+	for gas: Gas in gasses:
+		gas.emitting = false
+		gas.visible = false
 
 func _load_scenes() -> void:
 	_asteroid_scene = load(ASTEROID_SCENE_PATH)
@@ -82,21 +135,21 @@ var spawn_points: Array[float] = [10.0, 30.0, 50.0, 80.0, 100.0]
 
 var last_spawn_index: int = 0
 
+
 func _on_entropy_changed(entropy: float) -> void:
 	if entropy < ENTROPY_THRESHOLD:
 		last_spawn_index = 0
-		_stop_outgassing()
+		_stop_outgassing()  # disattiva tutti (non li distrugge più)
 		return
 
 	var current_index: int = 0
-
 	for spawn_point: float in spawn_points:
 		if entropy > spawn_point:
 			current_index += 1
 
 	if current_index > last_spawn_index:
 		for i: int in range(current_index - last_spawn_index):
-			_spawn_gas()
+			_activate_outgassing()  # attiva il prossimo gas inattivo
 
 	last_spawn_index = current_index
 
@@ -113,7 +166,7 @@ func _spawn_gas() -> void:
 
 	var scale_factor: float = sprite.scale.x
 
-	var offset: float = scale_factor - 10
+	var offset: float = scale_factor - 20
 
 	gas.global_position = global_position
 	gas.position = direction * offset
@@ -126,20 +179,7 @@ func _spawn_gas() -> void:
 		gas.process_material.scale_min = gas.initial_particle_scale.x * scale_factor
 		print("dopo:", gas.process_material.scale_min)
 		gas.process_material.scale_max = gas.initial_particle_scale.y * scale_factor
-		#gas.process_material.initial_velocity_min = gas.initial_particle_velocity.x
-		#gas.process_material.initial_velocity_max = gas.initial_particle_velocity.y
-	#if gas.gas_area:
-		#gas.gas_area.scale = Vector2.ONE * scale_factor
 
-	#printerr(scale_factor)
-#
-	#gas.amount *= int(scale_factor)
-	#gas.lifetime *= scale_factor
-
-
-func _stop_outgassing() -> void:
-	for child: Node in _get_gas_children():
-		child.queue_free()
 
 func _get_gas_children() -> Array:
 	var gas_children: Array = []

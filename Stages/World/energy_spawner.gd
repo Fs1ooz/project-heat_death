@@ -53,7 +53,7 @@ func cleanup_old_energy() -> void:
 	energies.sort_custom(_sort_by_age)
 	for i: int in range(energies.size() - max_energy):
 		energies[i].queue_free()
-func _sort_by_age(a: EnergyDrop, b: EnergyDrop) -> bool:
+func _sort_by_age(a: Exp, b: Exp) -> bool:
 	return a._spawn_time < b._spawn_time
 ## =========================
 ## SPAWN
@@ -69,6 +69,6 @@ func _on_timer_timeout() -> void:
 		counter = 0  # ← Reset del counter
 
 	# Spawna nuova energia
-	var energy: EnergyDrop = energy_scene.instantiate()
+	var energy: Exp = energy_scene.instantiate()
 	energy.global_position = get_dynamic_ring_spawn_position()
 	get_parent().add_child(energy)

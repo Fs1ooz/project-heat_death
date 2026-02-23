@@ -17,22 +17,24 @@ var growth_factor: float = 1.2
 signal tier_changed()
 signal energy_changed(current: float, max: float, level: int)
 
-var tiers: Array = [5, 10, 15, 20, 40]
+var tiers: Array = [3, 5, 10, 20, 30, 40, 50]
 
 func gain_energy(value: float) -> void:
 	energy += value
 	while energy >= max_energy:
-		printerr("LEVELUP!!!!!!")
+		printerr("LEVELUP!!!!")
 		energy -= max_energy
 		level += 1
 		level_up()
 		max_energy *= growth_factor
-	emit_signal("energy_changed", energy, max_energy, level)
+	energy_changed.emit(energy, max_energy, level)
 
 
 func level_up() -> void:
+	if not player:
+		player = get_tree().get_first_node_in_group("player")
 	player.change_size(1.25)
-	player.max_hp = int(player.max_hp * 1.25)
+	player.max_hp = int(player.max_hp * 1.15)
 	player.speed *= 1.25
 	player.acceleration *= 1.25
 	if level in tiers:
@@ -41,10 +43,12 @@ func level_up() -> void:
 
 
 func _ready() -> void:
-	GlobalSignals.connect("game_over", reset_upgrades)
+	GlobalSignals.game_over.connect(reset_upgrades)
 
 
 func reset_upgrades() -> void:
+	level = 1
+	max_energy = 100
 	energy = 0
 	for key: int in upgrades_data.keys():
 		var upgrade: Dictionary = upgrades_data[key]
@@ -70,8 +74,8 @@ var upgrades_data: Dictionary = {
 		"name": "Max Health",
 		"description": "Increases health.",
 		"level": 1,
-		"base_power": 150,
-		"current_power": 150,
+		"base_power": 100,
+		"current_power": 100,
 	},
 	UpgradeType.REGENERATION: {
 		"name": "Regeneration",
@@ -91,8 +95,8 @@ var upgrades_data: Dictionary = {
 		"name": "Accelaration",
 		"description": "Increases Acceleration.",
 		"level": 1,
-		"base_power": 750.0,
-		"current_power": 750.0,
+		"base_power": 800.0,
+		"current_power": 800.0,
 	},
 	UpgradeType.MASS: {
 		"name": "Mass",
@@ -151,11 +155,11 @@ func apply_upgrade(upgrade_type: UpgradeType) -> bool:
 		UpgradeType.REGENERATION:
 			power = max(0.2, upgrade_data["base_power"] - (upgrade_data["level"] * 0.15))
 		UpgradeType.SPEED:
-			power = upgrade_data["current_power"] + upgrade_data["level"] * 100
+			power = upgrade_data["current_power"] + upgrade_data["level"] * 200
 		UpgradeType.ACCELERATION:
 			power = upgrade_data["current_power"] + upgrade_data["level"] * 200
 		UpgradeType.MASS:
-			power = 1.25
+			power = 1.35
 
 
 		#UpgradeType.DENSITY:
@@ -172,7 +176,7 @@ func apply_upgrade(upgrade_type: UpgradeType) -> bool:
 			player._update_life_bar()
 			player.max_hp += int(power)
 		UpgradeType.REGENERATION:
-			player.regen_tick = power
+			player.regen_timer = power
 		UpgradeType.SPEED:
 			player.speed += power
 		UpgradeType.ACCELERATION:

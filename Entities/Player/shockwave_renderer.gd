@@ -1,7 +1,9 @@
+class_name ShockwaveRenderer
 extends ColorRect
 
 var shockwaves: Array = []
 var original_pos: Vector2 = global_position
+@onready var player: Player = get_tree().get_first_node_in_group("player")
 
 @onready var player_camera: Camera2D = $"../../../PlayerCamera"
 
@@ -12,6 +14,7 @@ func _ready() -> void:
 	material.set_shader_parameter("shockwave_count", 0)
 
 func _process(delta: float) -> void:
+	var rect_transform: Transform2D = get_global_transform()
 	if shockwaves.size() > 0:
 		var positions: Array = []
 		var progresses: Array = []
@@ -21,14 +24,21 @@ func _process(delta: float) -> void:
 		while i < shockwaves.size():
 			var shockwave: Dictionary = shockwaves[i]
 
+			# NOVITÀ: Finché è in attesa, aggiorna la posizione a quella del player
+			if shockwave.progress <= 0.0:
+				shockwave.world_position = get_parent().global_position
+
 			shockwave.progress += delta
-			if shockwave.progress > 1.5: # Adjust for duration
+			if shockwave.progress > 1.5:
 				shockwaves.remove_at(i)
 			else:
-				positions.append(shockwave.position)
+				# NOVITÀ: Calcola le UV usando il ColorRect, zero ritardi
+				var local_pos: Vector2 = rect_transform.affine_inverse() * shockwave.world_position
+				var uv_pos: Vector2 = local_pos / size
+
+				positions.append(uv_pos)
 				progresses.append(shockwave.progress)
 				i += 1
-
 		# Update shader parameters
 		material.set_shader_parameter("shockwave_positions", positions)
 		material.set_shader_parameter("shockwave_progresses", progresses)
@@ -42,29 +52,39 @@ func _process(delta: float) -> void:
 
 func trigger_shockwave(target_global_position: Vector2, shockwave_amount: int) -> void:
 	global_position = target_global_position + original_pos * scale
-	scale = get_parent().scale
-	var viewport: Viewport = get_viewport()
-	var viewport_pos: Vector2 = viewport.get_canvas_transform() * (target_global_position + player_camera.offset)
-	var viewport_size: Vector2 = viewport.get_visible_rect().size
-	var normalized_pos: Vector2 = Vector2(
-		viewport_pos.x / viewport_size.x,
-		viewport_pos.y / viewport_size.y
-	)
+	scale = player.base_scale
 
-	# Add new shockwave to the array
 	for i: int in shockwave_amount:
 		var shockwave: Dictionary = {
-		"position": normalized_pos,
-		"progress": -i * 0.12  # offset temporale
+			"world_position": target_global_position, # Salva la posizione globale, non normalizzata
+			"progress": -i * 0.125
 		}
 		shockwaves.append(shockwave)
 
-	# Update shader parameters immediately
-	var positions: Array = []
-	var progresses: Array = []
-	for sw: Dictionary in shockwaves:
-		positions.append(sw.position)
-		progresses.append(sw.progress)
-	material.set_shader_parameter("shockwave_positions", positions)
-	material.set_shader_parameter("shockwave_progresses", progresses)
-	material.set_shader_parameter("shockwave_count", shockwaves.size())
+	# (Puoi rimuovere anche i material.set_shader_parameter da qui, li gestirà _process)
+
+#
+
+	#print("target_global: ", target_global_position)
+	#print("viewport_pos: ", viewport_pos)
+	#print("normalized: ", normalized_pos)
+	#print("canvas_transform: ", viewport.get_canvas_transform())
+	#print("screen_transform: ", viewport.get_screen_transform())
+#
+	## Add new shockwave to the array
+	#for i: int in shockwave_amount:
+		#var shockwave: Dictionary = {
+		#"position": normalized_pos,
+		#"progress": -i * 0.12  # offset temporale
+		#}
+		#shockwaves.append(shockwave)
+#
+	## Update shader parameters immediately
+	#var positions: Array = []
+	#var progresses: Array = []
+	#for sw: Dictionary in shockwaves:
+		#positions.append(sw.position)
+		#progresses.append(sw.progress)
+	#material.set_shader_parameter("shockwave_positions", positions)
+	#material.set_shader_parameter("shockwave_progresses", progresses)
+	#material.set_shader_parameter("shockwave_count", shockwaves.size())

@@ -1,9 +1,13 @@
 [gd_scene format=3 uid="uid://cslvpssd0qp67"]
 
 [ext_resource type="PackedScene" uid="uid://470x1obeipdg" path="res://Entities/Player/player.tscn" id="2_yer1y"]
-[ext_resource type="PackedScene" uid="uid://8aj1dylerrl1" path="res://Entities/Enemies/SmallBodies/Comets/comet.tscn" id="3_yfsno"]
+[ext_resource type="PackedScene" uid="uid://befachtfe40l2" path="res://Stages/World/SolarSystem/AsteroidBelt/base_background_layer.tscn" id="3_gjt46"]
+[ext_resource type="PackedScene" uid="uid://dtfn8lijt6vxu" path="res://Stages/World/dust_layer.tscn" id="3_yfsno"]
 
 [node name="Test" type="Node2D" unique_id=1449383081]
+
+[node name="DustLayer" parent="." unique_id=1687043170 instance=ExtResource("3_yfsno")]
+follow_viewport_enabled = true
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=218431552]
 zoom = Vector2(0.02, 0.02)
@@ -12,4 +16,6 @@ zoom = Vector2(0.02, 0.02)
 position = Vector2(-4207, 958)
 mass = 40.0
 
-[node name="Comet" parent="." unique_id=1624827841 instance=ExtResource("3_yfsno")]
+[node name="BaseBackgroundLayer" parent="." unique_id=501950975 instance=ExtResource("3_gjt46")]
+
+[editable path="DustLayer"]

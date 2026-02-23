@@ -3,7 +3,7 @@
 [ext_resource type="Script" uid="uid://d4h8dit0lt11l" path="res://Entities/Enemies/SmallBodies/gas.gd" id="1_ehlfa"]
 
 [sub_resource type="Curve" id="Curve_76ep8"]
-_data = [Vector2(0, 0), 1.803978, 1.803978, 0, 0, Vector2(0.8, 0.8), 0.37466735, 0.37466735, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+_data = [Vector2(0, 0.2), 1.803978, 0.44828722, 0, 0, Vector2(0.7, 0.8), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
 point_count = 3
 metadata/_snap_enabled = true
 metadata/_snap_count = 20
@@ -12,20 +12,20 @@ metadata/_snap_count = 20
 curve = SubResource("Curve_76ep8")
 
 [sub_resource type="Gradient" id="Gradient_ehlfa"]
-offsets = PackedFloat32Array(0, 0.421875)
-colors = PackedColorArray(0.7040211, 0.99755996, 0.99999994, 1, 1, 1, 1, 1)
+offsets = PackedFloat32Array(0, 0.2511737)
+colors = PackedColorArray(0.7607843, 0.99607843, 1, 1, 0.98234254, 0.9823423, 0.9823424, 1)
 
 [sub_resource type="GradientTexture1D" id="GradientTexture1D_r0wkb"]
 gradient = SubResource("Gradient_ehlfa")
 
 [sub_resource type="Gradient" id="Gradient_44mok"]
-colors = PackedColorArray(0.8784314, 1, 1, 1, 0.509165, 0.6020495, 0.6868946, 1)
+colors = PackedColorArray(0.8784314, 1, 1, 0.039215688, 0.50980395, 0.6039216, 0.6862745, 0.05882353)
 
 [sub_resource type="GradientTexture1D" id="GradientTexture1D_612ub"]
 gradient = SubResource("Gradient_44mok")
 
 [sub_resource type="Curve" id="Curve_ehlfa"]
-_data = [Vector2(0, 0), 0.0, -1.763595, 0, 0, Vector2(0.1, 0.2), 0.0, 0.11111112, 0, 1, Vector2(1, 0.3), 0.11111112, 0.0, 1, 0]
+_data = [Vector2(0, 0), 0.0, 2.7212462, 0, 0, Vector2(0.1, 0.2), 0.0, 0.22222222, 0, 1, Vector2(1, 0.4), 0.22222222, 0.0, 1, 0]
 point_count = 3
 metadata/_snap_enabled = true
 
@@ -33,33 +33,27 @@ metadata/_snap_enabled = true
 curve = SubResource("Curve_ehlfa")
 
 [sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_ehlfa"]
+particle_flag_align_y = true
 particle_flag_disable_z = true
-spread = 3.0
-initial_velocity_min = 110.0
-initial_velocity_max = 125.0
+spread = 0.5
+initial_velocity_min = 600.0
+initial_velocity_max = 655.0
 gravity = Vector3(0, 0, 0)
 scale_min = 80.0
-scale_max = 100.0
+scale_max = 128.0
 scale_curve = SubResource("CurveTexture_r0wkb")
-color = Color(1, 1, 1, 0.05882353)
 color_ramp = SubResource("GradientTexture1D_612ub")
 color_initial_ramp = SubResource("GradientTexture1D_r0wkb")
 alpha_curve = SubResource("CurveTexture_n83y6")
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_sx8h3"]
-radius = 8.0
+radius = 11.0
 height = 618.0
 
 [node name="GasParticles" type="GPUParticles2D" unique_id=30725598]
-amount = 128
-lifetime = 6.0
-speed_scale = 7.0
+amount = 512
 fixed_fps = 0
-visibility_rect = Rect2(-0.922, -500, 1000, 1000)
-trail_enabled = true
-trail_lifetime = 2.5
-trail_sections = 2
-trail_section_subdivisions = 1
+visibility_rect = Rect2(-0.885039, -39.804432, 750.82825, 78.84795)
 process_material = SubResource("ParticleProcessMaterial_ehlfa")
 script = ExtResource("1_ehlfa")
 

@@ -15,7 +15,7 @@ extends Node2D
 	},
 	{
 		"scene":preload("uid://8aj1dylerrl1"),
-		"radius": 75_000.0
+		"radius": 70_000.0
 	}
 ]
 
@@ -25,13 +25,13 @@ extends Node2D
 
 @export_group("Area di Spawn")
 @export var spawn_margin_inner: float = 1000.0  # Distanza minima dal bordo schermo
-@export var spawn_margin_outer: float = 75_000.0 # Spessore della "cornice" di spawn
+@export var spawn_margin_outer: float = 80_000.0 # Spessore della "cornice" di spawn
 
 @export var despawn_buffer: float = 10000.0     # Quanto oltre la cornice distruggere l'oggetto
 
 @export_group("Parametri Poisson")
 @export var max_attempts: int = 3             # Il valore 'k' del video
-@export var target_object_count: int = 150
+@export var target_object_count: int = 250
 @export var max_objects: int = target_object_count + 50
 
 @onready var player: Node2D = get_tree().get_first_node_in_group("player") as Player
@@ -91,23 +91,23 @@ const STAGE_DATA: Dictionary = {
 		"label": "Polvere Spaziale"
 	},
 	GameStage.METEROIDS_2: {
-		"weights": [80.0, 20.0, 0.0],
+		"weights": [90.0, 10.0, 0.0],
 		"label": "Piccoli Detriti"
 	},
 	GameStage.METEROIDS_3: {
-		"weights": [60.0, 40.0, 0.0],
+		"weights": [60.0, 30.0, 0.0],
 		"label": "Fascia di Meteoroidi"
 	},
 	GameStage.ASTEROIDS_1: {
-		"weights": [40.0, 59.0, 0.5],
+		"weights": [10.0, 30.0, 0.1],
 		"label": "Primi Asteroidi"
 	},
 	GameStage.ASTEROIDS_2: {
-		"weights": [0.0, 95.0, 1.0],
+		"weights": [5.0, 30.0, 0.5],
 		"label": "Pioggia Rocciosa"
 	},
 	GameStage.ASTEROIDS_3: {
-		"weights": [0.0, 95.0, 5.0],
+		"weights": [0.0, 25.0, 1.0],
 		"label": "Pericolo Impatto"
 	}
 }
@@ -135,7 +135,6 @@ func spawn_object_poisson() -> void:
 	var data: Dictionary = get_random_spawn_data()
 
 	if data == {}:
-		print("non spawnare un caz")
 		return
 
 	var r: float = data["radius"]

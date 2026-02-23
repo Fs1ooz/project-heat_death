@@ -7,7 +7,7 @@
 [ext_resource type="Script" uid="uid://b5dsgsl5q46xm" path="res://Commons/Components/kick_component.gd" id="5_xu417"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_6m435"]
-radius = 789.2053
+radius = 968.0005
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_lyb38"]
 radius = 63.03174
@@ -111,7 +111,7 @@ texture = ExtResource("3_pnclo")
 
 [node name="VisibleScreenEnablerComponent" parent="Collision/Sprite" unique_id=1920965672 instance=ExtResource("2_pnclo")]
 position = Vector2(25, -9)
-rect = Rect2(-808, -786, 1560, 1615)
+rect = Rect2(-993.5, -959, 1935, 1935)
 enable_node_path = NodePath("../../..")
 
 [node name="Trail" type="GPUParticles2D" parent="." unique_id=1372681417]

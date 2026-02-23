@@ -241,7 +241,6 @@ func _spawn_energy_drop() -> void:
 # print("Target: %d | Ottenuto: %d | Differenza: %d" % [target_energy, current_total, abs(target_energy - current_total)])
 
 
-
 # Aggiungi questa funzione dopo _ready()
 func _setup_health_bar() -> void:
 	# Container per posizionare la barra

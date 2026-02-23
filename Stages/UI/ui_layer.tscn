@@ -3,10 +3,13 @@
 [ext_resource type="PackedScene" uid="uid://dnto56yr1b1ff" path="res://Commons/entropy_counter.tscn" id="1_bhpt4"]
 [ext_resource type="PackedScene" uid="uid://dr5pxtobflhyw" path="res://Stages/UI/UpgradeUI/upgrade_ui.tscn" id="1_hli8u"]
 [ext_resource type="PackedScene" uid="uid://bcnmskds2ga3l" path="res://Stages/World/SolarSystem/arrow.tscn" id="1_l25jl"]
+[ext_resource type="PackedScene" uid="uid://l2m8c2o136a2" path="res://Stages/UI/life_vignette.tscn" id="1_wud8y"]
 [ext_resource type="PackedScene" uid="uid://dyd3uoe8y1asi" path="res://Stages/World/game_over_screen.tscn" id="2_bhpt4"]
 [ext_resource type="PackedScene" uid="uid://byiufddhmby2s" path="res://Stages/UI/UpgradeUI/progress_bars.tscn" id="5_l25jl"]
 
 [node name="UILayer" type="CanvasLayer" unique_id=1973272501]
+
+[node name="LifeVignette" parent="." unique_id=1900134162 instance=ExtResource("1_wud8y")]
 
 [node name="EntropyCounter" parent="." unique_id=1222725892 instance=ExtResource("1_bhpt4")]
 

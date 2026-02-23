@@ -2,7 +2,7 @@ class_name Gas
 extends GPUParticles2D
 
 var player_inside: Player = null
-var damage_time: float = 5.0
+var damage_time: float = 0.2
 var timer: float = 0.0
 
 @onready var initial_particle_scale: Vector2 = Vector2(process_material.scale_min, process_material.scale_max)
@@ -18,8 +18,10 @@ func _process(delta: float) -> void:
 		return
 	timer += delta
 	if timer >= damage_time:
-		printerr("sto danneggiando")
-		player_inside.take_damage(int(player_inside.get_damage()))
+		var damage: int = int(10)
+		printerr("sto danneggiando ", damage)
+		player_inside.take_damage(damage)
+
 		timer = 0.0
 
 

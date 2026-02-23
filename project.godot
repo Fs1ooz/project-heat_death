@@ -24,8 +24,6 @@ config/icon="uid://cutmcskxym36k"
 [autoload]
 
 GlobalSignals="*res://Commons/global_signals.tscn"
-StreamingManager="*res://Commons/streaming_manager.tscn"
-UnitConversion="*res://Commons/unit_conversion.tscn"
 UpgradeManager="*res://Commons/upgrade_manager.tscn"
 EntropyManager="*res://Commons/entropy_manager.tscn"
 

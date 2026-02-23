@@ -37,7 +37,7 @@ _data = {
 }
 
 [sub_resource type="Curve" id="Curve_5pao6"]
-_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 0.05), -2.017251, 0.0, 0, 0]
+_data = [Vector2(0, 1), 0.0, 0.15387842, 0, 0, Vector2(1, 0.05), -0.42004997, 0.0, 0, 0]
 point_count = 2
 metadata/_snap_enabled = true
 metadata/_snap_count = 20
@@ -62,7 +62,7 @@ metadata/_snap_enabled = true
 curve = SubResource("Curve_ibsrq")
 
 [sub_resource type="Curve" id="Curve_gepmy"]
-_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 0.4), -2.1022365, 0.0, 0, 0]
+_data = [Vector2(0, 1), 0.0, -1.791196e-06, 0, 0, Vector2(1, 0.5), -1.2315089, 0.0, 0, 0]
 point_count = 2
 metadata/_snap_enabled = true
 
@@ -70,16 +70,17 @@ metadata/_snap_enabled = true
 curve = SubResource("Curve_gepmy")
 
 [sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_uqslx"]
-lifetime_randomness = 0.05
+lifetime_randomness = 0.2
+particle_flag_disable_z = true
 direction = Vector3(0, 0, 0)
 spread = 180.0
 initial_velocity_min = 1500.0
 initial_velocity_max = 1600.0
 gravity = Vector3(0, 0, 0)
 damping_min = 5.0
-damping_max = 50.000004
+damping_max = 75.0
 damping_curve = SubResource("CurveTexture_hnfga")
-scale_min = 8.0
+scale_min = 10.0
 scale_max = 12.0
 scale_curve = SubResource("CurveTexture_2celf")
 color_ramp = SubResource("GradientTexture1D_pwbyw")
@@ -124,13 +125,14 @@ libraries/ = SubResource("AnimationLibrary_ik6tg")
 
 [node name="ExplosionRed" type="GPUParticles2D" parent="." unique_id=1746194594]
 emitting = false
-amount = 30
+amount = 25
 one_shot = true
-explosiveness = 0.9
+explosiveness = 0.8
 fixed_fps = 0
 visibility_rect = Rect2(-1000, -1000, 2000, 2000)
 trail_enabled = true
-trail_lifetime = 0.15000000000000002
+trail_sections = 2
+trail_section_subdivisions = 1
 process_material = SubResource("ParticleProcessMaterial_uqslx")
 
 [node name="Shockwave" type="GPUParticles2D" parent="." unique_id=1347491691]

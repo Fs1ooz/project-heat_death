@@ -4,7 +4,7 @@
 [ext_resource type="AudioStream" uid="uid://dp1e7mdwgi743" path="res://Assets/Sounds/coin.sfxr" id="2_psw32"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_psw32"]
-radius = 1871.0452
+radius = 2813.2434
 
 [sub_resource type="AudioStreamRandomizer" id="AudioStreamRandomizer_psw32"]
 random_pitch = 2.0
@@ -16,7 +16,7 @@ radius = 60.0
 
 [sub_resource type="Gradient" id="Gradient_psw32"]
 interpolation_mode = 2
-offsets = PackedFloat32Array(0, 0.20940171, 0.3931624)
+offsets = PackedFloat32Array(0, 0.29263157, 0.6568421)
 colors = PackedColorArray(1, 1, 0.9882353, 1, 0.74509805, 0.74509805, 0.74509805, 0.39215687, 1, 1, 1, 0)
 
 [sub_resource type="GradientTexture2D" id="GradientTexture2D_mersp"]
@@ -45,7 +45,6 @@ bus = &"Sound"
 shape = SubResource("CircleShape2D_rdhfw")
 
 [node name="Sprite2D" type="Sprite2D" parent="CollisionShape2D" unique_id=865159995]
-scale = Vector2(4, 4)
 texture = SubResource("GradientTexture2D_mersp")
 region_rect = Rect2(1.655, 0, 0, 0)
 

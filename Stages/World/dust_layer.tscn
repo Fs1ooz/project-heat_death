@@ -1,0 +1,29 @@
+[gd_scene format=3 uid="uid://dtfn8lijt6vxu"]
+
+[sub_resource type="Gradient" id="Gradient_n3etr"]
+interpolation_mode = 2
+offsets = PackedFloat32Array(0, 0.6652632, 0.8702128)
+colors = PackedColorArray(0.105882354, 0.05882353, 0.011764706, 0.05882353, 0.13333334, 0.13333334, 0.13333334, 0.11764706, 0, 0, 0, 0.05882353)
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_507dh"]
+noise_type = 4
+frequency = 0.2
+fractal_weighted_strength = 0.28
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_105us"]
+noise = SubResource("FastNoiseLite_507dh")
+color_ramp = SubResource("Gradient_n3etr")
+seamless = true
+
+[node name="DustLayer" type="CanvasLayer" unique_id=1687043170]
+layer = 0
+
+[node name="Parallax2D" type="Parallax2D" parent="." unique_id=1745528812]
+texture_filter = 1
+scale = Vector2(32, 32)
+repeat_size = Vector2(512, 512)
+autoscroll = Vector2(0.1, 0.05)
+repeat_times = 100
+
+[node name="Sprite2D" type="Sprite2D" parent="Parallax2D" unique_id=820977670]
+texture = SubResource("NoiseTexture2D_105us")

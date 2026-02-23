@@ -4,6 +4,8 @@ extends Node
 signal game_over()
 @warning_ignore("unused_signal")
 signal death(body: CelestialBody)
+@warning_ignore("unused_signal")
+signal low_health(value: bool)
 
 func _input(event: InputEvent) -> void:
 	if event.is_action_pressed("fullscreen"):

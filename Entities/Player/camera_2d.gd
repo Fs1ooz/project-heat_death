@@ -3,11 +3,11 @@ extends Camera2D
 
 @export var zoom_speed: float = 1.05
 @export_group("Zoom Limits (Base Values)")
-@export var min_zoom_base: float = 0.001
-@export var max_zoom_base: float = 2.0
+@export var min_zoom_base: float = 0.01
+@export var max_zoom_base: float = 2.5
 
 @export_group("Zoom Settings")
-@export var base_zoom: Vector2 = Vector2.ONE * 0.5
+@export var base_zoom: Vector2 = Vector2.ONE * 0.4
 @export var zoom_lerp_speed: float = 2.15
 @export var manual_zoom_timeout: float = 2.0
 @export var zoom_value_multiplier: float = 0.5 # Moltiplicatore quando ti muovi
@@ -18,7 +18,7 @@ var last_zoom_input_time: float = 0.0
 # Limiti dinamici
 var min_zoom: float
 var max_zoom: float
-var forward_offset: float = 250.0
+var forward_offset: float = 350.0
 
 # Variabili di stato
 @onready var player: Player = get_parent()
@@ -28,7 +28,7 @@ var tier_base_zoom: Vector2 # Questo è il "Target Zoom Value" di base per il Ti
 # Shake
 var shake_intensity: float = 0.0
 var active_shake_time: float = 0.0
-var shake_decay: float = 5.0
+var shake_decay: float = 3.0
 var shake_time: float = 0.0
 var shake_time_speed: float = 30.0
 @export var noise: FastNoiseLite
@@ -102,7 +102,7 @@ func _process(delta: float) -> void:
 	offset = base_offset + shake_offset
 
 func apply_shake(intensity: float, time: float) -> void:
-	shake_intensity = intensity
+	shake_intensity = intensity + 1.75
 	active_shake_time = max(active_shake_time, time)
 
 func _unhandled_input(event: InputEvent) -> void:

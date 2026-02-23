@@ -1,39 +1,93 @@
 [gd_scene format=3 uid="uid://bkljj71ppklsf"]
 
+[ext_resource type="Shader" uid="uid://cxymrnwv1vlew" path="res://Assets/Shaders/colorchange.gdshader" id="1_4jhtp"]
 [ext_resource type="Shader" uid="uid://dkeibheix7tve" path="res://Commons/nebulosa.gdshader" id="1_xnvbv"]
 [ext_resource type="Texture2D" uid="uid://cw7ytj1vmdret" path="res://Assets/Images/Grayscale/nebulae.png" id="2_bio74"]
+[ext_resource type="Texture2D" uid="uid://dn52hn7hj60c1" path="res://Assets/Images/eso0932a.png" id="2_n3etr"]
 [ext_resource type="Texture2D" uid="uid://kkw2x4ldjk1m" path="res://Assets/Images/Grayscale/stars.png" id="3_bio74"]
-
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_n3etr"]
-shader = ExtResource("1_xnvbv")
-shader_parameter/color1 = Color(0.5, 0.1, 0.8, 1)
-shader_parameter/color2 = Color(0.1, 0.3, 0.9, 1)
-shader_parameter/color3 = Color(0.8, 0.2, 0.5, 1)
-shader_parameter/color_shift_speed = 0.3
-shader_parameter/gradient_scale = 2.0000000223518
-shader_parameter/pulse_speed = 0.5
-shader_parameter/pulse_intensity = 0.2
-shader_parameter/enable_shimmer = false
-shader_parameter/shimmer_speed = 2.0
-shader_parameter/alpha_intensity = 0.80000001192096
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_507dh"]
 shader = ExtResource("1_xnvbv")
-shader_parameter/color1 = Color(0.8611975, 0.20162952, 1.353256, 1)
-shader_parameter/color2 = Color(0.17545618, 0.4685975, 1.353256, 1)
-shader_parameter/color3 = Color(1.2900516, 0.5207778, 0.25912008, 1)
+shader_parameter/color1 = Color(0.15447891, 0.0093653295, 0.26790577, 1)
+shader_parameter/color2 = Color(0.0035661699, 0.040354915, 0.24958688, 1)
+shader_parameter/color3 = Color(0.22395858, 0.018186336, 0.12359119, 1)
 shader_parameter/color_shift_speed = 0.3
-shader_parameter/gradient_scale = 2.0000000223518
+shader_parameter/gradient_scale = 2.0
 shader_parameter/pulse_speed = 0.5
-shader_parameter/pulse_intensity = 0.2
-shader_parameter/enable_shimmer = true
+shader_parameter/pulse_intensity = 2.0
+shader_parameter/enable_shimmer = false
 shader_parameter/shimmer_speed = 2.0
-shader_parameter/alpha_intensity = 0.90000001341108
+shader_parameter/alpha_intensity = 0.55000000819566
+
+[sub_resource type="Shader" id="Shader_507dh"]
+code = "shader_type canvas_item;
+
+// Colori della nebulosa (cambia questi per temi diversi)
+uniform vec3 color1 : source_color = vec3(0.5, 0.1, 0.8); // viola
+uniform vec3 color2 : source_color = vec3(0.1, 0.3, 0.9); // blu
+uniform vec3 color3 : source_color = vec3(0.8, 0.2, 0.5); // rosa
+
+// Controlli animazione
+uniform float color_shift_speed : hint_range(0.0, 2.0, 0.1) = 0.3;
+uniform float gradient_scale : hint_range(0.5, 5.0, 0.1) = 2.0;
+uniform float pulse_speed : hint_range(0.0, 3.0, 0.1) = 0.5;
+uniform float pulse_intensity : hint_range(0.0, 2.0, 0.05) = 0.2;
+
+// Effetti aggiuntivi
+uniform bool enable_shimmer = true;
+uniform float shimmer_speed : hint_range(0.0, 5.0, 0.1) = 2.0;
+uniform float alpha_intensity : hint_range(0.0, 1.0, 0.05) = 1.0;
+
+float hash(vec2 p) {
+    return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5);
+}
+
+void fragment() {
+    // Leggi la texture originale (usa l'alpha come maschera)
+    vec4 original = texture(TEXTURE, UV);
+    
+    // Crea gradiente animato che si muove sulla nebulosa
+    float gradient = sin(UV.x * gradient_scale + TIME * color_shift_speed) * 0.5 + 0.5;
+    gradient += cos(UV.y * gradient_scale * 0.7 - TIME * color_shift_speed * 0.8) * 0.3;
+    gradient = fract(gradient);
+    
+    // Interpola tra 3 colori
+    vec3 color;
+    if(gradient < 0.33) {
+        color = mix(color1, color2, gradient * 3.0);
+    } else if(gradient < 0.66) {
+        color = mix(color2, color3, (gradient - 0.33) * 3.0);
+    } else {
+        color = mix(color3, color1, (gradient - 0.66) * 3.0);
+    }
+    
+    // Effetto pulsazione (respiro della nebulosa)
+    float pulse = sin(TIME * pulse_speed) * pulse_intensity + pulse_intensity + 0.5;
+    color *= pulse;
+    
+    // Shimmer (scintillio locale)
+    if(enable_shimmer) {
+        vec2 shimmer_uv = floor(UV * 50.0);
+        float shimmer_val = hash(shimmer_uv);
+        float shimmer = sin(TIME * shimmer_speed + shimmer_val * 100.0) * 0.1 + 1.0;
+        
+        // Applica shimmer solo dove c'è opacità
+        if(original.a > 0.3 && shimmer_val > 0.7) {
+            color *= shimmer;
+        }
+    }
+    
+    // Mantieni la forma originale usando l'alpha della texture
+    // Moltiplica per il colore originale per preservare i dettagli
+    vec3 final_color = color * original.rgb;
+    
+    COLOR = vec4(final_color, original.a * alpha_intensity);
+}"
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_bio74"]
-shader = ExtResource("1_xnvbv")
+shader = SubResource("Shader_507dh")
 shader_parameter/color1 = Color(0.28100932, 0.7660193, 2.454227, 1)
-shader_parameter/color2 = Color(1.8247963, 1.5592736, 0.80462986, 1)
+shader_parameter/color2 = Color(1, 0.8509804, 0.42745098, 1)
 shader_parameter/color3 = Color(1.353256, 0.25921082, 0.096936174, 1)
 shader_parameter/color_shift_speed = 0.0
 shader_parameter/gradient_scale = 4.0000000521542
@@ -43,51 +97,50 @@ shader_parameter/enable_shimmer = true
 shader_parameter/shimmer_speed = 2.0
 shader_parameter/alpha_intensity = 1.0
 
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_tctns"]
+shader = ExtResource("1_4jhtp")
+shader_parameter/color1 = Color(0.944052, 0.8938526, 0.9496922, 1)
+shader_parameter/color2 = Color(0.9359263, 0.97058207, 0.9999998, 1)
+shader_parameter/color3 = Color(1, 1, 1, 1)
+shader_parameter/color_shift_speed = 0.3
+shader_parameter/gradient_scale = 5.0
+shader_parameter/pulse_speed = 3.0
+shader_parameter/pulse_intensity = 0.2
+shader_parameter/enable_shimmer = false
+shader_parameter/shimmer_speed = 2.0
+shader_parameter/alpha_intensity = 1.0
+
 [node name="BackgroundLayer" type="CanvasLayer" unique_id=110186335]
 layer = -2
 follow_viewport_enabled = true
-follow_viewport_scale = 0.5
 
-[node name="Parallax2DBottom" type="Parallax2D" parent="." unique_id=1352383593]
+[node name="Parallax3" type="Parallax2D" parent="." unique_id=1491156606]
 texture_filter = 1
-rotation = -3.1415925
-scale = Vector2(200, 200)
-scroll_scale = Vector2(0.001, 0.001)
-repeat_size = Vector2(2000, 1438)
-autoscroll = Vector2(0.001, 0.002)
-repeat_times = 50
-
-[node name="Nebulae" type="Sprite2D" parent="Parallax2DBottom" unique_id=967559075]
-material = SubResource("ShaderMaterial_n3etr")
-texture = ExtResource("2_bio74")
-
-[node name="Parallax2DTop" type="Parallax2D" parent="." unique_id=1491156606]
-texture_filter = 1
-scale = Vector2(500, 500)
-scroll_scale = Vector2(0.01, 0.01)
-repeat_size = Vector2(2000, 1438)
-autoscroll = Vector2(0.01, 0.005)
-repeat_times = 25
-
-[node name="Nebulae" type="Sprite2D" parent="Parallax2DTop" unique_id=836743018]
-material = SubResource("ShaderMaterial_507dh")
-position = Vector2(-183.296, -101.88801)
-texture = ExtResource("2_bio74")
-
-[node name="Stars" type="Sprite2D" parent="Parallax2DTop" unique_id=641259670]
-modulate = Color(1.8247963, 1.8247963, 1.8247963, 1)
-material = SubResource("ShaderMaterial_bio74")
-texture = ExtResource("3_bio74")
-
-[node name="Parallax2DTop2" type="Parallax2D" parent="." unique_id=1249018939]
-texture_filter = 1
-scale = Vector2(15, 15)
+scale = Vector2(128, 128)
 scroll_scale = Vector2(0.1, 0.1)
 repeat_size = Vector2(2000, 1438)
 autoscroll = Vector2(0.01, 0.005)
 repeat_times = 25
 
-[node name="Stars" type="Sprite2D" parent="Parallax2DTop2" unique_id=1600889675]
+[node name="Nebulae" type="Sprite2D" parent="Parallax3" unique_id=836743018]
+material = SubResource("ShaderMaterial_507dh")
+texture = ExtResource("2_bio74")
+
+[node name="Stars" type="Sprite2D" parent="Parallax3" unique_id=641259670]
 modulate = Color(1.8247963, 1.8247963, 1.8247963, 1)
 material = SubResource("ShaderMaterial_bio74")
 texture = ExtResource("3_bio74")
+
+[node name="Parallax1" type="Parallax2D" parent="." unique_id=1527427644]
+texture_filter = 1
+scale = Vector2(1024, 1024)
+scroll_scale = Vector2(0.001, 0.001)
+repeat_size = Vector2(6000, 3000)
+autoscroll = Vector2(0.035, 0.001)
+repeat_times = 10
+follow_viewport = false
+
+[node name="Eso0932A" type="Sprite2D" parent="Parallax1" unique_id=1760172794]
+material = SubResource("ShaderMaterial_tctns")
+texture = ExtResource("2_n3etr")
+offset = Vector2(0, 512)

@@ -19,12 +19,11 @@ extends RigidBody2D
 @export var sprite: Sprite2D
 @export var trail: GPUParticles2D
 
-@export var shockwave: Node
+@export var shockwave: ShockwaveRenderer
 @onready var player_camera: PlayerCamera = $PlayerCamera
 
 var rotation_responsiveness: float = 8.0
 
-var regen_tick: float = 2.0
 var auto_revive: bool = true
 var _last_velocity: Vector2 = Vector2.ZERO
 
@@ -35,8 +34,6 @@ var accumulated_forces: Vector2 = Vector2.ZERO
 var energy_threshold: float = 300.0
 
 var gravity: bool = true
-
-@onready var regen_timer: Timer = $RegenTimer
 
 @onready var hit_audio_stream_player: AudioStreamPlayer = $HitAudioStreamPlayer
 
@@ -66,8 +63,33 @@ func _ready() -> void:
 	await get_tree().create_timer(2).timeout
 
 
+var regen_time: float = 0.0
+var regen_timer: float = 2.0
+
+func _process(delta: float) -> void:
+	if hp == max_hp:
+		return
+	else:
+		regen_time += delta
+		if regen_time > regen_timer:
+			_start_regen()
+			regen_time = 0.0
+	if hp >= max_hp * 0.25:
+		if $AnimationPlayer.current_animation == "low_health":
+			GlobalSignals.low_health.emit(false)
+			$AnimationPlayer.play("RESET")
+	else:
+		GlobalSignals.low_health.emit(true)
+		$AnimationPlayer.play("low_health")
+
+
+
+
 #region Movement
 var base_scale: Vector2 = Vector2.ONE
+
+
+
 
 func _physics_process(delta: float) -> void:
 	_last_velocity = linear_velocity
@@ -186,26 +208,57 @@ func apply_entropy(delta: float) -> void:
 
 func _handle_collision_resistance(state: PhysicsDirectBodyState2D) -> void:
 	var max_resistance: float = 0.0
-	var min_res_ratio: float = 0.8
+	var min_res_ratio: float = 0.5
+
+	# Array temporaneo per accumulare i corpi da inglobare
+	var bodies_to_engulf: Array[CelestialBody] = []
+
 	for i: int in range(state.get_contact_count()):
 		var collider: CelestialBody = state.get_contact_collider_object(i)
+
+		# USA CONTINUE INVECE DI RETURN!
 		if collider is not CelestialBody:
-			return
+			continue
+
 		var mass_ratio: float = mass / collider.mass
-		player_camera.apply_shake(1.0/mass_ratio, 0.75)
+		player_camera.apply_shake(1.0 / mass_ratio, 0.75)
 		_animate_player(false)
-		if mass_ratio >= 5.0:
+
+		# 1. NUOVA LOGICA: Ingloba se la massa è immensamente superiore (es. 10x)
+		if mass_ratio >= 8.0:
+			print("🌌 INGLOBATO: ", collider.name)
+			bodies_to_engulf.append(collider)
+
+		# 2. LOGICA ESISTENTE: Bulldozer mode (es. 5x)
+		elif mass_ratio >= 3.0:
 			max_resistance = 1.0
 			print("💥 BULLDOZER MODE vs ", collider.name)
 			break
+
+		# 3. LOGICA ESISTENTE: Resistenza normale
 		elif mass_ratio > min_res_ratio:
 			var resistance: float = smoothstep(min_res_ratio, 3.0, mass_ratio)
 			max_resistance = max(max_resistance, resistance)
 			print("⚡ Resistenza: %.0f%% vs %s" % [resistance * 100, collider.name])
 
+	# Applica la resistenza se necessaria
 	if max_resistance > 0.0:
 		state.linear_velocity = state.linear_velocity.lerp(_last_velocity, max_resistance)
 
+	# Gestisci l'inglobamento al di fuori del calcolo della fisica
+	for body: CelestialBody in bodies_to_engulf:
+		_engulf_body(body)
+
+@onready var engulf_audio_stream_player: AudioStreamPlayer = $EngulfAudioStreamPlayer
+
+func _engulf_body(body: CelestialBody) -> void:
+	UpgradeManager.gain_energy(body.game_energy)
+	_start_regen()
+	engulf_audio_stream_player.play()
+
+	# Distruggi il nemico in modo sicuro usando call_deferred per non far arrabbiare la fisica
+	if is_instance_valid(body) and not body.is_queued_for_deletion():
+		body.queue_free.call_deferred()
 
 func get_input() -> Vector2:
 	return Input.get_vector("left", "right", "up", "down")
@@ -220,7 +273,6 @@ func get_damage() -> float:
 	var damage: int = maxi(snappedi(scaled_damage, round_base), 1)
 
 	return damage
-
 
 
 func _on_tier_changed()-> void:
@@ -259,7 +311,7 @@ func change_scale(amount: float) -> void:
 
 
 	var tween: Tween = create_tween()
-	tween.tween_property(sprite, "scale", scale_change, 1.0).set_trans(Tween.TRANS_BOUNCE).set_ease(Tween.EASE_OUT)
+	tween.tween_property(sprite, "scale", scale_change, 1.2).set_trans(Tween.TRANS_ELASTIC).set_ease(Tween.EASE_OUT)
 	base_scale = scale_change
 
 
@@ -305,11 +357,7 @@ func _update_life_bar() -> void:
 		life_bar.value = hp
 	#life_bar.start_fade()
 
-func _on_regen_timer_timeout() -> void:
-	if hp == max_hp:
-		return
 
+func _start_regen() -> void:
 	hp = min(hp + int(max_hp * 0.15), max_hp)
 	_update_life_bar()
-
-	regen_timer.wait_time = regen_tick

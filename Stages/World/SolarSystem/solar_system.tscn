@@ -7,6 +7,7 @@
 [ext_resource type="AudioStream" uid="uid://cawomildbxiao" path="res://Assets/Music/BETA - Phase1.mp3" id="5_3u0hu"]
 [ext_resource type="PackedScene" uid="uid://befachtfe40l2" path="res://Stages/World/SolarSystem/AsteroidBelt/base_background_layer.tscn" id="5_qs46f"]
 [ext_resource type="PackedScene" uid="uid://bkljj71ppklsf" path="res://Stages/World/SolarSystem/AsteroidBelt/background_layer.tscn" id="6_bfis2"]
+[ext_resource type="PackedScene" uid="uid://dtfn8lijt6vxu" path="res://Stages/World/dust_layer.tscn" id="6_l0eld"]
 [ext_resource type="AudioStream" uid="uid://wvogywji06eb" path="res://Assets/Music/BETA - Phase2.mp3" id="6_niy7f"]
 [ext_resource type="Script" uid="uid://cvs60xrp5qjxm" path="res://Stages/World/music_audio_stream_player.gd" id="7_l0eld"]
 [ext_resource type="PackedScene" uid="uid://470x1obeipdg" path="res://Entities/Player/player.tscn" id="7_o1t32"]
@@ -70,6 +71,9 @@ environment = SubResource("Environment_lnrn1")
 [node name="UILayer" parent="." unique_id=1419037089 instance=ExtResource("4_l0eld")]
 layer = 2
 
+[node name="DustLayer" parent="." unique_id=1687043170 instance=ExtResource("6_l0eld")]
+follow_viewport_enabled = true
+
 [node name="BaseBackgroundLayer" parent="." unique_id=907845646 instance=ExtResource("5_qs46f")]
 
 [node name="BackgroundLayer" parent="." unique_id=1271258351 instance=ExtResource("6_bfis2")]
@@ -102,3 +106,4 @@ position = Vector2(-964, 2039)
 
 [editable path="UILayer"]
 [editable path="UILayer/ProgressBars"]
+[editable path="DustLayer"]

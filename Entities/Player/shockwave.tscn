@@ -1,20 +1,32 @@
-[gd_scene load_steps=4 format=3 uid="uid://0vbdasmelfef"]
+[gd_scene format=3 uid="uid://0vbdasmelfef"]
 
 [ext_resource type="Shader" uid="uid://dcm1nuuualb2i" path="res://Entities/Player/shockwave.gdshader" id="1_v8dji"]
 [ext_resource type="Script" uid="uid://bxp1hoj87t5u7" path="res://Entities/Player/shockwave_renderer.gd" id="2_gdfje"]
 
+[sub_resource type="Gradient" id="Gradient_gdfje"]
+interpolation_color_space = 1
+offsets = PackedFloat32Array(0.3914328, 0.6706056, 0.732644, 0.76809454, 0.7932053, 0.8197932, 0.8434269, 0.8683938, 0.8953368, 0.9160622, 0.9335303, 0.9492228, 1)
+colors = PackedColorArray(0, 0.28235295, 1, 1, 0.29168522, 0.42301914, 1, 1, 0.3647059, 0.8235294, 1, 1, 0, 0.8862745, 0.8352941, 1, 0, 0.7137255, 0.6039216, 1, 0, 0.6627451, 0.32156864, 1, 0, 1, 0, 1, 1, 0.8666667, 0, 1, 1, 0.64705884, 0, 1, 1, 0, 0, 1, 0.85490197, 0, 0.4627451, 1, 0.70980394, 0.003921569, 0.6117647, 1, 1, 1, 1, 0)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_c26b0"]
+gradient = SubResource("Gradient_gdfje")
+
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_7a1se"]
 shader = ExtResource("1_v8dji")
-shader_parameter/color = Color(0, 0.6, 2, 1)
+shader_parameter/gradient = SubResource("GradientTexture1D_c26b0")
 shader_parameter/frequency = 10.0
 shader_parameter/ring_sharpness = 10.0
 shader_parameter/wobble_strength = 0.02
 shader_parameter/wobble_frequency = 13.0
+shader_parameter/radius_mult = 0.5
+shader_parameter/strength = 0.075
+shader_parameter/dist_width = 0.01999999949399999
+shader_parameter/feather = 0.0250000011875
 shader_parameter/shockwave_positions = PackedVector2Array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
 shader_parameter/shockwave_progresses = PackedFloat32Array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
 shader_parameter/shockwave_count = 0
 
-[node name="ShockwaveRenderer" type="ColorRect"]
+[node name="ShockwaveRenderer" type="ColorRect" unique_id=1179483927]
 show_behind_parent = true
 top_level = true
 material = SubResource("ShaderMaterial_7a1se")

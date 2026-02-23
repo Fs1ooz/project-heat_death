@@ -1,0 +1,63 @@
+[gd_scene format=3 uid="uid://l2m8c2o136a2"]
+
+[ext_resource type="Shader" uid="uid://d52fon5v10ot" path="res://Stages/UI/vignette.gdshader" id="1_nivf5"]
+[ext_resource type="Script" uid="uid://b4e6i35tkgje3" path="res://Stages/UI/life_vignette.gd" id="2_nruxu"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_n77kx"]
+shader = ExtResource("1_nivf5")
+shader_parameter/vignette_intensity = 0.7
+shader_parameter/vignette_opacity = 0.0
+shader_parameter/vignette_rgb = Color(0.8219107, 1.853034e-06, 7.70092e-07, 1)
+
+[sub_resource type="Animation" id="Animation_3c5yr"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:material:shader_parameter/vignette_opacity")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [0.0]
+}
+
+[sub_resource type="Animation" id="Animation_n77kx"]
+resource_name = "low_health"
+length = 0.5
+loop_mode = 1
+step = 0.25
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:material:shader_parameter/vignette_opacity")
+tracks/0/interp = 2
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.25, 0.5),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [0.0, 1.0, 0.0]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_3c5yr"]
+_data = {
+&"RESET": SubResource("Animation_3c5yr"),
+&"low_health": SubResource("Animation_n77kx")
+}
+
+[node name="LifeVignette" type="ColorRect" unique_id=1900134162]
+material = SubResource("ShaderMaterial_n77kx")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+focus_behavior_recursive = 1
+mouse_filter = 2
+script = ExtResource("2_nruxu")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=1945418683]
+libraries/ = SubResource("AnimationLibrary_3c5yr")

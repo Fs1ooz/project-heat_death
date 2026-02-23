@@ -1,19 +1,23 @@
 class_name Exp
 extends Area2D
 
-var starting_threshold: float = 500.0
+@export var starting_threshold: float = 500.0
+@export var scale_mult: float = 7.5
+
 
 var energy: int = 1:
 	set(value):
 		energy = value
-		if is_node_ready():  # Evita errori se chiamato prima di _ready()
-			printerr("dopo")
+		if is_node_ready():
 			update_color()
 
 @onready var player: Player = get_tree().get_first_node_in_group("player")
 @onready var sfx: AudioStreamPlayer = $EnergyAudioStreamPlayer
 @onready var collision_shape_2d: CollisionShape2D = $CollisionShape2D
 @onready var sprite: Sprite2D = $CollisionShape2D/Sprite2D
+
+# Presumo tu abbia un nodo area per il range, ad esempio:
+# @onready var range_area: Area2D = $RangeArea
 
 var colors: Array = [
 	Color("ffdd00ff"), Color("ffa500"), Color("ff0000"),
@@ -22,17 +26,11 @@ var colors: Array = [
 	Color("00a952ff"), Color("00ff00"),
 ]
 
-var playback: AudioStreamPlayback = null
-var _spawn_time: float = 0.0
-var _is_in_range: bool = false  # Flag per tracciare se è nel range
-
-func _ready() -> void:
-	_spawn_time = Time.get_unix_time_from_system()
-	update_color()
-
-
+var _is_in_range: bool = false
 @export var energy_per_cycle: float = 100.0
 
+func _ready() -> void:
+	update_color()
 
 func update_color() -> void:
 	if energy <= 0:
@@ -41,39 +39,43 @@ func update_color() -> void:
 	var i: int = int(cycle_pos) % colors.size()
 	var next_i: int = (i + 1) % colors.size()
 	var f: float = cycle_pos - int(cycle_pos)
-	var scale_factor: float = 1.0 + (energy / energy_per_cycle)
-	sprite.modulate = colors[i].lerp(colors[next_i], f) * Color(1,1,1,0.7)
-	sprite.scale *= scale_factor
 
+	var scale_factor: float = 1.0 + (energy / energy_per_cycle) * scale_mult
+	sprite.modulate = colors[i].lerp(colors[next_i], f) * Color(1, 1, 1, 0.7)
 
-func _physics_process(delta: float) -> void:
+	# FIX: Usa l'assegnazione diretta, non la moltiplicazione!
+	sprite.scale = Vector2(scale_factor, scale_factor)
+
+# FIX: Usa _process invece di _physics_process per movimenti più fluidi
+func _process(delta: float) -> void:
 	if not _is_in_range or not player:
 		return
 
 	var distance: float = global_position.distance_to(player.global_position)
 	var active_threshold: float = max(starting_threshold, player.energy_threshold)
 
-	# Calcola velocità con un minimo garantito
 	var normalized_distance: float = clamp(distance / active_threshold, 0.0, 1.0)
-	var speed: float = lerp(500.0, 100.0, normalized_distance) * delta  # velocità da 200 a 50
+	var speed: float = lerp(500.0, 100.0, normalized_distance) * delta
 
 	global_position = global_position.move_toward(player.global_position, speed)
-
 
 func _on_body_entered(body: Node2D) -> void:
 	if body is Player:
 		sfx.reparent(body)
 		sfx.play()
-		sfx.connect("finished", queue_free)
+		# FIX: Collega il segnale per eliminare l'SFX stesso, non il nodo EXP (che stiamo già distruggendo)
+		sfx.finished.connect(sfx.queue_free)
 		UpgradeManager.gain_energy(energy)
 		queue_free()
-
 
 func _on_range_body_entered(body: Node2D) -> void:
 	if body is not Player:
 		return
 	_is_in_range = true
 
+	# OTTIMIZZAZIONE: Se hai un nodo per il range, disabilitalo qui.
+	# Una volta agganciato, non ha senso che l'EXP continui a cercare collisioni
+	# range_area.set_deferred("monitoring", false)
 
 func _on_range_body_exited(body: Node2D) -> void:
 	if body is not Player:
