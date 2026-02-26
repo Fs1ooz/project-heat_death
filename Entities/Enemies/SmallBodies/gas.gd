@@ -18,10 +18,14 @@ func _process(delta: float) -> void:
 		return
 	timer += delta
 	if timer >= damage_time:
-		var damage: int = int(10)
-		printerr("sto danneggiando ", damage)
-		player_inside.take_damage(damage)
+		# Toglie il 2% della VITA MASSIMA ogni 0.2 secondi (10% al secondo)
+		var damage: float = player_inside.max_hp * 0.02
 
+		# Se vuoi che faccia almeno un tot minimo di danni (es. 10) nei primi livelli:
+		damage = max(damage, 10.0)
+
+		printerr("sto danneggiando ", damage)
+		player_inside.take_damage(int(damage))
 		timer = 0.0
 
 

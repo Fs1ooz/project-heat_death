@@ -5,19 +5,39 @@
 [ext_resource type="Texture2D" uid="uid://cw7ytj1vmdret" path="res://Assets/Images/Grayscale/nebulae.png" id="2_bio74"]
 [ext_resource type="Texture2D" uid="uid://dn52hn7hj60c1" path="res://Assets/Images/eso0932a.png" id="2_n3etr"]
 [ext_resource type="Texture2D" uid="uid://kkw2x4ldjk1m" path="res://Assets/Images/Grayscale/stars.png" id="3_bio74"]
+[ext_resource type="Texture2D" uid="uid://cf1mweekdtpt1" path="res://Assets/Images/Grayscale/smallstarsgray.png" id="5_4jhtp"]
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_507dh"]
-shader = ExtResource("1_xnvbv")
-shader_parameter/color1 = Color(0.15447891, 0.0093653295, 0.26790577, 1)
-shader_parameter/color2 = Color(0.0035661699, 0.040354915, 0.24958688, 1)
-shader_parameter/color3 = Color(0.22395858, 0.018186336, 0.12359119, 1)
+[sub_resource type="Gradient" id="Gradient_n3etr"]
+offsets = PackedFloat32Array(0.071698114, 0.11194968, 0.1308176, 0.14591195, 0.9770688, 0.99002993)
+colors = PackedColorArray(0.7408001, 0.90830946, 1.353256, 0.78431374, 0.6052743, 0.6052743, 0.6052743, 0, 1, 0.9647059, 0.9137255, 0.5882353, 0, 0, 0, 0, 0, 0, 0, 0, 1.353256, 0.96200395, 0.7495183, 0.5882353)
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_507dh"]
+noise_type = 4
+frequency = 0.6521
+fractal_type = 2
+fractal_octaves = 10
+domain_warp_amplitude = 41.175
+domain_warp_fractal_octaves = 10
+domain_warp_fractal_lacunarity = 9.36
+domain_warp_fractal_gain = 0.915
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_4jhtp"]
+noise = SubResource("FastNoiseLite_507dh")
+color_ramp = SubResource("Gradient_n3etr")
+seamless = true
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_tctns"]
+shader = ExtResource("1_4jhtp")
+shader_parameter/color1 = Color(0.944052, 0.8938526, 0.9496922, 1)
+shader_parameter/color2 = Color(0.9359263, 0.97058207, 0.9999998, 1)
+shader_parameter/color3 = Color(1, 1, 1, 1)
 shader_parameter/color_shift_speed = 0.3
-shader_parameter/gradient_scale = 2.0
-shader_parameter/pulse_speed = 0.5
-shader_parameter/pulse_intensity = 2.0
+shader_parameter/gradient_scale = 5.0
+shader_parameter/pulse_speed = 3.0
+shader_parameter/pulse_intensity = 0.2
 shader_parameter/enable_shimmer = false
 shader_parameter/shimmer_speed = 2.0
-shader_parameter/alpha_intensity = 0.55000000819566
+shader_parameter/alpha_intensity = 1.0
 
 [sub_resource type="Shader" id="Shader_507dh"]
 code = "shader_type canvas_item;
@@ -86,54 +106,63 @@ void fragment() {
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_bio74"]
 shader = SubResource("Shader_507dh")
-shader_parameter/color1 = Color(0.28100932, 0.7660193, 2.454227, 1)
+shader_parameter/color1 = Color(0.281, 0.766, 2.454, 1)
 shader_parameter/color2 = Color(1, 0.8509804, 0.42745098, 1)
-shader_parameter/color3 = Color(1.353256, 0.25921082, 0.096936174, 1)
+shader_parameter/color3 = Color(1.755, 0.35, 0.141, 1)
 shader_parameter/color_shift_speed = 0.0
 shader_parameter/gradient_scale = 4.0000000521542
 shader_parameter/pulse_speed = 0.5
-shader_parameter/pulse_intensity = 0.80000001192096
+shader_parameter/pulse_intensity = 0.95000001415614
 shader_parameter/enable_shimmer = true
 shader_parameter/shimmer_speed = 2.0
 shader_parameter/alpha_intensity = 1.0
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_tctns"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_4jhtp"]
 shader = ExtResource("1_4jhtp")
-shader_parameter/color1 = Color(0.944052, 0.8938526, 0.9496922, 1)
-shader_parameter/color2 = Color(0.9359263, 0.97058207, 0.9999998, 1)
-shader_parameter/color3 = Color(1, 1, 1, 1)
-shader_parameter/color_shift_speed = 0.3
-shader_parameter/gradient_scale = 5.0
-shader_parameter/pulse_speed = 3.0
-shader_parameter/pulse_intensity = 0.2
-shader_parameter/enable_shimmer = false
+shader_parameter/color1 = Color(1, 0.3372549, 0.023529412, 1)
+shader_parameter/color2 = Color(1, 0.80784315, 0, 1)
+shader_parameter/color3 = Color(0.5411765, 0.6666667, 1, 1)
+shader_parameter/color_shift_speed = 0.10000000149012
+shader_parameter/gradient_scale = 4.0000000521542
+shader_parameter/pulse_speed = 1.30000001937156
+shader_parameter/pulse_intensity = 1.2500000186265
+shader_parameter/enable_shimmer = true
 shader_parameter/shimmer_speed = 2.0
 shader_parameter/alpha_intensity = 1.0
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_507dh"]
+shader = ExtResource("1_xnvbv")
+shader_parameter/color1 = Color(0.15294118, 0.007843138, 0.26666668, 1)
+shader_parameter/color2 = Color(0.003921569, 0.039215688, 0.2509804, 1)
+shader_parameter/color3 = Color(0.22352941, 0.019607844, 0.1254902, 1)
+shader_parameter/color_shift_speed = 0.3
+shader_parameter/gradient_scale = 2.0
+shader_parameter/pulse_speed = 0.5
+shader_parameter/pulse_intensity = 2.0
+shader_parameter/enable_shimmer = false
+shader_parameter/shimmer_speed = 2.0
+shader_parameter/alpha_intensity = 0.5000000074506
 
 [node name="BackgroundLayer" type="CanvasLayer" unique_id=110186335]
 layer = -2
 follow_viewport_enabled = true
+metadata/_edit_vertical_guides_ = [1655.0]
+metadata/_edit_horizontal_guides_ = [3286.0]
 
-[node name="Parallax3" type="Parallax2D" parent="." unique_id=1491156606]
+[node name="Parallax0" type="Parallax2D" parent="." unique_id=2043778429]
 texture_filter = 1
-scale = Vector2(128, 128)
+scale = Vector2(16, 16)
 scroll_scale = Vector2(0.1, 0.1)
-repeat_size = Vector2(2000, 1438)
-autoscroll = Vector2(0.01, 0.005)
-repeat_times = 25
+repeat_size = Vector2(512, 512)
+autoscroll = Vector2(5, 5)
+repeat_times = 50
 
-[node name="Nebulae" type="Sprite2D" parent="Parallax3" unique_id=836743018]
-material = SubResource("ShaderMaterial_507dh")
-texture = ExtResource("2_bio74")
-
-[node name="Stars" type="Sprite2D" parent="Parallax3" unique_id=641259670]
-modulate = Color(1.8247963, 1.8247963, 1.8247963, 1)
-material = SubResource("ShaderMaterial_bio74")
-texture = ExtResource("3_bio74")
+[node name="Sprite2D" type="Sprite2D" parent="Parallax0" unique_id=792199290]
+texture = SubResource("NoiseTexture2D_4jhtp")
 
 [node name="Parallax1" type="Parallax2D" parent="." unique_id=1527427644]
 texture_filter = 1
-scale = Vector2(1024, 1024)
+scale = Vector2(2048, 2048)
 scroll_scale = Vector2(0.001, 0.001)
 repeat_size = Vector2(6000, 3000)
 autoscroll = Vector2(0.035, 0.001)
@@ -144,3 +173,47 @@ follow_viewport = false
 material = SubResource("ShaderMaterial_tctns")
 texture = ExtResource("2_n3etr")
 offset = Vector2(0, 512)
+
+[node name="Parallax3" type="Parallax2D" parent="." unique_id=557755364]
+texture_filter = 1
+rotation = 3.1415927
+scale = Vector2(32, 32)
+scroll_scale = Vector2(0.1, 0.1)
+repeat_size = Vector2(2000, 1438)
+autoscroll = Vector2(0.1, 0.05)
+repeat_times = 25
+
+[node name="Stars" type="Sprite2D" parent="Parallax3" unique_id=1610986913]
+modulate = Color(1.8247963, 1.8247963, 1.8247963, 1)
+material = SubResource("ShaderMaterial_bio74")
+texture = ExtResource("3_bio74")
+
+[node name="Parallax4" type="Parallax2D" parent="." unique_id=313080393]
+texture_filter = 1
+scale = Vector2(256, 256)
+scroll_scale = Vector2(0.1, 0.1)
+repeat_size = Vector2(1024, 512)
+autoscroll = Vector2(0.01, 0.005)
+repeat_times = 25
+
+[node name="Smallstarsgray" type="Sprite2D" parent="Parallax4" unique_id=2071489062]
+self_modulate = Color(3.2944162, 3.2944162, 3.2944162, 1)
+material = SubResource("ShaderMaterial_4jhtp")
+texture = ExtResource("5_4jhtp")
+
+[node name="Parallax2" type="Parallax2D" parent="." unique_id=1491156606]
+texture_filter = 1
+scale = Vector2(128, 128)
+scroll_scale = Vector2(0.5, 0.5)
+repeat_size = Vector2(2000, 1438)
+autoscroll = Vector2(0.01, 0.005)
+repeat_times = 25
+
+[node name="Nebulae" type="Sprite2D" parent="Parallax2" unique_id=836743018]
+material = SubResource("ShaderMaterial_507dh")
+texture = ExtResource("2_bio74")
+
+[node name="Stars" type="Sprite2D" parent="Parallax2" unique_id=641259670]
+modulate = Color(1.8247963, 1.8247963, 1.8247963, 1)
+material = SubResource("ShaderMaterial_bio74")
+texture = ExtResource("3_bio74")

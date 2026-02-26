@@ -1,8 +1,6 @@
 class_name ExpBar
 extends ColorRect
 
-
-
 """
 	Progress Bar System v1.0
 	Compatible with Godot 4.4+

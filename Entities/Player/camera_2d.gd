@@ -7,7 +7,7 @@ extends Camera2D
 @export var max_zoom_base: float = 2.5
 
 @export_group("Zoom Settings")
-@export var base_zoom: Vector2 = Vector2.ONE * 0.4
+@export var base_zoom: Vector2 = Vector2.ONE * 0.25
 @export var zoom_lerp_speed: float = 2.15
 @export var manual_zoom_timeout: float = 2.0
 @export var zoom_value_multiplier: float = 0.5 # Moltiplicatore quando ti muovi
@@ -18,7 +18,7 @@ var last_zoom_input_time: float = 0.0
 # Limiti dinamici
 var min_zoom: float
 var max_zoom: float
-var forward_offset: float = 350.0
+var forward_offset: float = 450.0
 
 # Variabili di stato
 @onready var player: Player = get_parent()

@@ -99,6 +99,9 @@ _data = {
 &"low_health": SubResource("Animation_01a4e")
 }
 
+[sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_7a1se"]
+polygon = PackedVector2Array(0, -41, 21, -39, 39, -32, 54, -18, 60, 0, 56, 15, 37, 32, 0, 40, -23, 37, -41, 29, -55, 16, -60, 1, -53, -19, -37, -32, -20, -39)
+
 [node name="Player" type="RigidBody2D" unique_id=952817380 node_paths=PackedStringArray("collision", "sprite", "trail", "shockwave") groups=["player"]]
 collision_mask = 2
 physics_material_override = SubResource("PhysicsMaterial_5c2io")
@@ -152,3 +155,6 @@ bus = &"Sound"
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=42343380]
 libraries/ = SubResource("AnimationLibrary_7a1se")
+
+[node name="LightOccluder2D" type="LightOccluder2D" parent="." unique_id=2089612375]
+occluder = SubResource("OccluderPolygon2D_7a1se")

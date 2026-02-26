@@ -1,0 +1,33 @@
+[gd_scene format=3 uid="uid://bim11ltg0fs0b"]
+
+[sub_resource type="Gradient" id="Gradient_4xqfp"]
+colors = PackedColorArray(0.8808708, 0.6917928, 0.5816841, 1, 0.85606676, 0.8560674, 0.856067, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_ma3v0"]
+gradient = SubResource("Gradient_4xqfp")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_yfkhf"]
+particle_flag_align_y = true
+particle_flag_disable_z = true
+emission_shape = 2
+emission_sphere_radius = 1000.0
+spread = 180.0
+initial_velocity_max = 5.0
+angular_velocity_min = -720.0
+angular_velocity_max = 278.18
+gravity = Vector3(0, 0, 0)
+scale_min = 5.0
+scale_max = 50.0
+color_initial_ramp = SubResource("GradientTexture1D_ma3v0")
+collision_mode = 1
+collision_friction = 0.15
+collision_bounce = 1.0
+
+[node name="Dust Particles" type="GPUParticles2D" unique_id=1278486513]
+amount = 1000
+lifetime = 10.0
+randomness = 0.25
+fixed_fps = 0
+collision_base_size = 2.0
+visibility_rect = Rect2(-5000.841, -5000.351, 9999.835, 10000.159)
+process_material = SubResource("ParticleProcessMaterial_yfkhf")

@@ -2,28 +2,76 @@
 
 [sub_resource type="Gradient" id="Gradient_n3etr"]
 interpolation_mode = 2
-offsets = PackedFloat32Array(0, 0.6652632, 0.8702128)
-colors = PackedColorArray(0.105882354, 0.05882353, 0.011764706, 0.05882353, 0.13333334, 0.13333334, 0.13333334, 0.11764706, 0, 0, 0, 0.05882353)
+offsets = PackedFloat32Array(0.97108674, 1)
+colors = PackedColorArray(0.3665946, 0.3665946, 0.36659458, 0, 0.93333334, 0.93333334, 0.93333334, 0.5882353)
 
 [sub_resource type="FastNoiseLite" id="FastNoiseLite_507dh"]
 noise_type = 4
-frequency = 0.2
-fractal_weighted_strength = 0.28
+frequency = 0.9
+fractal_type = 2
+fractal_octaves = 10
 
 [sub_resource type="NoiseTexture2D" id="NoiseTexture2D_105us"]
+generate_mipmaps = false
 noise = SubResource("FastNoiseLite_507dh")
 color_ramp = SubResource("Gradient_n3etr")
 seamless = true
 
+[sub_resource type="Gradient" id="Gradient_105us"]
+interpolation_mode = 2
+offsets = PackedFloat32Array(0.9441675, 0.9800598)
+colors = PackedColorArray(0, 0, 0, 0, 0.46666667, 0.4, 0.3137255, 0.9019608)
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_7xm7i"]
+generate_mipmaps = false
+noise = SubResource("FastNoiseLite_507dh")
+color_ramp = SubResource("Gradient_105us")
+seamless = true
+
+[sub_resource type="Gradient" id="Gradient_ycge7"]
+interpolation_mode = 2
+offsets = PackedFloat32Array(0.96944445, 0.99444443)
+colors = PackedColorArray(0, 0, 0, 0, 0.35686275, 0.35686275, 0.35686275, 0.9019608)
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_vf2pk"]
+generate_mipmaps = false
+noise = SubResource("FastNoiseLite_507dh")
+color_ramp = SubResource("Gradient_ycge7")
+seamless = true
+
 [node name="DustLayer" type="CanvasLayer" unique_id=1687043170]
 layer = 0
+follow_viewport_enabled = true
 
 [node name="Parallax2D" type="Parallax2D" parent="." unique_id=1745528812]
-texture_filter = 1
-scale = Vector2(32, 32)
+texture_filter = 3
+scale = Vector2(4, 4)
+scroll_scale = Vector2(1.2, 1.2)
 repeat_size = Vector2(512, 512)
-autoscroll = Vector2(0.1, 0.05)
-repeat_times = 100
+autoscroll = Vector2(5, 5)
+repeat_times = 50
 
 [node name="Sprite2D" type="Sprite2D" parent="Parallax2D" unique_id=820977670]
 texture = SubResource("NoiseTexture2D_105us")
+
+[node name="Parallax2D2" type="Parallax2D" parent="." unique_id=2063912322]
+texture_filter = 3
+scale = Vector2(8, 8)
+scroll_scale = Vector2(1.5, 1.5)
+repeat_size = Vector2(512, 512)
+autoscroll = Vector2(5, 5)
+repeat_times = 50
+
+[node name="Sprite2D" type="Sprite2D" parent="Parallax2D2" unique_id=38170810]
+texture = SubResource("NoiseTexture2D_7xm7i")
+
+[node name="Parallax2D3" type="Parallax2D" parent="." unique_id=68764339]
+texture_filter = 3
+scale = Vector2(16, 16)
+scroll_scale = Vector2(2, 2)
+repeat_size = Vector2(512, 512)
+autoscroll = Vector2(5, 5)
+repeat_times = 50
+
+[node name="Sprite2D" type="Sprite2D" parent="Parallax2D3" unique_id=1759958142]
+texture = SubResource("NoiseTexture2D_vf2pk")

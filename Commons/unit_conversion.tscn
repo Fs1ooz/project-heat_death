@@ -1,6 +1,0 @@
-[gd_scene format=3 uid="uid://hc3ghg1thxhf"]
-
-[ext_resource type="Script" uid="uid://ifjtu4l1dppc" path="res://Commons/unit_conversion.gd" id="1_00x3d"]
-
-[node name="UnitConversion" type="Node2D" unique_id=130136397]
-script = ExtResource("1_00x3d")

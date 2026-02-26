@@ -52,7 +52,7 @@ func reset_upgrades() -> void:
 	energy = 0
 	for key: int in upgrades_data.keys():
 		var upgrade: Dictionary = upgrades_data[key]
-		upgrade["level"] = 0
+		upgrade["level"] = 1
 		if "base_power" in upgrade:
 			upgrade["current_power"] = upgrade["base_power"]
 		#if "current_cost" in upgrade:
@@ -172,9 +172,8 @@ func apply_upgrade(upgrade_type: UpgradeType) -> bool:
 	match upgrade_type:
 
 		UpgradeType.MAX_HEALTH:
-			player.life_bar.max_value = power
-			player._update_life_bar()
 			player.max_hp += int(power)
+			player.update_life_bar()
 		UpgradeType.REGENERATION:
 			player.regen_timer = power
 		UpgradeType.SPEED:

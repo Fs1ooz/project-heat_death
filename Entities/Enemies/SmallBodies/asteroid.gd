@@ -39,7 +39,7 @@ const STAGE_CONFIG: Dictionary = {
 const ASTEROID_SCENE_PATH: String = "res://Entities/Enemies/SmallBodies/Asteroid.tscn"
 const METEOROID_SCENE_PATH: String = "res://Entities/Enemies/SmallBodies/Meteoroid.tscn"
 const GAS_SCENE_PATH: String = "res://Entities/Enemies/SmallBodies/gas.tscn"
-const FRAGMENT_SPAWN_OFFSET: float = 50.0
+const FRAGMENT_SPAWN_OFFSET: float = 70.0
 const OUTGASSING_IMPULSE: float = 1000.0
 
 

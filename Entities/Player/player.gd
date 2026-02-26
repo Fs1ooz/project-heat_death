@@ -89,8 +89,6 @@ func _process(delta: float) -> void:
 var base_scale: Vector2 = Vector2.ONE
 
 
-
-
 func _physics_process(delta: float) -> void:
 	_last_velocity = linear_velocity
 
@@ -168,7 +166,7 @@ func _handle_rotation(state: PhysicsDirectBodyState2D) -> void:
 	var angle_diff: float = wrapf(target_angle - rotation, -PI, PI)
 	state.angular_velocity = angle_diff * rotation_responsiveness
 
-var oscillation_speed: float = 1000.0   # Intensità della forza
+var oscillation_speed: float = 1250.0   # Intensità della forza
 var oscillation_frequency: float = 2.0  # Quante oscillazioni al secondo
 var time_passed: float = 0.0            # Contatore del tempo
 
@@ -180,30 +178,30 @@ func apply_entropy(delta: float) -> void:
 
 	time_passed += delta
 
-	# Oscillazione sinusoidale lungo Y locale
+	# 1. ONDULAZIONE CONTINUA (Esponenziale morbido, es: ^1.5)
+	# A 10 = 31x; A 50 = 353x; A 100 = 1000x
+	var force_multiplier: float = pow(entropy, 1.5)
+
 	var oscillation: float = sin(time_passed * oscillation_frequency * TAU)  # -1..1
 	var local_dir: Vector2 = Vector2(0, oscillation)
 	var world_dir: Vector2 = local_dir.rotated(rotation)
-	apply_central_force(world_dir * entropy * oscillation_speed * mass)
+	apply_central_force(world_dir * force_multiplier * oscillation_speed * mass)
 
-	# 2. IMPULSI IMPROVVISI
-	if entropy > 10.0 and randf() < 0.01:  # aggiungi probabilità per non sparare ogni frame
+	# 2. IMPULSI IMPROVVISI (Esponenziale aggressivo, es: ^2.0)
+	# A 10 = 100x; A 50 = 2500x; A 100 = 10000x
+	if entropy > 10.0 and randf() < 0.01:
+		var impulse_multiplier: float = pow(entropy, 2.0)
+
 		var rands_vec: Vector2 = Vector2(randf_range(-1.0, 1.0), randf_range(-1.0, 1.0)).normalized()
 		rands_vec = rands_vec.rotated(rotation)
-		apply_central_impulse(rands_vec * entropy)
+		apply_central_impulse(rands_vec * impulse_multiplier * mass)
 
-	# 3. ROTAZIONE CASUALE
+	# 3. ROTAZIONE CASUALE (Esponenziale medio-alto, es: ^1.8)
 	if entropy > 30.0:
-		apply_torque(randf_range(-1.0, 1.0) * entropy * 0.05)
+		var torque_multiplier: float = pow(entropy, 1.8)
 
-	## 4. VISUAL
-	#if randf() < entropy:
-		#sprite.modulate = Color(
-			#randf_range(0.7, 1.3),
-			#randf_range(0.7, 1.3),
-			#randf_range(0.7, 1.3)
-		#)
-		#sprite.scale = initial_scale * randf_range(0.9, 1.1)
+		# Ho aggiunto "* inertia" come ci dicevamo prima, fondamentale nello spazio!
+		apply_torque(randf_range(-1.0, 1.0) * torque_multiplier * 0.05 * inertia)
 
 
 func _handle_collision_resistance(state: PhysicsDirectBodyState2D) -> void:
@@ -222,7 +220,7 @@ func _handle_collision_resistance(state: PhysicsDirectBodyState2D) -> void:
 
 		var mass_ratio: float = mass / collider.mass
 		player_camera.apply_shake(1.0 / mass_ratio, 0.75)
-		_animate_player(false)
+
 
 		# 1. NUOVA LOGICA: Ingloba se la massa è immensamente superiore (es. 10x)
 		if mass_ratio >= 8.0:
@@ -230,7 +228,7 @@ func _handle_collision_resistance(state: PhysicsDirectBodyState2D) -> void:
 			bodies_to_engulf.append(collider)
 
 		# 2. LOGICA ESISTENTE: Bulldozer mode (es. 5x)
-		elif mass_ratio >= 3.0:
+		elif mass_ratio >= 4.0:
 			max_resistance = 1.0
 			print("💥 BULLDOZER MODE vs ", collider.name)
 			break
@@ -240,6 +238,7 @@ func _handle_collision_resistance(state: PhysicsDirectBodyState2D) -> void:
 			var resistance: float = smoothstep(min_res_ratio, 3.0, mass_ratio)
 			max_resistance = max(max_resistance, resistance)
 			print("⚡ Resistenza: %.0f%% vs %s" % [resistance * 100, collider.name])
+			_animate_player(false)
 
 	# Applica la resistenza se necessaria
 	if max_resistance > 0.0:
@@ -336,8 +335,8 @@ func _handle_mouse_input() -> Vector2:
 
 func take_damage(amount: int) -> void:
 	hp -= amount
-	_update_life_bar()
-
+	regen_time = 0.0
+	update_life_bar()
 	if hp <= 0:
 		if auto_revive:
 			printerr("RINATO!!")
@@ -352,12 +351,16 @@ func game_over() -> void:
 	queue_free()
 
 
-func _update_life_bar() -> void:
+func update_life_bar() -> void:
 	if life_bar:
+		# 1. Aggiorna sempre il massimo prima
+		if life_bar.max_value != max_hp:
+			life_bar.max_value = max_hp
+
+		# 2. Poi aggiorna il valore attuale
 		life_bar.value = hp
-	#life_bar.start_fade()
 
 
 func _start_regen() -> void:
 	hp = min(hp + int(max_hp * 0.15), max_hp)
-	_update_life_bar()
+	update_life_bar()

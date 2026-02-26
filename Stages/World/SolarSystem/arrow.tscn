@@ -1,7 +1,26 @@
 [gd_scene format=3 uid="uid://bcnmskds2ga3l"]
 
 [ext_resource type="Script" uid="uid://bewwgxfpnvdxx" path="res://Stages/World/SolarSystem/arrow.gd" id="1_bls3d"]
+[ext_resource type="Theme" uid="uid://brvjefc4224hi" path="res://Assets/Themes/upgrade_ui.tres" id="2_l13qp"]
 
-[node name="Arrow" type="Polygon2D" unique_id=993177644]
+[node name="Arrow" type="Polygon2D" unique_id=993177644 node_paths=PackedStringArray("_label")]
 color = Color(1, 1, 1, 0.37254903)
 script = ExtResource("1_bls3d")
+_label = NodePath("Label")
+
+[node name="Label" type="Label" parent="." unique_id=1553138069]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -5.5
+offset_top = -7.0
+offset_right = 5.5
+offset_bottom = 7.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("2_l13qp")
+theme_override_font_sizes/font_size = 16
+horizontal_alignment = 1
+vertical_alignment = 1

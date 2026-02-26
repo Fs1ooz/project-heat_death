@@ -2,20 +2,14 @@
 
 [ext_resource type="PackedScene" uid="uid://470x1obeipdg" path="res://Entities/Player/player.tscn" id="2_yer1y"]
 [ext_resource type="PackedScene" uid="uid://befachtfe40l2" path="res://Stages/World/SolarSystem/AsteroidBelt/base_background_layer.tscn" id="3_gjt46"]
-[ext_resource type="PackedScene" uid="uid://dtfn8lijt6vxu" path="res://Stages/World/dust_layer.tscn" id="3_yfsno"]
 
 [node name="Test" type="Node2D" unique_id=1449383081]
-
-[node name="DustLayer" parent="." unique_id=1687043170 instance=ExtResource("3_yfsno")]
-follow_viewport_enabled = true
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=218431552]
 zoom = Vector2(0.02, 0.02)
 
 [node name="Player" parent="." unique_id=1096128152 instance=ExtResource("2_yer1y")]
-position = Vector2(-4207, 958)
+position = Vector2(-8108, 998)
 mass = 40.0
 
 [node name="BaseBackgroundLayer" parent="." unique_id=501950975 instance=ExtResource("3_gjt46")]
-
-[editable path="DustLayer"]

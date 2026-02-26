@@ -9,15 +9,15 @@
 
 [node name="UILayer" type="CanvasLayer" unique_id=1973272501]
 
-[node name="LifeVignette" parent="." unique_id=1900134162 instance=ExtResource("1_wud8y")]
-
-[node name="EntropyCounter" parent="." unique_id=1222725892 instance=ExtResource("1_bhpt4")]
-
 [node name="UpgradeUI" parent="." unique_id=1006905132 instance=ExtResource("1_hli8u")]
 focus_behavior_recursive = 1
 
 [node name="GameOverScreen" parent="." unique_id=1128077076 instance=ExtResource("2_bhpt4")]
 
-[node name="Arrow" parent="." unique_id=328836627 instance=ExtResource("1_l25jl")]
-
 [node name="ProgressBars" parent="." unique_id=845535328 instance=ExtResource("5_l25jl")]
+
+[node name="LifeVignette" parent="." unique_id=1900134162 instance=ExtResource("1_wud8y")]
+
+[node name="EntropyCounter" parent="." unique_id=1222725892 instance=ExtResource("1_bhpt4")]
+
+[node name="Arrow" parent="." unique_id=328836627 instance=ExtResource("1_l25jl")]
