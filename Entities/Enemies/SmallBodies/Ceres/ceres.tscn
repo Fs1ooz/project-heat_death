@@ -1,33 +1,129 @@
-[gd_scene load_steps=5 format=3 uid="uid://d2i2r2ucklcu0"]
+[gd_scene format=3 uid="uid://d2i2r2ucklcu0"]
 
-[ext_resource type="Texture2D" uid="uid://0yxs2q0xu2iy" path="res://Entities/Enemies/SmallBodies/Ceres/Ceres.png" id="1_gp571"]
 [ext_resource type="Script" uid="uid://tvtxttl46aya" path="res://Entities/Enemies/SmallBodies/small_body.gd" id="1_xm1ix"]
-
-[sub_resource type="CircleShape2D" id="CircleShape2D_xm1ix"]
-radius = 4511.649
+[ext_resource type="Shader" uid="uid://djc5c0j2x4bgq" path="res://Assets/Shaders/rotating_body.gdshader" id="2_ie0dq"]
+[ext_resource type="Texture2D" uid="uid://covlywgthlbcb" path="res://Entities/Enemies/SmallBodies/Ceres/CeresGrayscale.png" id="3_ie0dq"]
+[ext_resource type="PackedScene" uid="uid://bgievdkpstd3t" path="res://Entities/Enemies/visible_screen_enabler_component.tscn" id="4_ad5k8"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_lw3hp"]
-radius = 61.008198
+radius = 616.0073
 
-[node name="Ceres" type="RigidBody2D" node_paths=PackedStringArray("collision", "gravity_area_collision")]
+[sub_resource type="Gradient" id="Gradient_3udwo"]
+interpolation_color_space = 1
+offsets = PackedFloat32Array(0, 0.27436823, 0.4801444, 0.6931408, 0.8303249, 1)
+colors = PackedColorArray(0.105882354, 0.08235294, 0.078431375, 1, 0.1764706, 0.16470589, 0.15294118, 1, 0.27450982, 0.25882354, 0.25882354, 1, 0.44705883, 0.42352942, 0.42352942, 1, 0.60784316, 0.5882353, 0.5882353, 1, 1, 1, 1, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_47lfr"]
+gradient = SubResource("Gradient_3udwo")
+width = 16
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_yviym"]
+shader = ExtResource("2_ie0dq")
+shader_parameter/pixel_scale = 256.0
+shader_parameter/use_texture_surface = true
+shader_parameter/use_texture_clouds = false
+shader_parameter/surface_radius = 0.499
+shader_parameter/surface_texture = ExtResource("3_ie0dq")
+shader_parameter/surface_palette = SubResource("GradientTexture1D_47lfr")
+shader_parameter/background_colour = Color(0, 0, 0, 1)
+shader_parameter/surface_base_rotation = 0.0
+shader_parameter/surface_rotation_speed = 0.30000006175000005
+shader_parameter/surface_primary_cell_amount = 10
+shader_parameter/surface_primary_strength = 1.0
+shader_parameter/surface_primary_period = Vector3(9.5, 9.5, 9.5)
+shader_parameter/surface_secondary_enabled = false
+shader_parameter/surface_secondary_cell_amount = 20
+shader_parameter/surface_secondary_strength = 0.3
+shader_parameter/surface_secondary_period = Vector3(9.5, 9.5, 9.5)
+shader_parameter/surface_secondary_rotation = 0.0
+shader_parameter/surface_secondary_rotation_speed = 0.0
+shader_parameter/surface_tertiary_enabled = false
+shader_parameter/surface_tertiary_cell_amount = 30
+shader_parameter/surface_tertiary_strength = 0.3
+shader_parameter/surface_tertiary_period = Vector3(9.5, 9.5, 9.5)
+shader_parameter/surface_tertiary_rotation = 0.0
+shader_parameter/surface_tertiary_rotation_speed = 0.0
+shader_parameter/use_band_distortion = false
+shader_parameter/band_frequency = 10.0
+shader_parameter/band_distortion_strength = 0.3
+shader_parameter/display_cloud_shadows = false
+shader_parameter/cloud_shadow_darkness = 0.25
+shader_parameter/cloud_1_cover = 0.0
+shader_parameter/cloud_1_radius = 0.00999999977648
+shader_parameter/cloud_1_rotation_speed = -1.0
+shader_parameter/cloud_1_opacity = 0.0
+shader_parameter/cloud_1_cell_amount = 10
+shader_parameter/cloud_1_fluctuation_speed = -1.0
+shader_parameter/cloud_1_period = Vector3(9.5, 9.5, 9.5)
+shader_parameter/cloud_1_secondary_period = Vector3(9.5, 9.5, 9.5)
+shader_parameter/cloud_1_secondary_cell_amount = 10
+shader_parameter/cloud_1_secondary_strength = -1.0
+shader_parameter/cloud_2_cover = 0.0
+shader_parameter/cloud_2_radius = 0.00999999977648
+shader_parameter/cloud_2_rotation_speed = -0.02
+shader_parameter/cloud_2_opacity = 0.0
+shader_parameter/cloud_2_cell_amount = 10
+shader_parameter/cloud_2_fluctuation_speed = -1.0
+shader_parameter/cloud_2_period = Vector3(9.5, 9.5, 9.5)
+shader_parameter/cloud_2_secondary_period = Vector3(9.5, 9.5, 9.5)
+shader_parameter/cloud_2_secondary_cell_amount = 10
+shader_parameter/cloud_2_secondary_strength = 0.3
+shader_parameter/atmosphere_radius = 0.00999999977648
+shader_parameter/posterise = false
+shader_parameter/shading_mode = 1
+shader_parameter/maximum_brightness = 1.0
+shader_parameter/sun_strength = 2.0
+shader_parameter/shade_transition = 15.0
+shader_parameter/shade_step = 8.0
+shader_parameter/sun_direction = Vector3(1, 1, 0)
+shader_parameter/dither_levels = 0
+shader_parameter/shading_noise_cell_amount = 50
+shader_parameter/shading_noise_strength = 0.1
+shader_parameter/shading_noise_period = Vector3(9.5, 9.5, 9.5)
+
+[sub_resource type="Gradient" id="Gradient_7768m"]
+offsets = PackedFloat32Array(1)
+colors = PackedColorArray(1, 1, 1, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_nnutx"]
+gradient = SubResource("Gradient_7768m")
+width = 2048
+height = 2048
+fill_to = Vector2(1, 1)
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_xm1ix"]
+radius = 1123.0538
+
+[node name="Ceres" type="RigidBody2D" unique_id=933810055 node_paths=PackedStringArray("collision", "gravity_area_collision", "sprite")]
 mass = 1000000.0
 script = ExtResource("1_xm1ix")
 internal_energy = 10
 game_energy = 10000
-min_size = 9400.0
-max_size = 9400.0
 collision = NodePath("Collision")
 gravity_area_collision = NodePath("GravityArea/GravityAreaCollision")
+sprite = NodePath("Collision/Ceres")
 metadata/_custom_type_script = "uid://tvtxttl46aya"
 
-[node name="GravityArea" type="Area2D" parent="."]
-
-[node name="GravityAreaCollision" type="CollisionShape2D" parent="GravityArea"]
-shape = SubResource("CircleShape2D_xm1ix")
-
-[node name="Collision" type="CollisionShape2D" parent="."]
+[node name="Collision" type="CollisionShape2D" parent="." unique_id=684607771]
 shape = SubResource("CircleShape2D_lw3hp")
 
-[node name="Ceres" type="Sprite2D" parent="Collision"]
-position = Vector2(0, -1)
-texture = ExtResource("1_gp571")
+[node name="Ceres" type="Sprite2D" parent="Collision" unique_id=1492625745]
+material = SubResource("ShaderMaterial_yviym")
+position = Vector2(14, -7)
+scale = Vector2(1, 1.03125)
+texture = SubResource("GradientTexture2D_nnutx")
+
+[node name="VisibleScreenEnablerComponent" parent="Collision/Ceres" unique_id=2049458175 instance=ExtResource("4_ad5k8")]
+visible = false
+position = Vector2(0, 1)
+rect = Rect2(-1107, -1088, 2222, 2184)
+enable_node_path = NodePath("../../..")
+
+[node name="GravityArea" type="Area2D" parent="." unique_id=1857330086]
+visible = false
+
+[node name="GravityAreaCollision" type="CollisionShape2D" parent="GravityArea" unique_id=759066499]
+shape = SubResource("CircleShape2D_xm1ix")
+
+[node name="Camera2D" type="Camera2D" parent="." unique_id=1583962311]
+zoom = Vector2(0.295, 0.295)

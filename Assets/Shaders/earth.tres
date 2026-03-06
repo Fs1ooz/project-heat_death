@@ -1,17 +1,15 @@
 [gd_resource type="ShaderMaterial" format=3 uid="uid://cbkk5d32kyybe"]
 
-[ext_resource type="Shader" uid="uid://djc5c0j2x4bgq" path="res://Entities/Enemies/RockyPlanets/rocky_planet.gdshader" id="1_w0bl6"]
+[ext_resource type="Shader" uid="uid://djc5c0j2x4bgq" path="res://Assets/Shaders/rotating_body.gdshader" id="1_w0bl6"]
+[ext_resource type="Texture2D" uid="uid://d1vkukqqcs14s" path="res://Entities/Enemies/RockyPlanets/2k_earth_clouds.jpg" id="2_ct432"]
 [ext_resource type="Texture2D" uid="uid://b6nijitbhyj0g" path="res://Assets/Images/world.200406.3x5400x2700.jpg" id="2_ra4dv"]
 
-[sub_resource type="Gradient" id="Gradient_ju5mk"]
-offsets = PackedFloat32Array(0, 0.55481726)
-colors = PackedColorArray(0.585062, 0.585062, 0.5850621, 1, 0.91228896, 0.9122889, 0.91228884, 1)
+[sub_resource type="Gradient" id="Gradient_ra4dv"]
 
-[sub_resource type="GradientTexture1D" id="GradientTexture1D_t5p0k"]
-gradient = SubResource("Gradient_ju5mk")
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_8kx7m"]
+gradient = SubResource("Gradient_ra4dv")
 
 [sub_resource type="Gradient" id="Gradient_ysc64"]
-interpolation_mode = 1
 offsets = PackedFloat32Array(0.021489972, 0.0730659, 0.124641836, 0.23065902, 0.31661892, 0.41260746, 0.49283668, 0.5630373, 0.65186244, 0.79512894, 0.8438395, 0.8825215, 0.9097421)
 colors = PackedColorArray(0.05563291, 0.10695442, 0.2508055, 1, 0.23529412, 0.4627451, 0.69803923, 1, 0.3529412, 0.5803922, 0.7607843, 1, 0.2, 0.32941177, 0.16862746, 1, 0.16207737, 0.25437856, 0.08363012, 1, 0.22352941, 0.28627452, 0.13333334, 1, 0.27450982, 0.2901961, 0.15294118, 1, 0.7607843, 0.69803923, 0.5019608, 1, 0.6392157, 0.5803922, 0.40784314, 1, 0.41960785, 0.36078432, 0.28235295, 1, 0.5019608, 0.4392157, 0.36078432, 1, 0.69803923, 0.69803923, 0.69803923, 1, 1, 1, 1, 1)
 
@@ -23,20 +21,20 @@ width = 16
 shader = ExtResource("1_w0bl6")
 shader_parameter/pixel_scale = 256.0
 shader_parameter/use_texture_surface = true
-shader_parameter/use_texture_clouds = false
-shader_parameter/surface_radius = 0.3
-shader_parameter/earth_texture = ExtResource("2_ra4dv")
+shader_parameter/use_texture_clouds = true
+shader_parameter/surface_radius = 0.4990000128746
+shader_parameter/surface_texture = ExtResource("2_ra4dv")
 shader_parameter/surface_palette = SubResource("GradientTexture1D_ju5mk")
 shader_parameter/background_colour = Color(0, 0, 0, 1)
 shader_parameter/surface_base_rotation = 0.0
-shader_parameter/surface_rotation_speed = 0.10000005224999996
+shader_parameter/surface_rotation_speed = 0.07500005106249996
 shader_parameter/surface_primary_cell_amount = 10
 shader_parameter/surface_primary_strength = 1.0
 shader_parameter/surface_primary_period = Vector3(9.5, 9.5, 9.5)
 shader_parameter/surface_secondary_enabled = false
 shader_parameter/surface_secondary_cell_amount = 20
 shader_parameter/surface_secondary_strength = 0.3
-shader_parameter/surface_secondary_period = Vector3(9.5, 9.5, 9.5)
+shader_parameter/surface_secondary_period = Vector3(9.5, 0.61, 9.5)
 shader_parameter/surface_secondary_rotation = 0.0
 shader_parameter/surface_secondary_rotation_speed = 0.0
 shader_parameter/surface_tertiary_enabled = false
@@ -48,13 +46,14 @@ shader_parameter/surface_tertiary_rotation_speed = 0.0
 shader_parameter/use_band_distortion = false
 shader_parameter/band_frequency = 10.0
 shader_parameter/band_distortion_strength = 0.3
-shader_parameter/display_cloud_shadows = true
+shader_parameter/display_cloud_shadows = false
 shader_parameter/cloud_shadow_darkness = 0.25
-shader_parameter/cloud_1_cover = 0.40999999083568
-shader_parameter/cloud_1_radius = 0.32
-shader_parameter/cloud_1_palette = SubResource("GradientTexture1D_t5p0k")
-shader_parameter/cloud_1_rotation_speed = 0.08700005163250002
-shader_parameter/cloud_1_opacity = 0.38999999128272
+shader_parameter/cloud_1_cover = 0.3
+shader_parameter/cloud_1_radius = 0.5
+shader_parameter/cloud_1_texture = ExtResource("2_ct432")
+shader_parameter/cloud_1_palette = SubResource("GradientTexture1D_8kx7m")
+shader_parameter/cloud_1_rotation_speed = 0.10000005224999997
+shader_parameter/cloud_1_opacity = 0.3999999910592
 shader_parameter/cloud_1_cell_amount = 10
 shader_parameter/cloud_1_fluctuation_speed = 0.03
 shader_parameter/cloud_1_period = Vector3(9.5, 9.5, 9.5)
@@ -63,7 +62,7 @@ shader_parameter/cloud_1_secondary_cell_amount = 10
 shader_parameter/cloud_1_secondary_strength = 0.3
 shader_parameter/cloud_2_cover = 0.0
 shader_parameter/cloud_2_radius = 0.34
-shader_parameter/cloud_2_rotation_speed = 0.06000005035
+shader_parameter/cloud_2_rotation_speed = -0.02
 shader_parameter/cloud_2_opacity = 0.5
 shader_parameter/cloud_2_cell_amount = 10
 shader_parameter/cloud_2_fluctuation_speed = 0.03
@@ -74,7 +73,7 @@ shader_parameter/cloud_2_secondary_strength = 0.3
 shader_parameter/atmosphere_radius = 0.34
 shader_parameter/posterise = false
 shader_parameter/shading_mode = 1
-shader_parameter/maximum_brightness = 1.0
+shader_parameter/maximum_brightness = 1.5000000223518
 shader_parameter/sun_strength = 2.0
 shader_parameter/shade_transition = 10.0
 shader_parameter/shade_step = 8.0

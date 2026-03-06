@@ -28,8 +28,8 @@ radius = 955.0
 
 [node name="Comet" type="RigidBody2D" unique_id=1624827841 node_paths=PackedStringArray("collision", "gravity_area_collision", "sprite") groups=["celestialbodies"]]
 script = ExtResource("1_2xb01")
-min_size = 400.0
-max_size = 512.0
+min_size = 700.0
+max_size = 750.0
 game_energy = 1000
 collision = NodePath("Collision")
 gravity_area_collision = NodePath("Gravity/GravityAreaCollision")

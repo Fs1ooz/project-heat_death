@@ -3,7 +3,7 @@
 [sub_resource type="Gradient" id="Gradient_n3etr"]
 interpolation_mode = 2
 offsets = PackedFloat32Array(0.97108674, 1)
-colors = PackedColorArray(0.3665946, 0.3665946, 0.36659458, 0, 0.93333334, 0.93333334, 0.93333334, 0.5882353)
+colors = PackedColorArray(0.3665946, 0.3665946, 0.36659458, 0, 0.93333334, 0.93333334, 0.93333334, 0.47058824)
 
 [sub_resource type="FastNoiseLite" id="FastNoiseLite_507dh"]
 noise_type = 4
@@ -20,7 +20,7 @@ seamless = true
 [sub_resource type="Gradient" id="Gradient_105us"]
 interpolation_mode = 2
 offsets = PackedFloat32Array(0.9441675, 0.9800598)
-colors = PackedColorArray(0, 0, 0, 0, 0.46666667, 0.4, 0.3137255, 0.9019608)
+colors = PackedColorArray(0, 0, 0, 0, 0.46666667, 0.4, 0.3137255, 0.39215687)
 
 [sub_resource type="NoiseTexture2D" id="NoiseTexture2D_7xm7i"]
 generate_mipmaps = false
@@ -31,7 +31,7 @@ seamless = true
 [sub_resource type="Gradient" id="Gradient_ycge7"]
 interpolation_mode = 2
 offsets = PackedFloat32Array(0.96944445, 0.99444443)
-colors = PackedColorArray(0, 0, 0, 0, 0.35686275, 0.35686275, 0.35686275, 0.9019608)
+colors = PackedColorArray(0, 0, 0, 0, 0.35686275, 0.35686275, 0.35686275, 0.27450982)
 
 [sub_resource type="NoiseTexture2D" id="NoiseTexture2D_vf2pk"]
 generate_mipmaps = false
@@ -67,7 +67,7 @@ texture = SubResource("NoiseTexture2D_7xm7i")
 
 [node name="Parallax2D3" type="Parallax2D" parent="." unique_id=68764339]
 texture_filter = 3
-scale = Vector2(16, 16)
+scale = Vector2(14, 14)
 scroll_scale = Vector2(2, 2)
 repeat_size = Vector2(512, 512)
 autoscroll = Vector2(5, 5)

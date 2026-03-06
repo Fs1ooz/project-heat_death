@@ -88,7 +88,6 @@ _data = {
 
 [node name="Meteoroid" type="RigidBody2D" unique_id=1905325980 node_paths=PackedStringArray("collision", "gravity_area_collision", "sprite", "animation_player") groups=["celestialbodies"]]
 script = ExtResource("1_otcpb")
-game_energy = 1000
 collision = NodePath("Collision")
 gravity_area_collision = NodePath("Gravity/GravityAreaCollision")
 sprite = NodePath("Collision/Sprite")
