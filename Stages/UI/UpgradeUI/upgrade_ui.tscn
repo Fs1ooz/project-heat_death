@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://dr5pxtobflhyw"]
 
-[ext_resource type="Theme" uid="uid://brvjefc4224hi" path="res://Assets/Themes/upgrade_ui.tres" id="1_mnd61"]
+[ext_resource type="Theme" uid="uid://brvjefc4224hi" path="res://Stages/UI/UpgradeUI/upgrade_ui.tres" id="1_mnd61"]
 [ext_resource type="Script" uid="uid://otgbhiinw4yu" path="res://Stages/UI/UpgradeUI/upgrade_ui.gd" id="1_qb0g1"]
 
 [node name="UpgradeUI" type="Control" unique_id=174511511]

@@ -5,7 +5,7 @@ extends SmallBody
 @onready var kick_component: KickComponent = %KickComponent
 @onready var comet_trail: GPUParticles2D = %CometTrail
 
-var mat: ParticleProcessMaterial
+var trail_mat: ParticleProcessMaterial
 
 # Valori iniziali da cui scalare in modo assoluto
 var initial_mat_scale: Vector2
@@ -21,19 +21,19 @@ var target_scale: Vector2
 
 func _ready() -> void:
 	super()
-	mat = comet_trail.process_material.duplicate()
-	comet_trail.process_material = mat
+	trail_mat = comet_trail.process_material.duplicate()
+	comet_trail.process_material = trail_mat
 
 	initial_sprite_scale = sprite.scale
-	initial_mat_scale = Vector2(mat.scale_min, mat.scale_max)
-	initial_velocity_min = mat.initial_velocity_min
-	initial_velocity_max = mat.initial_velocity_max
+	initial_mat_scale = Vector2(trail_mat.scale_min, trail_mat.scale_max)
+	initial_velocity_min = trail_mat.initial_velocity_min
+	initial_velocity_max = trail_mat.initial_velocity_max
 	initial_mass = mass
 
 	target_scale = initial_sprite_scale
 
-	mat.scale_min = initial_mat_scale.x * sprite.scale.x
-	mat.scale_max = initial_mat_scale.y * sprite.scale.x
+	trail_mat.scale_min = initial_mat_scale.x * sprite.scale.x
+	trail_mat.scale_max = initial_mat_scale.y * sprite.scale.x
 
 	rotation = kick_component.kick_position().angle()
 
@@ -48,8 +48,8 @@ func _process(delta: float) -> void:
 
 	# Interpolazione smooth verso il target invece di scatti
 	sprite.scale = sprite.scale.lerp(target_scale, delta * 4.0)
-	mat.scale_min = initial_mat_scale.x * sprite.scale.x
-	mat.scale_max = initial_mat_scale.y * sprite.scale.x
+	trail_mat.scale_min = initial_mat_scale.x * sprite.scale.x
+	trail_mat.scale_max = initial_mat_scale.y * sprite.scale.x
 
 	if game_energy <= 0:
 		_die_empty()
@@ -58,7 +58,7 @@ func _spawn_trail_drop() -> void:
 	if game_energy <= 0:
 		return
 
-	var energy_drop: Exp = energy_drop_scene.instantiate()
+	var energy_drop: Energy = energy_drop_scene.instantiate()
 	energy_drop.energy = energy_per_drop
 	energy_drop.global_position = global_position + (-linear_velocity.normalized() * 20.0)
 	get_parent().add_child.call_deferred(energy_drop)
@@ -69,8 +69,8 @@ func _spawn_trail_drop() -> void:
 	# Tutto calcolato in modo ASSOLUTO rispetto ai valori iniziali
 	target_scale = initial_sprite_scale * energy_ratio
 	mass = initial_mass * energy_ratio
-	mat.initial_velocity_min = initial_velocity_min * energy_ratio
-	mat.initial_velocity_max = initial_velocity_max * energy_ratio
+	trail_mat.initial_velocity_min = initial_velocity_min * energy_ratio
+	trail_mat.initial_velocity_max = initial_velocity_max * energy_ratio
 
 func _die_empty() -> void:
 	queue_free()

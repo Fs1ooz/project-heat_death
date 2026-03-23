@@ -1,9 +1,9 @@
 [gd_scene format=3 uid="uid://uf4irjwjm6pd"]
 
-[ext_resource type="Script" uid="uid://d4h8dit0lt11l" path="res://Entities/Enemies/SmallBodies/gas.gd" id="1_ehlfa"]
+[ext_resource type="Script" uid="uid://d4h8dit0lt11l" path="res://Entities/Enemies/SmallBodies/gas.gd" id="1_n8ooe"]
 
 [sub_resource type="Curve" id="Curve_76ep8"]
-_data = [Vector2(0, 0.2), 1.803978, 0.44828722, 0, 0, Vector2(0.7, 0.8), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+_data = [Vector2(0, 0.05), 1.803978, 0.44828722, 0, 0, Vector2(0.7, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
 point_count = 3
 metadata/_snap_enabled = true
 metadata/_snap_count = 20
@@ -47,21 +47,21 @@ color_initial_ramp = SubResource("GradientTexture1D_r0wkb")
 alpha_curve = SubResource("CurveTexture_n83y6")
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_sx8h3"]
-radius = 11.0
-height = 618.0
+height = 528.0
 
-[node name="GasParticles" type="GPUParticles2D" unique_id=30725598]
-amount = 512
+[node name="GasParticles" type="GPUParticles2D" unique_id=1964999053]
+amount = 400
 fixed_fps = 0
 visibility_rect = Rect2(-0.885039, -39.804432, 750.82825, 78.84795)
 process_material = SubResource("ParticleProcessMaterial_ehlfa")
-script = ExtResource("1_ehlfa")
+script = ExtResource("1_n8ooe")
+metadata/_custom_type_script = "uid://d4h8dit0lt11l"
 
 [node name="GasArea" type="Area2D" parent="." unique_id=346995923]
 show_behind_parent = true
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="GasArea" unique_id=1328067232]
-position = Vector2(309, 0)
+position = Vector2(305, 0)
 rotation = 1.5707964
 shape = SubResource("CapsuleShape2D_sx8h3")
 debug_color = Color(0.9686392, 0, 0.4696517, 0.41960785)

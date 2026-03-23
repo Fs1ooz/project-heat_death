@@ -27,9 +27,8 @@ var bodies_in_gravity: Array[RigidBody2D] = []
 
 @export var base_noise: float = 5.0
 
-@export var animation_player: AnimationPlayer
 
-
+@onready var mat: ShaderMaterial = sprite.material
 var current_noise: float = 0.0
 var entropy_force: Vector2 = Vector2.ZERO
 var health: float
@@ -190,10 +189,17 @@ func take_damage(damage: float) -> void:
 	if health_bar:
 		health_bar.value = health
 	print("Vita attuale: ", health)
-	if animation_player:
-		animation_player.play("hit_flash")
+	flash(0.05)
 	if health <= 0:
 		die()
+
+func flash(duration: float) -> void:
+	if not mat:
+		return
+	var tween: Tween = create_tween()
+	tween.tween_property(mat, "shader_parameter/flash_value", 1.0, duration).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN)
+	tween.tween_property(mat, "shader_parameter/flash_value", 0.0, duration * 2).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+
 
 # Morte e esplosione
 func die() -> void:
@@ -226,7 +232,7 @@ func _spawn_energy_drop() -> void:
 		var random_factor: float = pow(randf(), 3.0)  # Bias verso 0
 		var energy_value: int = max(1, int(random_factor * energy_to_spawn))
 
-		var energy_drop: Exp = energy_drop_scene.instantiate()
+		var energy_drop: Energy = energy_drop_scene.instantiate()
 		energy_drop.energy = energy_value
 
 		var angle: float = randf() * TAU

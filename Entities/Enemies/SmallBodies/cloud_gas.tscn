@@ -1,0 +1,70 @@
+[gd_scene format=3 uid="uid://cmh6regh1ook3"]
+
+[ext_resource type="Script" uid="uid://d4h8dit0lt11l" path="res://Entities/Enemies/SmallBodies/gas.gd" id="1_p32e1"]
+
+[sub_resource type="Curve" id="Curve_p32e1"]
+_data = [Vector2(0, 0.05), 1.803978, 0.15830466, 0, 0, Vector2(0.75, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), -1.4993731, 0.0, 0, 0]
+point_count = 3
+metadata/_snap_enabled = true
+metadata/_snap_count = 20
+
+[sub_resource type="CurveTexture" id="CurveTexture_65n8m"]
+curve = SubResource("Curve_p32e1")
+
+[sub_resource type="Gradient" id="Gradient_p32e1"]
+colors = PackedColorArray(0.7482798, 0.7982642, 0.81731707, 1, 1, 1, 1, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_65n8m"]
+gradient = SubResource("Gradient_p32e1")
+
+[sub_resource type="Gradient" id="Gradient_hlpbx"]
+colors = PackedColorArray(0.96862745, 1, 1, 0.039215688, 0.5764706, 0.5882353, 0.6392157, 0.27450982)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_y820n"]
+gradient = SubResource("Gradient_hlpbx")
+
+[sub_resource type="Curve" id="Curve_dnsjn"]
+_data = [Vector2(0, 0.1), 0.0, 2.720207, 0, 0, Vector2(0.4, 1), -0.061516706, -0.061516706, 0, 0, Vector2(1, 0.4), -1.5298479, 0.0, 0, 0]
+point_count = 3
+metadata/_snap_enabled = true
+
+[sub_resource type="CurveTexture" id="CurveTexture_h2ix7"]
+curve = SubResource("Curve_dnsjn")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_lrxdf"]
+particle_flag_align_y = true
+particle_flag_disable_z = true
+spread = 20.0
+initial_velocity_min = 300.0
+initial_velocity_max = 400.0
+radial_velocity_min = -2.2351742e-05
+radial_velocity_max = -2.2351742e-05
+gravity = Vector3(0, 0, 0)
+scale_min = 80.0
+scale_max = 90.0
+scale_curve = SubResource("CurveTexture_h2ix7")
+color_ramp = SubResource("GradientTexture1D_y820n")
+color_initial_ramp = SubResource("GradientTexture1D_65n8m")
+alpha_curve = SubResource("CurveTexture_65n8m")
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_g0d3m"]
+radius = 80.0
+height = 312.0
+
+[node name="CloudGas" type="GPUParticles2D" unique_id=245761884]
+amount = 250
+visibility_rect = Rect2(-0.4158212, -252.95468, 511.85458, 500.0077)
+process_material = SubResource("ParticleProcessMaterial_lrxdf")
+script = ExtResource("1_p32e1")
+metadata/_custom_type_script = "uid://d4h8dit0lt11l"
+
+[node name="Gas" type="Area2D" parent="." unique_id=1163619395]
+show_behind_parent = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Gas" unique_id=1346711050]
+position = Vector2(185, 0)
+rotation = 1.5707964
+shape = SubResource("CapsuleShape2D_g0d3m")
+debug_color = Color(0.96862745, 0, 0.47058824, 0.05490196)
+
+[connection signal="body_entered" from="Gas" to="." method="_on_gas_body_entered"]

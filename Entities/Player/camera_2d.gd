@@ -3,7 +3,7 @@ extends Camera2D
 
 @export var zoom_speed: float = 1.05
 @export_group("Zoom Limits (Base Values)")
-@export var min_zoom_base: float = 0.01
+@export var min_zoom_base: float = 0.05
 @export var max_zoom_base: float = 2.5
 
 @export_group("Zoom Settings")
@@ -38,6 +38,7 @@ var base_offset: Vector2 = Vector2.ZERO
 var shake_offset: Vector2 = Vector2.ZERO
 
 func _ready() -> void:
+	GlobalSignals.windup_shake.connect(apply_shake)
 	UpgradeManager.tier_changed.connect(_on_tier_changed)
 	randomize()
 	noise.seed = randi()

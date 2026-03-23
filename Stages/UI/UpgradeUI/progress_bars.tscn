@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://byiufddhmby2s"]
 
 [ext_resource type="Script" uid="uid://chkwn1g4jwxh3" path="res://Stages/UI/UpgradeUI/progress_bars.gd" id="1_3ykb5"]
-[ext_resource type="Theme" uid="uid://brvjefc4224hi" path="res://Assets/Themes/upgrade_ui.tres" id="1_nfcbj"]
+[ext_resource type="Theme" uid="uid://brvjefc4224hi" path="res://Stages/UI/UpgradeUI/upgrade_ui.tres" id="1_nfcbj"]
 [ext_resource type="Shader" uid="uid://byxv6543sfk4e" path="res://Stages/UI/UpgradeUI/exp_bar.gdshader" id="2_84lpq"]
 [ext_resource type="Gradient" uid="uid://cfobmd0a5h0ia" path="res://Commons/gurren_lagann.tres" id="3_nfcbj"]
 [ext_resource type="Script" uid="uid://bx5cmt2yual28" path="res://Stages/UI/UpgradeUI/exp_bar.gd" id="4_84lpq"]

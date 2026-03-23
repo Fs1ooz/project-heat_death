@@ -1,6 +1,11 @@
 shader_type canvas_item;
 render_mode unshaded;
 
+//// Flash effect
+uniform vec4 flash_color : source_color = vec4(1.0, 1.0, 1.0, 1.0);
+uniform float flash_value : hint_range(0.0, 1.0, 0.01) = 0.0;
+
+
 const int SHADING_MODE_NONE = 0;
 const int SHADING_MODE_SMOOTH = 1;
 const int SHADING_MODE_QUANT = 2;
@@ -53,7 +58,7 @@ const vec3 DEFAULT_EARTH_PALETTE[16] = vec3[16](
 
 uniform vec4 background_colour : source_color = vec4(0., 0., 0., 1.0);
 uniform float surface_base_rotation : hint_range(0.0, 6.28, 0.1) = 0.0;
-uniform float surface_rotation_speed : hint_range(-1.0, 1.0, 0.001) = 0.0;
+uniform float surface_rotation_speed : hint_range(-10.0, 10.0, 0.001) = 0.3;
 
 // Procedural surface options (for gas giants / sun)
 // Primary noise layer (main bands/features)
@@ -164,6 +169,7 @@ uniform sampler2D dither_texture : filter_nearest;
 uniform int dither_levels = 0;
 
 // Noise for shading variation
+uniform vec4 shadow_color : source_color = vec4(0.04, 0.04, 0.04, 1.0); 
 uniform int shading_noise_cell_amount = 40;
 uniform float shading_noise_strength : hint_range(-1.0, 1.0, 0.01) = 0.1;
 uniform vec3 shading_noise_period = vec3(9.5, 9.5, 9.5);
@@ -518,7 +524,7 @@ vec4 surface_procedural(vec2 uv, mat3 rot_p, mat3 rot_p2, mat3 rot_p3) {
 	
 	// Apply lighting
 	float light = calculate_light(uv, surface_radius);
-	color.rgb = color.rgb * light;
+	color.rgb = mix(shadow_color.rgb, color.rgb, light);
 	
 	return color;
 }
@@ -542,7 +548,7 @@ vec4 surface_from_texture(vec2 uv, float rotation) {
 	
 	// Apply lighting
 	float light = calculate_light(uv, surface_radius);
-	earth_color.rgb = earth_color.rgb * light;
+	earth_color.rgb = mix(shadow_color.rgb, earth_color.rgb, light);
 	
 	return earth_color;
 }
@@ -625,7 +631,7 @@ vec4 clouds_procedural(
 			
 			// Apply lighting
 			float light = calculate_light(uv, radius);
-			color.rgb = color.rgb * light;
+			color.rgb = mix(shadow_color.rgb, color.rgb, light);
 		}
 	}
 
@@ -878,5 +884,9 @@ void fragment() {
 	// Final posterization
 	if (posterise) {
 		COLOR.rgb = get_nearest_colour(posterisation_palette, COLOR.rgb, false);
+	}
+	// Flash hit effect
+	if (flash_value > 0.0 && COLOR.a > 0.0) {
+		COLOR.rgb = mix(COLOR.rgb, flash_color.rgb, flash_value);
 	}
 }

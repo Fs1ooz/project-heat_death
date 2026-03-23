@@ -60,38 +60,12 @@ color_ramp = SubResource("GradientTexture1D_88gdh")
 alpha_curve = SubResource("CurveTexture_88gdh")
 emission_curve = SubResource("CurveTexture_jx0wn")
 
-[sub_resource type="Animation" id="Animation_xu417"]
-length = 0.001
-
-[sub_resource type="Animation" id="Animation_pnclo"]
-resource_name = "hit_flash"
-length = 0.2
-step = 0.01
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("Collision/Sprite:material:shader_parameter/flash_value")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0, 0.049999997, 0.2),
-"transitions": PackedFloat32Array(1, 1, 1),
-"update": 0,
-"values": [0.0, 1.0, 0.0]
-}
-
-[sub_resource type="AnimationLibrary" id="AnimationLibrary_xu417"]
-_data = {
-&"RESET": SubResource("Animation_xu417"),
-&"hit_flash": SubResource("Animation_pnclo")
-}
-
 [node name="Meteoroid" type="RigidBody2D" unique_id=1905325980 node_paths=PackedStringArray("collision", "gravity_area_collision", "sprite", "animation_player") groups=["celestialbodies"]]
 script = ExtResource("1_otcpb")
 collision = NodePath("Collision")
 gravity_area_collision = NodePath("Gravity/GravityAreaCollision")
 sprite = NodePath("Collision/Sprite")
-animation_player = NodePath("AnimationPlayer")
+animation_player = NodePath("")
 metadata/_custom_type_script = "uid://be8uvibib1twp"
 
 [node name="Gravity" type="Area2D" parent="." unique_id=4395370]
@@ -120,9 +94,6 @@ amount = 50
 lifetime = 2.0
 randomness = 0.2
 process_material = SubResource("ParticleProcessMaterial_pnclo")
-
-[node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=965719063]
-libraries/ = SubResource("AnimationLibrary_xu417")
 
 [node name="KickComponent" type="Node" parent="." unique_id=1366482448 node_paths=PackedStringArray("body")]
 unique_name_in_owner = true

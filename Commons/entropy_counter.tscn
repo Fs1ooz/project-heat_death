@@ -1,17 +1,16 @@
-[gd_scene load_steps=3 format=3 uid="uid://dnto56yr1b1ff"]
+[gd_scene format=3 uid="uid://dnto56yr1b1ff"]
 
-[ext_resource type="Theme" uid="uid://brvjefc4224hi" path="res://Assets/Themes/upgrade_ui.tres" id="1_1ci5r"]
+[ext_resource type="Theme" uid="uid://brvjefc4224hi" path="res://Stages/UI/UpgradeUI/upgrade_ui.tres" id="1_1ci5r"]
 [ext_resource type="Script" uid="uid://btvtti3jdlg1b" path="res://Commons/entropy_counter.gd" id="1_fmoht"]
 
-[node name="EntropyCounter" type="Label"]
+[node name="EntropyCounter" type="Label" unique_id=1131242628]
 texture_filter = 1
 anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
 offset_left = -100.0
-offset_top = -5.0
 offset_right = 100.0
-offset_bottom = 50.0
+offset_bottom = 55.0
 grow_horizontal = 2
 theme = ExtResource("1_1ci5r")
 theme_override_font_sizes/font_size = 64
@@ -20,3 +19,17 @@ horizontal_alignment = 1
 visible_characters = 5
 visible_ratio = 1.6666666
 script = ExtResource("1_fmoht")
+
+[node name="Delta" type="Label" parent="." unique_id=871457589]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -20.0
+offset_top = -28.0
+offset_right = 20.0
+grow_horizontal = 2
+grow_vertical = 0
+horizontal_alignment = 1

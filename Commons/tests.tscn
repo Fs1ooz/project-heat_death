@@ -6,16 +6,13 @@
 
 [node name="Test" type="Node2D" unique_id=1449383081]
 
+[node name="Ceres" parent="." unique_id=933810055 instance=ExtResource("3_yfsno")]
+attack_duration = 5.0
+
 [node name="Camera2D" type="Camera2D" parent="." unique_id=218431552]
-zoom = Vector2(0.02, 0.02)
+zoom = Vector2(0.005, 0.005)
 
 [node name="Player" parent="." unique_id=1096128152 instance=ExtResource("2_yer1y")]
-position = Vector2(-8108, 998)
-mass = 40.0
+position = Vector2(-108459, 388)
 
 [node name="BaseBackgroundLayer" parent="." unique_id=501950975 instance=ExtResource("3_gjt46")]
-
-[node name="Ceres" parent="." unique_id=933810055 instance=ExtResource("3_yfsno")]
-position = Vector2(775, -644)
-min_size = 140.0
-max_size = 150.0

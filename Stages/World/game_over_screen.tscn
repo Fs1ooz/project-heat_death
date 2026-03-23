@@ -1,7 +1,7 @@
-[gd_scene load_steps=3 format=3 uid="uid://dyd3uoe8y1asi"]
+[gd_scene format=3 uid="uid://dyd3uoe8y1asi"]
 
 [ext_resource type="Script" uid="uid://dme2yavclvita" path="res://Stages/World/game_over_screen.gd" id="1_0sqq5"]
-[ext_resource type="Theme" uid="uid://brvjefc4224hi" path="res://Assets/Themes/upgrade_ui.tres" id="1_yd1lp"]
+[ext_resource type="Theme" uid="uid://brvjefc4224hi" path="res://Stages/UI/UpgradeUI/upgrade_ui.tres" id="1_yd1lp"]
 
 [node name="GameOverScreen" type="Control"]
 texture_filter = 1

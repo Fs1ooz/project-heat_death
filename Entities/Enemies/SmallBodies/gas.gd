@@ -2,12 +2,10 @@ class_name Gas
 extends GPUParticles2D
 
 var player_inside: Player = null
-var damage_time: float = 0.2
+var damage_time: float = 0.4
 var timer: float = 0.0
 
 @onready var initial_particle_scale: Vector2 = Vector2(process_material.scale_min, process_material.scale_max)
-
-@onready var gas_area: Area2D = $GasArea
 
 func _ready() -> void:
 	if process_material:

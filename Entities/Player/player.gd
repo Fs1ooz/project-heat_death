@@ -21,6 +21,7 @@ extends RigidBody2D
 
 @export var shockwave: ShockwaveRenderer
 @onready var player_camera: PlayerCamera = $PlayerCamera
+@onready var attraction_radius: float = $Attraction/CollisionShape2D.shape.radius
 
 var rotation_responsiveness: float = 8.0
 
@@ -89,7 +90,43 @@ func _process(delta: float) -> void:
 var base_scale: Vector2 = Vector2.ONE
 
 
+
+var nearby_energy: Array = []
+var nearby_bodies: Array = []
+
+func _attract(delta: float) -> void:
+
+	for energy: Energy in nearby_energy:
+		if not is_instance_valid(energy):
+			continue
+
+		var distance: float = global_position.distance_to(energy.global_position)
+		var normalized: float = clamp(distance / energy_threshold, 0.0, 1.0)
+
+		var attraction_speed: float = lerp(500.0, 100.0, normalized) * delta * mass
+
+		energy.global_position = energy.global_position.move_toward(
+			global_position,
+			attraction_speed
+		)
+	for body: CelestialBody in nearby_bodies:
+		if not is_instance_valid(body):
+			continue
+
+		var distance: float = global_position.distance_to(body.global_position)
+		var direction: Vector2 = (global_position - body.global_position).normalized()
+
+		var weight: float = clamp(distance / attraction_radius, 0.0, 1.0)
+		var attraction_force: float = lerp(500.0, 100.0, weight) * sqrt(mass)
+
+
+		body.apply_central_force(direction * attraction_force)
+
+
+
 func _physics_process(delta: float) -> void:
+	_attract(delta)
+
 	_last_velocity = linear_velocity
 
 	if EntropyManager.entropy_value < 0:
@@ -282,6 +319,7 @@ func change_size(amount: float) -> void:
 
 	change_mass(amount)
 	change_scale(amount)
+	$Attraction/CollisionShape2D.shape.radius *= amount
 
 	energy_threshold *= amount
 
@@ -307,6 +345,7 @@ func change_scale(amount: float) -> void:
 	if mat:
 		var initial_x: float = -25.0
 		mat.set("emission_shape_offset", Vector3(initial_x * amount, 0.0, 0.0))
+
 
 
 	var tween: Tween = create_tween()
@@ -364,3 +403,23 @@ func update_life_bar() -> void:
 func _start_regen() -> void:
 	hp = min(hp + int(max_hp * 0.15), max_hp)
 	update_life_bar()
+
+
+func _on_attraction_area_entered(area: Area2D) -> void:
+	if area is Energy:
+		nearby_energy.append(area)
+
+
+func _on_attraction_area_exited(area: Area2D) -> void:
+	if area is Energy:
+		nearby_energy.erase(area)
+
+
+func _on_attraction_body_entered(body: Node2D) -> void:
+	if body is CelestialBody:
+		nearby_bodies.append(body)
+
+
+func _on_attraction_body_exited(body: Node2D) -> void:
+	if body is CelestialBody:
+		nearby_bodies.erase(body)

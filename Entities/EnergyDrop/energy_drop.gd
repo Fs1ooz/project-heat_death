@@ -1,7 +1,7 @@
-class_name Exp
+class_name Energy
 extends Area2D
 
-@export var starting_threshold: float = 500.0
+@export var starting_threshold: float = 750.0
 @export var scale_mult: float = 7.5
 
 
@@ -26,7 +26,6 @@ var colors: Array = [
 	Color("00a952ff"), Color("00ff00"),
 ]
 
-var _is_in_range: bool = false
 @export var energy_per_cycle: float = 100.0
 
 func _ready() -> void:
@@ -46,18 +45,7 @@ func update_color() -> void:
 	# FIX: Usa l'assegnazione diretta, non la moltiplicazione!
 	sprite.scale = Vector2(scale_factor, scale_factor)
 
-# FIX: Usa _process invece di _physics_process per movimenti più fluidi
-func _process(delta: float) -> void:
-	if not _is_in_range or not player:
-		return
 
-	var distance: float = global_position.distance_to(player.global_position)
-	var active_threshold: float = max(starting_threshold, player.energy_threshold)
-
-	var normalized_distance: float = clamp(distance / active_threshold, 0.0, 1.0)
-	var speed: float = lerp(500.0, 100.0, normalized_distance) * delta
-
-	global_position = global_position.move_toward(player.global_position, speed)
 
 func _on_body_entered(body: Node2D) -> void:
 	if body is Player:
@@ -67,17 +55,3 @@ func _on_body_entered(body: Node2D) -> void:
 		sfx.finished.connect(sfx.queue_free)
 		UpgradeManager.gain_energy(energy)
 		queue_free()
-
-func _on_range_body_entered(body: Node2D) -> void:
-	if body is not Player:
-		return
-	_is_in_range = true
-
-	# OTTIMIZZAZIONE: Se hai un nodo per il range, disabilitalo qui.
-	# Una volta agganciato, non ha senso che l'EXP continui a cercare collisioni
-	# range_area.set_deferred("monitoring", false)
-
-func _on_range_body_exited(body: Node2D) -> void:
-	if body is not Player:
-		return
-	_is_in_range = false

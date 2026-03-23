@@ -11,11 +11,11 @@ extends Node2D
 	},
 	{
 		"scene": preload("res://Entities/Enemies/SmallBodies/asteroid.tscn"),
-		"radius": 35_000.0
+		"radius": 30_000.0
 	},
 	{
 		"scene":preload("uid://8aj1dylerrl1"),
-		"radius": 70_000.0
+		"radius": 45_000.0
 	}
 ]
 
@@ -25,7 +25,7 @@ extends Node2D
 
 @export_group("Area di Spawn")
 @export var spawn_margin_inner: float = 1000.0  # Distanza minima dal bordo schermo
-@export var spawn_margin_outer: float = 80_000.0 # Spessore della "cornice" di spawn
+@export var spawn_margin_outer: float = 50_000.0 # Spessore della "cornice" di spawn
 
 @export var despawn_buffer: float = 10000.0     # Quanto oltre la cornice distruggere l'oggetto
 
@@ -97,11 +97,11 @@ const STAGE_DATA: Dictionary = {
 		"label": "Polvere Spaziale"
 	},
 	GameStage.METEROIDS_2: {
-		"weights": [90.0, 10.0, 0.0],
+		"weights": [50.0, 5.0, 0.0],
 		"label": "Piccoli Detriti"
 	},
 	GameStage.METEROIDS_3: {
-		"weights": [60.0, 30.0, 0.0],
+		"weights": [30.0, 10.0, 0.0],
 		"label": "Fascia di Meteoroidi"
 	},
 	GameStage.ASTEROIDS_1: {
@@ -109,11 +109,11 @@ const STAGE_DATA: Dictionary = {
 		"label": "Primi Asteroidi"
 	},
 	GameStage.ASTEROIDS_2: {
-		"weights": [5.0, 20.0, 0.5],
+		"weights": [5.0, 15.0, 0.5],
 		"label": "Pioggia Rocciosa"
 	},
 	GameStage.ASTEROIDS_3: {
-		"weights": [0.0, 15.0, 1.0],
+		"weights": [0.0, 10.0, 1.0],
 		"label": "Pericolo Impatto"
 	}
 }

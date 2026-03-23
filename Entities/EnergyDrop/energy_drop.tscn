@@ -3,9 +3,6 @@
 [ext_resource type="Script" uid="uid://xy3bkvisvinm" path="res://Entities/EnergyDrop/energy_drop.gd" id="1_nnvmk"]
 [ext_resource type="AudioStream" uid="uid://dp1e7mdwgi743" path="res://Assets/Sounds/coin.sfxr" id="2_psw32"]
 
-[sub_resource type="CircleShape2D" id="CircleShape2D_psw32"]
-radius = 2813.2434
-
 [sub_resource type="AudioStreamRandomizer" id="AudioStreamRandomizer_psw32"]
 random_pitch = 2.0
 streams_count = 1
@@ -30,11 +27,6 @@ fill_from = Vector2(0.5, 0.5)
 [node name="EnergyDrop" type="Area2D" unique_id=300791633 groups=["energy"]]
 script = ExtResource("1_nnvmk")
 
-[node name="Range" type="Area2D" parent="." unique_id=596080526]
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Range" unique_id=2005566635]
-shape = SubResource("CircleShape2D_psw32")
-
 [node name="EnergyAudioStreamPlayer" type="AudioStreamPlayer" parent="." unique_id=1085185809]
 stream = SubResource("AudioStreamRandomizer_psw32")
 volume_db = -5.0
@@ -49,5 +41,3 @@ texture = SubResource("GradientTexture2D_mersp")
 region_rect = Rect2(1.655, 0, 0, 0)
 
 [connection signal="body_entered" from="." to="." method="_on_body_entered"]
-[connection signal="body_entered" from="Range" to="." method="_on_range_body_entered"]
-[connection signal="body_exited" from="Range" to="." method="_on_range_body_exited"]

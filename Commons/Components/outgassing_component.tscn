@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://craa6ydm1f6rw"]
+
+[ext_resource type="Script" uid="uid://blifotmla3xit" path="res://Commons/Components/outgassing_component.gd" id="1_k0t71"]
+
+[node name="OutgassingComponent" type="Node" unique_id=618525949]
+script = ExtResource("1_k0t71")

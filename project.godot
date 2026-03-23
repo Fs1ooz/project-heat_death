@@ -21,11 +21,16 @@ config/features=PackedStringArray("4.6", "Forward Plus")
 run/max_fps=240
 config/icon="uid://cutmcskxym36k"
 
+[audio]
+
+buses/default_bus_layout="res://Commons/default_bus_layout.tres"
+
 [autoload]
 
 GlobalSignals="*res://Commons/global_signals.tscn"
 UpgradeManager="*res://Commons/upgrade_manager.tscn"
 EntropyManager="*res://Commons/entropy_manager.tscn"
+ImGuiRoot="*uid://dugmpnsxaagba"
 
 [debug]
 
@@ -43,13 +48,27 @@ window/physics_interpolation=false
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/brackeys_particle_controls/plugin.cfg", "res://addons/gdfxr/plugin.cfg", "res://addons/trail_2d/plugin.cfg")
+enabled=PackedStringArray("res://addons/brackeys_particle_controls/plugin.cfg", "res://addons/gdfxr/plugin.cfg", "res://addons/imgui-godot/plugin.cfg", "res://addons/trail_2d/plugin.cfg")
+
+[file_customization]
+
+folder_colors={
+"res://Assets/": "blue",
+"res://Commons/": "teal",
+"res://Entities/": "purple",
+"res://Stages/": "pink",
+"res://addons/": "gray"
+}
 
 [global_group]
 
 player=""
 celestialbodies=""
 energy=""
+
+[gui]
+
+theme/default_font_multichannel_signed_distance_field=true
 
 [input]
 

@@ -10,7 +10,7 @@ func _ready() -> void:
 	super()
 
 
-
 func _setup_random_scale() -> void:
 	var scale_rand: float = randf_range(min_size, max_size)
+	print(scale_rand)
 	_setup_scale(scale_rand)

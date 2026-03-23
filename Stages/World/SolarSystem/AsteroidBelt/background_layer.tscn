@@ -152,7 +152,7 @@ metadata/_edit_horizontal_guides_ = [3286.0]
 [node name="Parallax0" type="Parallax2D" parent="." unique_id=2043778429]
 texture_filter = 1
 scale = Vector2(24, 24)
-scroll_scale = Vector2(0.1, 0.1)
+scroll_scale = Vector2(0.02, 0.02)
 repeat_size = Vector2(512, 512)
 autoscroll = Vector2(5, 5)
 repeat_times = 50

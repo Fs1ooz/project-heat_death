@@ -102,6 +102,9 @@ _data = {
 [sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_7a1se"]
 polygon = PackedVector2Array(0, -41, 21, -39, 39, -32, 54, -18, 60, 0, 56, 15, 37, 32, 0, 40, -23, 37, -41, 29, -55, 16, -60, 1, -53, -19, -37, -32, -20, -39)
 
+[sub_resource type="CircleShape2D" id="CircleShape2D_7a1se"]
+radius = 900.0
+
 [node name="Player" type="RigidBody2D" unique_id=952817380 node_paths=PackedStringArray("collision", "sprite", "trail", "shockwave") groups=["player"]]
 collision_mask = 2
 physics_material_override = SubResource("PhysicsMaterial_5c2io")
@@ -124,6 +127,7 @@ position_smoothing_enabled = true
 position_smoothing_speed = 10.0
 rotation_smoothing_speed = 20.0
 script = ExtResource("5_5c2io")
+min_zoom_base = 0.001
 noise = SubResource("FastNoiseLite_01a4e")
 
 [node name="Collision" type="CollisionShape2D" parent="." unique_id=1021464206]
@@ -158,3 +162,14 @@ libraries/ = SubResource("AnimationLibrary_7a1se")
 
 [node name="LightOccluder2D" type="LightOccluder2D" parent="." unique_id=2089612375]
 occluder = SubResource("OccluderPolygon2D_7a1se")
+
+[node name="Attraction" type="Area2D" parent="." unique_id=1445965777]
+collision_mask = 3
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Attraction" unique_id=445074716]
+shape = SubResource("CircleShape2D_7a1se")
+
+[connection signal="area_entered" from="Attraction" to="." method="_on_attraction_area_entered"]
+[connection signal="area_exited" from="Attraction" to="." method="_on_attraction_area_exited"]
+[connection signal="body_entered" from="Attraction" to="." method="_on_attraction_body_entered"]
+[connection signal="body_exited" from="Attraction" to="." method="_on_attraction_body_exited"]

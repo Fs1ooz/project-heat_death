@@ -17,10 +17,10 @@ func _enter_tree() -> void:
 	dock = preload("res://addons/brackeys_particle_controls/BrackeysParticleControlsUI.tscn").instantiate()
 	var editor_main_screen = get_editor_interface().get_editor_main_screen()
 	editor_main_screen.add_child(dock)
-	
+
 	pause_button = dock.get_node("%PauseButton")
 	scrub = dock.get_node("%Scrub")
-	
+
 	start_button = dock.get_node("%StartButton")
 	start_button.pressed.connect(_on_start_pressed)
 	start_button.icon = editor_main_screen.get_theme_icon("PlayStart","EditorIcons")
@@ -32,29 +32,29 @@ func _enter_tree() -> void:
 	stop_button.pressed.connect(_on_stop_pressed)
 	stop_button.icon = editor_main_screen.get_theme_icon("Stop","EditorIcons")
 	stop_button.text = ""
-	
+
 	loop_button = dock.get_node("%LoopButton")
 	loop_button.icon = editor_main_screen.get_theme_icon("Loop","EditorIcons")
 	loop_button.text = ""
 	loop_button.toggled.connect(_on_loop_toggled)
-	
+
 	affect_neightbors_button = dock.get_node("%AffectNeighborsButton")
 	affect_neightbors_button.icon = editor_main_screen.get_theme_icon("AnimationTrackList","EditorIcons")
 	affect_neightbors_button.text = ""
 	affect_neightbors_button.toggled.connect(_on_affect_neighbors_toggled)
-	
+
 	affect_children_button = dock.get_node("%AffectChildrenButton")
 	affect_children_button.icon = editor_main_screen.get_theme_icon("AnimationTrackGroup","EditorIcons")
 	affect_children_button.text = ""
 	affect_children_button.toggled.connect(_on_affect_children_toggled)
-	
+
 	scrub.value_changed.connect(_on_scrub_value_changed)
-	
+
 	director = BPC_PreviewDirector.new()
 	director.play_processed.connect(_on_play_processed)
 	director.state_changed.connect(_on_director_state_changed)
 	get_editor_interface().get_editor_viewport_3d().add_child(director)
-	
+
 	_on_selection_changed()
 	get_editor_interface().get_selection().selection_changed.connect(_on_selection_changed)
 
@@ -134,7 +134,7 @@ func _on_director_state_changed():
 
 	loop_button.disabled = !director.can_loop()
 	loop_button.button_pressed = director.should_loop
-	
+
 	scrub.max_value = director.get_longest_sim_sime()
 	scrub.set_value_no_signal(director.get_play_time())
 
@@ -142,11 +142,11 @@ func _on_selection_changed():
 	var was_playing: bool = director.is_playing
 	if was_playing:
 		director.stop()
-	
+
 	var selection: Array = get_editor_interface().get_selection().get_selected_nodes()
-	
+
 	var selection_good: bool = false
-	
+
 	if selection and selection.size() == 1:
 		if director.node_is_particles(selection[0]):
 			selection_good = true
