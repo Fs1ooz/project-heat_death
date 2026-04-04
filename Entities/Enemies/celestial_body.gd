@@ -51,7 +51,7 @@ func _ready() -> void:
 	_setup_physics()
 	_setup_mass()
 	_setup_health()
-	_setup_health_bar()
+	#_setup_health_bar()
 	EntropyManager.entropy_changed.connect(_on_entropy_changed)
 
 

@@ -1,6 +1,6 @@
 [gd_resource type="ShaderMaterial" format=3 uid="uid://cbkk5d32kyybe"]
 
-[ext_resource type="Shader" uid="uid://djc5c0j2x4bgq" path="res://Assets/Shaders/rotating_body.gdshader" id="1_w0bl6"]
+[ext_resource type="Shader" uid="uid://djc5c0j2x4bgq" path="res://Assets/Shaders/spherical_body.gdshader" id="1_w0bl6"]
 [ext_resource type="Texture2D" uid="uid://d1vkukqqcs14s" path="res://Entities/Enemies/RockyPlanets/2k_earth_clouds.jpg" id="2_ct432"]
 [ext_resource type="Texture2D" uid="uid://b6nijitbhyj0g" path="res://Assets/Images/world.200406.3x5400x2700.jpg" id="2_ra4dv"]
 
@@ -25,6 +25,7 @@ shader_parameter/pixel_scale = 256.0
 shader_parameter/use_texture_surface = true
 shader_parameter/use_texture_clouds = true
 shader_parameter/surface_radius = 0.4990000128746
+shader_parameter/bump_strength = 1.5
 shader_parameter/surface_texture = ExtResource("2_ra4dv")
 shader_parameter/surface_palette = SubResource("GradientTexture1D_ju5mk")
 shader_parameter/background_colour = Color(0, 0, 0, 1)
@@ -85,3 +86,8 @@ shader_parameter/shadow_color = Color(0.07, 0.07, 0.07, 1)
 shader_parameter/shading_noise_cell_amount = 40
 shader_parameter/shading_noise_strength = 0.1
 shader_parameter/shading_noise_period = Vector3(9.5, 9.5, 9.5)
+shader_parameter/specular_strength = 0.6
+shader_parameter/specular_shininess = 48.0
+shader_parameter/specular_color = Color(1, 1, 1, 1)
+shader_parameter/fresnel_strength = 0.4
+shader_parameter/fresnel_color = Color(0.4, 0.6, 1, 1)

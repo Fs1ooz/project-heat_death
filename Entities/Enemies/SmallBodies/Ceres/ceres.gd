@@ -27,7 +27,7 @@ func _ready() -> void:
 	super()
 	_change_state(State.WAIT)
 	outgassing_component.setup(self, sprite)
-	outgassing_component.prespawn(max_gas)
+	outgassing_component.prespawn.call_deferred(max_gas)
 
 
 func _process(delta: float) -> void:
@@ -46,12 +46,14 @@ func _process(delta: float) -> void:
 			if state_timer <= 0:
 				_on_attack_finished()
 
+
+
 func _change_state(new_state: State) -> void:
 	current_state = new_state
 	match new_state:
 		State.WAIT:
 			var tween: Tween = create_tween()
-			tween.tween_property(mat, "shader_parameter/surface_rotation_speed", 0.3, 0.5).set_trans(Tween.TRANS_SPRING)
+			tween.tween_property($SubViewport, "rotation_speed", 0.3, 0.5).set_trans(Tween.TRANS_SPRING)
 			state_timer = wait_duration
 			outgassing_component.stop()
 			outgassing_component.erase_spawn_points()
@@ -67,7 +69,7 @@ func _change_state(new_state: State) -> void:
 					t.kill()
 			state_timer = attack_duration       # <-- countdown parte qui
 			outgassing_component.activate_all()
-			mat.set_shader_parameter("surface_rotation_speed", 0.01)
+			$SubViewport.rotation_speed = 0.01
 			mat.set_shader_parameter("flash_value", 0.0)
 		State.SPAWN_ENEMIES:
 			state_timer = attack_duration       # <-- idem
@@ -77,9 +79,9 @@ func _change_state(new_state: State) -> void:
 func _windup() -> void:
 	# Tween principale: rampa sulla rotation speed + snap finale
 	var tween: Tween = create_tween().set_parallel()
-	tween.tween_property(mat, "shader_parameter/surface_rotation_speed", 8.0, windup_duration) \
+	tween.tween_property($SubViewport, "rotation_speed", 100.0, windup_duration) \
 		.set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN)
-	tween.tween_property(mat, "shader_parameter/surface_rotation_speed", 0.3, 0.25) \
+	tween.tween_property($SubViewport, "rotation_speed", 0.3, 0.25) \
 		.set_delay(windup_duration)
 	GlobalSignals.windup_shake.emit(25.0, windup_duration)
 	# Tween pulsante: oscilla flash_value in loop durante il caricamento

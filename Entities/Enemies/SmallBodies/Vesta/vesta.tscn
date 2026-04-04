@@ -1,0 +1,61 @@
+[gd_scene format=3 uid="uid://714k31e6y8aj"]
+
+[ext_resource type="PackedScene" uid="uid://dfsihpsxl07dl" path="res://Entities/Enemies/SmallBodies/Vesta/vesta_sub_viewport.tscn" id="1_dsmkv"]
+[ext_resource type="Script" uid="uid://bk7rg4t3g85xo" path="res://Entities/Enemies/SmallBodies/Vesta/vesta.gd" id="1_ewsx1"]
+[ext_resource type="Gradient" uid="uid://cqt238trp4ydp" path="res://Assets/Gradients/asteroid_gradient.tres" id="2_ewsx1"]
+[ext_resource type="Shader" uid="uid://cs3d0hdnbo23i" path="res://Assets/Shaders/irregular_body.gdshader" id="3_w82wr"]
+[ext_resource type="PackedScene" uid="uid://bgievdkpstd3t" path="res://Entities/Enemies/visible_screen_enabler_component.tscn" id="4_g52g0"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_w82wr"]
+radius = 551.1098
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_jy45m"]
+gradient = ExtResource("2_ewsx1")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_iiopx"]
+shader = ExtResource("3_w82wr")
+shader_parameter/flash_color = Color(1, 1, 1, 1)
+shader_parameter/flash_value = 0.0
+shader_parameter/pixel_scale = 128.0
+shader_parameter/use_palette = true
+shader_parameter/surface_palette = SubResource("GradientTexture2D_jy45m")
+shader_parameter/posterise = false
+shader_parameter/use_atmosphere = false
+shader_parameter/atmosphere_color = Color(0.3, 0.5, 1, 1)
+shader_parameter/atmosphere_width = 0.08
+shader_parameter/atmosphere_intensity = 0.6
+
+[sub_resource type="ViewportTexture" id="ViewportTexture_w82wr"]
+viewport_path = NodePath("SubViewport")
+
+[node name="Vesta" type="RigidBody2D" unique_id=919368619 node_paths=PackedStringArray("collision", "gravity_area_collision", "sprite")]
+script = ExtResource("1_ewsx1")
+min_size = 3.0
+max_size = 3.0
+collision = NodePath("Collision")
+gravity_area_collision = NodePath("Gravity/GravityAreaCollision")
+sprite = NodePath("Collision/Sprite")
+
+[node name="SubViewport" parent="." unique_id=299103768 instance=ExtResource("1_dsmkv")]
+
+[node name="Gravity" type="Area2D" parent="." unique_id=922011648]
+
+[node name="GravityAreaCollision" type="CollisionShape2D" parent="Gravity" unique_id=1570812645]
+shape = SubResource("CircleShape2D_w82wr")
+
+[node name="Collision" type="CollisionPolygon2D" parent="." unique_id=372087916]
+polygon = PackedVector2Array(-198, -108, -106, -183, 3, -198, 136, -161, 189, -119, 243, -44, 249, 6, 236, 76, 210, 114, 99, 164, 9, 195, -34, 186, -108, 171, -174, 142, -213, 85, -235, 43, -241, -40)
+
+[node name="Sprite" type="Sprite2D" parent="Collision" unique_id=986566973]
+texture_filter = 1
+material = SubResource("ShaderMaterial_iiopx")
+texture = SubResource("ViewportTexture_w82wr")
+
+[node name="VisibleScreenEnablerComponent" parent="Collision/Sprite" unique_id=271568865 instance=ExtResource("4_g52g0")]
+position = Vector2(3.0000002, -4)
+scale = Vector2(0.39999995, 0.39999995)
+rect = Rect2(-1394.5002, -1434.0002, 2760.0005, 2847.5005)
+enable_node_path = NodePath("../../..")
+
+[node name="Camera2D" type="Camera2D" parent="." unique_id=182715589]
+zoom = Vector2(0.2, 0.2)

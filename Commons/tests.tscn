@@ -1,10 +1,12 @@
 [gd_scene format=3 uid="uid://cslvpssd0qp67"]
 
+[ext_resource type="Script" uid="uid://coenheqp3k73" path="res://Commons/tests.gd" id="1_gjt46"]
 [ext_resource type="PackedScene" uid="uid://470x1obeipdg" path="res://Entities/Player/player.tscn" id="2_yer1y"]
 [ext_resource type="PackedScene" uid="uid://befachtfe40l2" path="res://Stages/World/SolarSystem/AsteroidBelt/base_background_layer.tscn" id="3_gjt46"]
 [ext_resource type="PackedScene" uid="uid://d2i2r2ucklcu0" path="res://Entities/Enemies/SmallBodies/Ceres/ceres.tscn" id="3_yfsno"]
 
 [node name="Test" type="Node2D" unique_id=1449383081]
+script = ExtResource("1_gjt46")
 
 [node name="Ceres" parent="." unique_id=933810055 instance=ExtResource("3_yfsno")]
 attack_duration = 5.0

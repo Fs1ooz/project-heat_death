@@ -27,6 +27,8 @@ uniform bool use_texture_clouds = false; // false = procedural clouds, true = im
 //// Surface
 uniform float surface_radius : hint_range(0.01, 0.499, 0.001) = .499;
 
+uniform float bump_strength : hint_range(0.0, 5.0, 0.05) = 1.5;
+
 // Image-based surface (Earth mode)
 uniform sampler2D surface_texture : filter_linear, hint_default_white;
 
@@ -173,6 +175,15 @@ uniform vec4 shadow_color : source_color = vec4(0.04, 0.04, 0.04, 1.0);
 uniform int shading_noise_cell_amount = 40;
 uniform float shading_noise_strength : hint_range(-1.0, 1.0, 0.01) = 0.1;
 uniform vec3 shading_noise_period = vec3(9.5, 9.5, 9.5);
+
+uniform float specular_strength : hint_range(0.0, 3.0, 0.01) = 0.6;
+uniform float specular_shininess : hint_range(1.0, 256.0, 1.0) = 48.0;
+uniform vec4 specular_color : source_color = vec4(1.0, 1.0, 1.0, 1.0);
+
+uniform float fresnel_strength : hint_range(0.0, 2.0, 0.01) = 0.4;
+uniform vec4 fresnel_color : source_color = vec4(0.4, 0.6, 1.0, 1.0);
+
+
 
 // modulo function that returns positive wrapped values
 vec3 modulo(vec3 divident, vec3 divisor){
@@ -408,6 +419,64 @@ float calculate_light(vec2 grid_uv, float radius) {
 	return light;
 }
 
+float calculate_light_bumped(vec2 grid_uv, float radius, vec3 bumped_normal) {
+    if (shading_mode == SHADING_MODE_NONE) return 1.0;
+    if (shading_mode == SHADING_MODE_MAX)  return maximum_brightness;
+
+    float light = dot(bumped_normal, normalize(sun_direction));
+    float brightness_cap = maximum_brightness / sun_strength;
+
+    light = clamp(light, 0.0, 1.0);
+
+    if (shading_mode == SHADING_MODE_SMOOTH) {
+        light = sun_strength * min(brightness_cap, (light * shade_transition) / shade_step);
+    } else if (shading_mode == SHADING_MODE_QUANT) {
+        light = sun_strength * min(brightness_cap, floor(light * shade_transition) / shade_step);
+    } else if (shading_mode == SHADING_MODE_DITHER) {
+        light = sun_strength * min(brightness_cap, (light * shade_transition) / shade_step);
+        for (int level = 0; level < dither_levels; level++) {
+            float cutoff = float(level + 1) * (1.0 / float(dither_levels));
+            if (light <= cutoff) {
+                light = maximum_brightness * get_leveled_dither(level, grid_uv);
+                break;
+            }
+        }
+    }
+    return light;
+}
+
+float calculate_specular(vec2 uv, float radius) {
+    vec2 n_uv = (uv - vec2(0.5)) / radius;
+    float d = dot(n_uv, n_uv);
+    if (d > 1.0) return 0.0;
+
+    // Normale sulla superficie della sfera
+    vec3 normal = normalize(vec3(n_uv.x, sqrt(max(0.0, 1.0 - d)), n_uv.y));
+    vec3 view_dir = vec3(0.0, 1.0, 0.0); // camera frontale
+    vec3 light_dir = normalize(sun_direction);
+
+    // Non mostrare specular sul lato in ombra
+    if (dot(normal, light_dir) < 0.0) return 0.0;
+
+    // Blinn-Phong
+    vec3 half_vec = normalize(light_dir + view_dir);
+    float spec = pow(max(dot(normal, half_vec), 0.0), specular_shininess);
+    return spec * specular_strength;
+}
+
+float calculate_fresnel(vec2 uv, float radius) {
+    vec2 n_uv = (uv - vec2(0.5)) / radius;
+    float d = dot(n_uv, n_uv);
+    if (d > 1.0) return 0.0;
+
+    vec3 normal = normalize(vec3(n_uv.x, sqrt(max(0.0, 1.0 - d)), n_uv.y));
+    vec3 view_dir = vec3(0.0, 1.0, 0.0);
+
+    float rim = 1.0 - dot(normal, view_dir);
+    return pow(rim, 3.0) * fresnel_strength;
+}
+
+
 // Convert UV on sphere to spherical coordinates for texture mapping
 vec2 uv_to_spherical(vec2 uv, float radius, float rotation) {
 	vec2 centered = uv - vec2(0.5);
@@ -431,6 +500,33 @@ vec2 uv_to_spherical(vec2 uv, float radius, float rotation) {
 	return vec2(tex_u, tex_v);
 }
 
+vec3 compute_bump_normal(vec2 uv, float radius, float rotation) {
+    float eps = 1.0 / pixel_scale;
+
+    vec2 tc      = uv_to_spherical(uv,                    radius, rotation);
+    vec2 tc_r    = uv_to_spherical(uv + vec2(eps, 0.0),   radius, rotation);
+    vec2 tc_u    = uv_to_spherical(uv + vec2(0.0, eps),   radius, rotation);
+
+    // Normale sferica base
+    vec2 n_uv = (uv - vec2(0.5)) / radius;
+    float d = dot(n_uv, n_uv);
+    vec3 base_normal = normalize(vec3(n_uv.x, sqrt(max(0.0, 1.0 - d)), n_uv.y));
+
+    if (tc.x < 0.0 || tc_r.x < 0.0 || tc_u.x < 0.0) {
+        return base_normal;
+    }
+
+    // Luminosità come heightmap
+    vec3 luma = vec3(0.299, 0.587, 0.114);
+    float h   = dot(texture(surface_texture, tc).rgb,   luma);
+    float h_r = dot(texture(surface_texture, tc_r).rgb, luma);
+    float h_u = dot(texture(surface_texture, tc_u).rgb, luma);
+
+    float dx = (h_r - h) * bump_strength;
+    float dz = (h_u - h) * bump_strength;
+
+    return normalize(base_normal + vec3(dx, 0.0, dz));
+}
 // Apply surface noise layers
 float apply_surface_noise(
 	float perlin,
@@ -547,8 +643,9 @@ vec4 surface_from_texture(vec2 uv, float rotation) {
 	earth_color.rgb = get_nearest_colour(surface_palette, earth_color.rgb, false);
 	
 	// Apply lighting
-	float light = calculate_light(uv, surface_radius);
-	earth_color.rgb = mix(shadow_color.rgb, earth_color.rgb, light);
+	vec3 bump_normal = compute_bump_normal(uv, surface_radius, rotation);
+float light = calculate_light_bumped(uv, surface_radius, bump_normal);
+earth_color.rgb = mix(shadow_color.rgb, earth_color.rgb, light);
 	
 	return earth_color;
 }
@@ -885,6 +982,19 @@ void fragment() {
 	if (posterise) {
 		COLOR.rgb = get_nearest_colour(posterisation_palette, COLOR.rgb, false);
 	}
+	
+	// ---- 3D Enhancement ----
+	if (COLOR.a > 0.0) {
+	    float spec    = calculate_specular(grid_uv, surface_radius);
+	    float fresnel = calculate_fresnel(grid_uv, surface_radius);
+
+	    // Aggiungi specular (additivo)
+	    COLOR.rgb += specular_color.rgb * spec;
+
+	    // Aggiungi fresnel ai bordi (blending)
+	    COLOR.rgb = mix(COLOR.rgb, fresnel_color.rgb, fresnel);
+	}
+	
 	// Flash hit effect
 	if (flash_value > 0.0 && COLOR.a > 0.0) {
 		COLOR.rgb = mix(COLOR.rgb, flash_color.rgb, flash_value);

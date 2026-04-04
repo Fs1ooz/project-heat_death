@@ -1,0 +1,16 @@
+[gd_scene format=3 uid="uid://c750bq6df3umy"]
+
+[ext_resource type="PackedScene" uid="uid://bmv5jj5qeyf13" path="res://Entities/Enemies/SmallBodies/Vesta/Vesta_1_100.glb" id="1_x2ht6"]
+
+[node name="Vesta" type="Node3D" unique_id=13676416]
+
+[node name="Vesta_1_100" parent="." unique_id=1460239562 instance=ExtResource("1_x2ht6")]
+
+[node name="Camera3D" type="Camera3D" parent="." unique_id=1773675535]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 15)
+projection = 1
+size = 6.0
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=1701772694]
+transform = Transform3D(0.5075384, 0, 0.8616291, 0, 1, 0, -0.8616291, 0, 0.5075384, 5.655, 0, 4.685)
+sky_mode = 1

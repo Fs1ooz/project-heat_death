@@ -1,0 +1,19 @@
+[gd_scene format=3 uid="uid://dfsihpsxl07dl"]
+
+[ext_resource type="Script" uid="uid://0xks18q11fen" path="res://Entities/Enemies/SmallBodies/celestial_body_sub_viewport.gd" id="1_2pcq1"]
+[ext_resource type="PackedScene" uid="uid://c750bq6df3umy" path="res://Entities/Enemies/SmallBodies/Vesta/vesta3d.tscn" id="1_aanei"]
+
+[node name="SubViewport" type="SubViewport" unique_id=299103768 node_paths=PackedStringArray("mesh")]
+own_world_3d = true
+transparent_bg = true
+script = ExtResource("1_2pcq1")
+mesh = NodePath("Vesta/Vesta_1_100/Vesta")
+metadata/_custom_type_script = "uid://0xks18q11fen"
+
+[node name="Vesta" parent="." unique_id=13676416 instance=ExtResource("1_aanei")]
+
+[node name="Camera3D" parent="Vesta" index="1" unique_id=1773675535]
+current = true
+
+[editable path="Vesta"]
+[editable path="Vesta/Vesta_1_100"]

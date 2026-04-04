@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://ciqotnndblj2m"
-path="res://.godot/imported/isnobulino.png-f409991e0e0669610e545d65e7415ad7.ctex"
+uid="uid://0rvi1q3sv1ox"
+path="res://.godot/imported/685735main_pia15678-43_full.jpg-33429c3a6b29122349ed8515b253c451.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/Images/isnobulino.png"
-dest_files=["res://.godot/imported/isnobulino.png-f409991e0e0669610e545d65e7415ad7.ctex"]
+source_file="res://Assets/Shaders/685735main_pia15678-43_full.jpg"
+dest_files=["res://.godot/imported/685735main_pia15678-43_full.jpg-33429c3a6b29122349ed8515b253c451.ctex"]
 
 [params]
 
@@ -21,7 +21,7 @@ compress/lossy_quality=0.7
 compress/uastc_level=0
 compress/rdo_quality_loss=0.0
 compress/hdr_compression=1
-compress/normal_map=1
+compress/normal_map=0
 compress/channel_pack=0
 mipmaps/generate=false
 mipmaps/limit=-1

@@ -25,7 +25,7 @@ func prespawn(spawn_points_count: int) -> void:
 		var angle: float = randf_range(0.0, TAU)
 		var direction: Vector2 = Vector2.RIGHT.rotated(angle)
 		_sprite.add_child(gas)
-		var scale_factor: float = _sprite.scale.x
+		var scale_factor: float = _sprite.scale.x * 0.8
 		gas.global_position = _body.global_position
 		var sprite_radius: float = (_sprite.texture.get_width() / 2.0)
 		gas.position = direction * sprite_radius * offset_multiplier
@@ -34,6 +34,7 @@ func prespawn(spawn_points_count: int) -> void:
 			gas.process_material.scale_min = gas.initial_particle_scale.x * scale_factor
 			gas.process_material.scale_max = gas.initial_particle_scale.y * scale_factor
 		gas.set_meta("direction", direction)
+		gas.set_process(false)
 		gas.emitting = false
 		gas.visible = false
 		_gasses.append(gas)
@@ -41,8 +42,9 @@ func prespawn(spawn_points_count: int) -> void:
 func activate() -> void:
 	for gas: Gas in _gasses:
 		if not gas.emitting:
-			gas.visible = true
+			gas.set_process(true)
 			gas.emitting = true
+			gas.visible = true
 			var direction: Vector2 = gas.get_meta("direction", Vector2.RIGHT)
 			_body.apply_impulse(-direction.rotated(_body.rotation) * outgassing_impulse * EntropyManager.entropy_value)
 			break

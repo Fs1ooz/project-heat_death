@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://ciqotnndblj2m"
-path="res://.godot/imported/isnobulino.png-f409991e0e0669610e545d65e7415ad7.ctex"
+uid="uid://b2xbiuwdkx2g6"
+path="res://.godot/imported/grayscale_normal.png-f708e2cdd228f3edba53b8d3ce45b8dd.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/Images/isnobulino.png"
-dest_files=["res://.godot/imported/isnobulino.png-f409991e0e0669610e545d65e7415ad7.ctex"]
+source_file="res://Entities/Enemies/SmallBodies/Vesta/grayscale_normal.png"
+dest_files=["res://.godot/imported/grayscale_normal.png-f708e2cdd228f3edba53b8d3ce45b8dd.ctex"]
 
 [params]
 
