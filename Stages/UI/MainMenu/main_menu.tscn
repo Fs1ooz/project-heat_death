@@ -1,5 +1,20 @@
 [gd_scene format=3 uid="uid://bkmf5gdvkg83v"]
 
+[ext_resource type="Theme" uid="uid://brvjefc4224hi" path="res://Stages/UI/UpgradeUI/upgrade_ui.tres" id="1_1g70f"]
+[ext_resource type="Script" uid="uid://dvs3te48nw36p" path="res://Stages/UI/MainMenu/main_menu.gd" id="2_715ji"]
+[ext_resource type="PackedScene" uid="uid://bkljj71ppklsf" path="res://Stages/World/SolarSystem/AsteroidBelt/background_layer.tscn" id="3_25f73"]
+[ext_resource type="PackedScene" uid="uid://befachtfe40l2" path="res://Stages/World/SolarSystem/AsteroidBelt/base_background_layer.tscn" id="4_2b7i7"]
+[ext_resource type="PackedScene" uid="uid://d2i2r2ucklcu0" path="res://Entities/Enemies/SmallBodies/Ceres/ceres.tscn" id="4_25f73"]
+[ext_resource type="PackedScene" uid="uid://714k31e6y8aj" path="res://Entities/Enemies/SmallBodies/Vesta/vesta.tscn" id="4_qsswq"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_2b7i7"]
+bg_color = Color(0.003921569, 0.003921569, 0.003921569, 1)
+border_color = Color(0.89059, 0.89059, 0.8905901, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
 [node name="MainMenu" type="Control" unique_id=748498538]
 layout_mode = 3
 anchors_preset = 15
@@ -7,18 +22,62 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+theme = ExtResource("1_1g70f")
+script = ExtResource("2_715ji")
 
-[node name="Button" type="Button" parent="." unique_id=57593782]
+[node name="TributoGormita" type="Button" parent="." unique_id=742340853]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -1.0
+offset_right = -936.0
+offset_bottom = -513.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 64
+theme_override_styles/normal = SubResource("StyleBoxFlat_2b7i7")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=2124335268]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -153.0
-offset_top = -20.0
-offset_right = 149.0
-offset_bottom = 40.0
+offset_left = -59.0
+offset_top = -33.0
+offset_right = 59.0
+offset_bottom = 33.0
 grow_horizontal = 2
 grow_vertical = 2
+theme_override_constants/separation = 50
+
+[node name="Label" type="Label" parent="VBoxContainer" unique_id=712828817]
+layout_mode = 2
+theme_override_font_sizes/font_size = 128
+text = "HEAT DEATH"
+
+[node name="Button" type="Button" parent="VBoxContainer" unique_id=57593782]
+layout_mode = 2
+theme_override_font_sizes/font_size = 64
 text = "Start"
+
+[node name="BaseBackgroundLayer" parent="." unique_id=501950975 instance=ExtResource("4_2b7i7")]
+
+[node name="Vesta" parent="." unique_id=919368619 instance=ExtResource("4_qsswq")]
+position = Vector2(-37, 253)
+rotation = -0.3577925
+min_size = 1.0
+max_size = 1.0
+
+[node name="Ceres" parent="." unique_id=933810055 instance=ExtResource("4_25f73")]
+position = Vector2(908, 101)
+rotation = -0.54105204
+min_size = 1.0
+max_size = 1.0
+
+[node name="BackgroundLayer" parent="." unique_id=110186335 instance=ExtResource("3_25f73")]
+
+[connection signal="pressed" from="TributoGormita" to="." method="_on_tributo_gormita_pressed"]
+[connection signal="pressed" from="VBoxContainer/Button" to="." method="_on_button_pressed"]

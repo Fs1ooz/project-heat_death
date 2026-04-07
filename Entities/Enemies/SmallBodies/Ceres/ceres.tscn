@@ -21,7 +21,7 @@ gradient = ExtResource("3_ad5k8")
 shader = ExtResource("3_403pl")
 shader_parameter/flash_color = Color(1, 1, 1, 1)
 shader_parameter/flash_value = 0.0
-shader_parameter/pixel_scale = 256.0
+shader_parameter/pixel_scale = 128.0
 shader_parameter/use_palette = true
 shader_parameter/surface_palette = SubResource("GradientTexture2D_ad5k8")
 shader_parameter/posterise = false
@@ -45,9 +45,6 @@ sprite = NodePath("Collision/Sprite")
 metadata/_custom_type_script = "uid://tvtxttl46aya"
 
 [node name="SubViewport" parent="." unique_id=1305065566 instance=ExtResource("2_ie0dq")]
-
-[node name="Camera2D" type="Camera2D" parent="." unique_id=284705729]
-zoom = Vector2(0.005, 0.005)
 
 [node name="GravityArea" type="Area2D" parent="." unique_id=1857330086]
 

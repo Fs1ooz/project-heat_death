@@ -56,6 +56,3 @@ position = Vector2(3.0000002, -4)
 scale = Vector2(0.39999995, 0.39999995)
 rect = Rect2(-1394.5002, -1434.0002, 2760.0005, 2847.5005)
 enable_node_path = NodePath("../../..")
-
-[node name="Camera2D" type="Camera2D" parent="." unique_id=182715589]
-zoom = Vector2(0.2, 0.2)

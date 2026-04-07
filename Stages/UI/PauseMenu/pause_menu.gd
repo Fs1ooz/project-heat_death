@@ -21,3 +21,13 @@ func _on_close_pressed() -> void:
 func _on_restart_pressed() -> void:
 	GlobalSignals.death.emit()
 	get_tree().reload_current_scene()
+
+func _set_bus_volume(bus_name: String, value: float) -> void:
+	AudioServer.set_bus_volume_db(AudioServer.get_bus_index(bus_name), linear_to_db(value))
+
+func _on_master_value_changed(value: float) -> void:
+	_set_bus_volume("Master", value)
+func _on_music_value_changed(value: float) -> void:
+	_set_bus_volume("Music", value)
+func _on_sound_value_changed(value: float) -> void:
+	_set_bus_volume("Sound", value)

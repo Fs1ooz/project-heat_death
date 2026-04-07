@@ -60,12 +60,11 @@ color_ramp = SubResource("GradientTexture1D_88gdh")
 alpha_curve = SubResource("CurveTexture_88gdh")
 emission_curve = SubResource("CurveTexture_jx0wn")
 
-[node name="Meteoroid" type="RigidBody2D" unique_id=1905325980 node_paths=PackedStringArray("collision", "gravity_area_collision", "sprite", "animation_player") groups=["celestialbodies"]]
+[node name="Meteoroid" type="RigidBody2D" unique_id=1905325980 node_paths=PackedStringArray("collision", "gravity_area_collision", "sprite") groups=["celestialbodies"]]
 script = ExtResource("1_otcpb")
 collision = NodePath("Collision")
 gravity_area_collision = NodePath("Gravity/GravityAreaCollision")
 sprite = NodePath("Collision/Sprite")
-animation_player = NodePath("")
 metadata/_custom_type_script = "uid://be8uvibib1twp"
 
 [node name="Gravity" type="Area2D" parent="." unique_id=4395370]
