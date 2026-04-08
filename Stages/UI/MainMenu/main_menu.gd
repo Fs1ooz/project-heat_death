@@ -4,8 +4,29 @@ extends Control
 const SOLAR_SYSTEM: String = "res://Stages/World/SolarSystem/solar_system.tscn"
 
 
+func _ready() -> void:
+	$Vesta.set_process(false)
+	$Ceres.set_process(false)
+	var tween: Tween = create_tween()
+	tween.set_loops()
+
+	# Fase 1: si allontana (rimpicciolisce, ruota, deriva)
+	tween.tween_property($BackgroundLayer, "scale", Vector2(0.01, 0.01), 90)
+	tween.parallel().tween_property($BackgroundLayer, "rotation", deg_to_rad(15), 90)
+	tween.parallel().tween_property($BackgroundLayer, "offset", Vector2(80, 40), 90)
+
+	# Fase 2: torna vicino
+	tween.tween_property($BackgroundLayer, "scale", Vector2(0.15, 0.15), 50)
+	tween.parallel().tween_property($BackgroundLayer, "rotation", deg_to_rad(0), 50)
+	tween.parallel().tween_property($BackgroundLayer, "offset", Vector2(0, 0), 50)
+
+
+
 func _on_button_pressed() -> void:
 	get_tree().change_scene_to_file(SOLAR_SYSTEM)
+	EntropyManager.reset_entropy()
+	$Vesta.set_process(true)
+	$Ceres.set_process(true)
 
 
 func _on_tributo_gormita_pressed() -> void:

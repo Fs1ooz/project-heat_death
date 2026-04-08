@@ -49,6 +49,7 @@ var mass_percentage: float = 1.0
 @onready var initial_particle_scale: Vector2
 @onready var mat: ParticleProcessMaterial = trail.process_material
 
+var orbit_unlocked: bool = true
 
 func _ready() -> void:
 	UpgradeManager.tier_changed.connect(_on_tier_changed)
@@ -94,33 +95,6 @@ var base_scale: Vector2 = Vector2.ONE
 var nearby_energy: Array = []
 var nearby_bodies: Array = []
 
-func _attract(delta: float) -> void:
-
-	for energy: Energy in nearby_energy:
-		if not is_instance_valid(energy):
-			continue
-
-		var distance: float = global_position.distance_to(energy.global_position)
-		var normalized: float = clamp(distance / energy_threshold, 0.0, 1.0)
-
-		var attraction_speed: float = lerp(500.0, 100.0, normalized) * delta * mass
-
-		energy.global_position = energy.global_position.move_toward(
-			global_position,
-			attraction_speed
-		)
-	for body: CelestialBody in nearby_bodies:
-		if not is_instance_valid(body):
-			continue
-
-		var distance: float = global_position.distance_to(body.global_position)
-		var direction: Vector2 = (global_position - body.global_position).normalized()
-
-		var weight: float = clamp(distance / attraction_radius, 0.0, 1.0)
-		var attraction_force: float = lerp(500.0, 100.0, weight) * sqrt(mass)
-
-
-		body.apply_central_force(direction * attraction_force)
 
 
 
@@ -178,12 +152,96 @@ func _animate_player(is_accelerating: bool) -> void:
 			.set_trans(Tween.TRANS_QUART).set_ease(Tween.EASE_OUT)
 
 
+var orbit_active: bool = false
+
+
 func _input(event: InputEvent) -> void:
 	if event.is_action_pressed("space") and EntropyManager.entropy_value < 0:
 		# Trigger shockwave usando la posizione modificata
 		shockwave.trigger_shockwave(global_position, 3)
 		EntropyManager.change_entropy(abs(EntropyManager.entropy_value) * 2)
 		get_viewport().set_input_as_handled()
+	if not orbit_unlocked:
+		return
+	if event.is_action_pressed("orbit"):
+		printerr("PORCACCIO DI DIO PORCODIO")
+		_activate_orbit()
+	elif event.is_action_released("orbit"):
+		_deactivate_orbit()
+
+
+func _activate_orbit() -> void:
+	orbit_active = true
+	for body: CelestialBody in nearby_bodies:
+		if body is SmallBody and body.orbit_state == SmallBody.OrbitState.FREE:
+			body.start_attraction(self)
+
+func _deactivate_orbit() -> void:
+	orbit_active = false
+	for body: CelestialBody in nearby_bodies:
+		if body is SmallBody:
+			if body.orbit_state == SmallBody.OrbitState.ATTRACTED \
+			or body.orbit_state == SmallBody.OrbitState.ORBITING:
+				body.leave_orbit()
+
+
+func _attract(delta: float) -> void:
+	if not orbit_active:
+		return
+	for energy: Energy in nearby_energy:
+		if not is_instance_valid(energy):
+			continue
+
+		var distance: float = global_position.distance_to(energy.global_position)
+		var normalized: float = clamp(distance / energy_threshold, 0.0, 1.0)
+
+		var attraction_speed: float = lerp(500.0, 100.0, normalized) * delta * mass
+
+		energy.global_position = energy.global_position.move_toward(
+			global_position,
+			attraction_speed
+		)
+
+	for body: CelestialBody in nearby_bodies:
+		if not is_instance_valid(body):
+			continue
+		if body is SmallBody and body.orbit_state != SmallBody.OrbitState.FREE:
+			continue  # questo manca
+		var distance: float = global_position.distance_to(body.global_position)
+
+		var direction: Vector2 = (global_position - body.global_position).normalized()
+
+		var weight: float = clamp(distance / attraction_radius, 0.0, 1.0)
+		var attraction_force: float = lerp(500.0, 100.0, weight) * sqrt(mass)
+
+		body.apply_central_force(direction * attraction_force)
+
+
+func _on_attraction_area_entered(area: Area2D) -> void:
+	if area is Energy:
+		nearby_energy.append(area)
+
+
+func _on_attraction_area_exited(area: Area2D) -> void:
+	if area is Energy:
+		nearby_energy.erase(area)
+
+
+func _on_attraction_body_entered(body: Node2D) -> void:
+	if body is CelestialBody:
+		nearby_bodies.append(body)
+	if body is SmallBody and orbit_active:
+		body.start_attraction(self)
+
+
+func _on_attraction_body_exited(body: Node2D) -> void:
+	if body is CelestialBody:
+		nearby_bodies.erase(body)
+	if body is SmallBody and body.orbit_state == SmallBody.OrbitState.ATTRACTED:
+		body.leave_orbit()
+
+
+
 
 
 func _integrate_forces(state: PhysicsDirectBodyState2D) -> void:
@@ -403,23 +461,3 @@ func update_life_bar() -> void:
 func _start_regen() -> void:
 	hp = min(hp + int(max_hp * 0.15), max_hp)
 	update_life_bar()
-
-
-func _on_attraction_area_entered(area: Area2D) -> void:
-	if area is Energy:
-		nearby_energy.append(area)
-
-
-func _on_attraction_area_exited(area: Area2D) -> void:
-	if area is Energy:
-		nearby_energy.erase(area)
-
-
-func _on_attraction_body_entered(body: Node2D) -> void:
-	if body is CelestialBody:
-		nearby_bodies.append(body)
-
-
-func _on_attraction_body_exited(body: Node2D) -> void:
-	if body is CelestialBody:
-		nearby_bodies.erase(body)

@@ -26,7 +26,6 @@ var next_attack: State
 func _ready() -> void:
 	super()
 	_change_state(State.WAIT)
-	set_process(false)
 	outgassing_component.setup(self, sprite)
 	outgassing_component.prespawn.call_deferred(max_gas)
 

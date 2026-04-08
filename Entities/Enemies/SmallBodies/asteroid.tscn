@@ -17,6 +17,48 @@ shader = ExtResource("2_ed23r")
 shader_parameter/flash_color = Color(1, 1, 1, 1)
 shader_parameter/flash_value = 0.13333338
 
+[sub_resource type="Curve" id="Curve_aw0bt"]
+_data = [Vector2(0, 0.8), 0.0, -0.13285534, 0, 0, Vector2(1, 0), -1.0819256, 0.0, 0, 0]
+point_count = 2
+metadata/_snap_enabled = true
+
+[sub_resource type="CurveTexture" id="CurveTexture_88gdh"]
+curve = SubResource("Curve_aw0bt")
+
+[sub_resource type="Gradient" id="Gradient_w63yn"]
+colors = PackedColorArray(0.49019608, 0.49019608, 0.49019608, 1, 0.3137255, 0.3137255, 0.3137255, 0.9411765)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_88gdh"]
+gradient = SubResource("Gradient_w63yn")
+
+[sub_resource type="Curve" id="Curve_wndlk"]
+_data = [Vector2(0, 1), 0.0, -0.58042216, 0, 0, Vector2(1, 0.022471905), 0.0, 1.4, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_jx0wn"]
+curve = SubResource("Curve_wndlk")
+
+[sub_resource type="Curve" id="Curve_xamy3"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(0.99999, 0), 0.0, 0.0, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
+point_count = 3
+metadata/_snap_enabled = true
+
+[sub_resource type="CurveTexture" id="CurveTexture_4wf4l"]
+curve = SubResource("Curve_xamy3")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_mveyi"]
+emission_shape_offset = Vector3(-15, 0, 0)
+emission_shape = 2
+emission_sphere_radius = 20.0
+gravity = Vector3(0, 0, 0)
+attractor_interaction_enabled = false
+scale_min = 28.0
+scale_max = 30.0
+scale_curve = SubResource("CurveTexture_4wf4l")
+color_ramp = SubResource("GradientTexture1D_88gdh")
+alpha_curve = SubResource("CurveTexture_88gdh")
+emission_curve = SubResource("CurveTexture_jx0wn")
+
 [node name="Asteroid" type="RigidBody2D" unique_id=1561733638 node_paths=PackedStringArray("collision", "gravity_area_collision", "sprite") groups=["celestialbodies"]]
 z_index = 1
 continuous_cd = 2
@@ -58,6 +100,13 @@ script = ExtResource("6_7ulue")
 activate_impulse = true
 gas_scenes = Array[PackedScene]([ExtResource("7_aw0bt")])
 metadata/_custom_type_script = "uid://blifotmla3xit"
+
+[node name="Trail" type="GPUParticles2D" parent="." unique_id=256127035]
+z_index = -1
+amount = 50
+lifetime = 2.0
+randomness = 0.2
+process_material = SubResource("ParticleProcessMaterial_mveyi")
 
 [connection signal="body_entered" from="." to="." method="_on_body_entered"]
 [connection signal="body_entered" from="Gravity" to="." method="_on_gravity_body_entered"]

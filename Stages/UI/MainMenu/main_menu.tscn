@@ -67,17 +67,21 @@ text = "Start"
 
 [node name="Vesta" parent="." unique_id=919368619 instance=ExtResource("4_qsswq")]
 position = Vector2(-37, 253)
-rotation = -0.3577925
+rotation = -1.5446163
 min_size = 1.0
 max_size = 1.0
 
 [node name="Ceres" parent="." unique_id=933810055 instance=ExtResource("4_25f73")]
-position = Vector2(908, 101)
-rotation = -0.54105204
+position = Vector2(943, 250)
 min_size = 1.0
 max_size = 1.0
 
 [node name="BackgroundLayer" parent="." unique_id=110186335 instance=ExtResource("3_25f73")]
+scale = Vector2(0.15, 0.15)
+transform = Transform2D(0.15, 0, 0, 0.15, 0, 0)
+follow_viewport_enabled = false
 
 [connection signal="pressed" from="TributoGormita" to="." method="_on_tributo_gormita_pressed"]
 [connection signal="pressed" from="VBoxContainer/Button" to="." method="_on_button_pressed"]
+
+[editable path="BackgroundLayer"]
