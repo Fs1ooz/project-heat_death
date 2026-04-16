@@ -20,8 +20,13 @@ extends RigidBody2D
 @export var trail: GPUParticles2D
 
 @export var shockwave: ShockwaveRenderer
+
+@export var max_orbiting_bodies: int = 1
+
 @onready var player_camera: PlayerCamera = $PlayerCamera
-@onready var attraction_radius: float = $Attraction/CollisionShape2D.shape.radius
+
+var attraction_radius: float:
+	get: return $Attraction/CollisionShape2D.shape.radius
 
 var rotation_responsiveness: float = 8.0
 
@@ -47,7 +52,7 @@ var old_mass: float = 1.0
 var mass_percentage: float = 1.0
 
 @onready var initial_particle_scale: Vector2
-@onready var mat: ParticleProcessMaterial = trail.process_material
+@onready var mat: ParticleProcessMaterial = trail.process_material.duplicate()
 
 var orbit_unlocked: bool = true
 
@@ -58,6 +63,7 @@ func _ready() -> void:
 	initial_height = collision.shape.height
 	initial_scale = sprite.scale
 	initial_particle_scale = Vector2(mat.scale_min, mat.scale_max)
+	trail.process_material = mat
 
 	if life_bar:
 		life_bar.value = max_hp
@@ -85,21 +91,16 @@ func _process(delta: float) -> void:
 		$AnimationPlayer.play("low_health")
 
 
-
-
 #region Movement
 var base_scale: Vector2 = Vector2.ONE
-
 
 
 var nearby_energy: Array = []
 var nearby_bodies: Array = []
 
 
-
-
 func _physics_process(delta: float) -> void:
-	_attract(delta)
+	_do_gravity(delta)
 
 	_last_velocity = linear_velocity
 
@@ -169,25 +170,46 @@ func _input(event: InputEvent) -> void:
 	elif event.is_action_released("orbit"):
 		_deactivate_orbit()
 
+@export var orbit_mass_ratio_min: float = 0.1  # massa minima orbitabile (evita roba troppo piccola)
+@export var orbit_mass_ratio_max: float = 2.0  # massa massima orbitabile
+
+func _can_orbit(body: CelestialBody) -> bool:
+	var ratio: float = body.mass / mass
+	return ratio >= orbit_mass_ratio_min and ratio <= orbit_mass_ratio_max
 
 func _activate_orbit() -> void:
 	orbit_active = true
+	var current_count: int = get_current_orbiting_count()
+
 	for body: CelestialBody in nearby_bodies:
+		if current_count >= max_orbiting_bodies:
+			break # Ferma il ciclo se abbiamo raggiunto il limite di 3
+
 		if body is SmallBody and body.orbit_state == SmallBody.OrbitState.FREE:
-			body.start_attraction(self)
+			if _can_orbit(body):
+				body.start_attraction(self)
+				current_count += 1 # Aggiorna il contatore man mano che li aggancia
+
+func _on_attraction_body_entered(body: Node2D) -> void:
+	if body is CelestialBody:
+		nearby_bodies.append(body)
+
+	if body is SmallBody and orbit_active:
+		if _can_orbit(body):
+			# Controlla il limite prima di attrarre un nuovo corpo entrato nell'area
+			if get_current_orbiting_count() < max_orbiting_bodies:
+				body.start_attraction(self)
 
 func _deactivate_orbit() -> void:
 	orbit_active = false
 	for body: CelestialBody in nearby_bodies:
 		if body is SmallBody:
-			if body.orbit_state == SmallBody.OrbitState.ATTRACTED \
-			or body.orbit_state == SmallBody.OrbitState.ORBITING:
+			if body.orbit_state != SmallBody.OrbitState.FREE:
 				body.leave_orbit()
 
 
-func _attract(delta: float) -> void:
-	if not orbit_active:
-		return
+func _do_gravity(delta: float) -> void:
+
 	for energy: Energy in nearby_energy:
 		if not is_instance_valid(energy):
 			continue
@@ -205,8 +227,10 @@ func _attract(delta: float) -> void:
 	for body: CelestialBody in nearby_bodies:
 		if not is_instance_valid(body):
 			continue
-		if body is SmallBody and body.orbit_state != SmallBody.OrbitState.FREE:
-			continue  # questo manca
+		if body is Ceres:  # ← skippa Ceres e futuri boss
+			continue
+		if body is SmallBody and body.orbit_state == SmallBody.OrbitState.ORBITING:
+			continue
 		var distance: float = global_position.distance_to(body.global_position)
 
 		var direction: Vector2 = (global_position - body.global_position).normalized()
@@ -227,19 +251,12 @@ func _on_attraction_area_exited(area: Area2D) -> void:
 		nearby_energy.erase(area)
 
 
-func _on_attraction_body_entered(body: Node2D) -> void:
-	if body is CelestialBody:
-		nearby_bodies.append(body)
-	if body is SmallBody and orbit_active:
-		body.start_attraction(self)
-
 
 func _on_attraction_body_exited(body: Node2D) -> void:
 	if body is CelestialBody:
 		nearby_bodies.erase(body)
-	if body is SmallBody and body.orbit_state == SmallBody.OrbitState.ATTRACTED:
-		body.leave_orbit()
-
+	if body is SmallBody and body.orbit_state != SmallBody.OrbitState.FREE:
+		body.call_deferred("leave_orbit")
 
 
 
@@ -297,6 +314,15 @@ func apply_entropy(delta: float) -> void:
 
 		# Ho aggiunto "* inertia" come ci dicevamo prima, fondamentale nello spazio!
 		apply_torque(randf_range(-1.0, 1.0) * torque_multiplier * 0.05 * inertia)
+
+
+
+func get_current_orbiting_count() -> int:
+	var count: int = 0
+	for body: CelestialBody in nearby_bodies:
+		if body is SmallBody and body.orbit_target == self and body.orbit_state != SmallBody.OrbitState.FREE:
+			count += 1
+	return count
 
 
 func _handle_collision_resistance(state: PhysicsDirectBodyState2D) -> void:
@@ -374,7 +400,6 @@ func _on_tier_changed()-> void:
 
 
 func change_size(amount: float) -> void:
-
 	change_mass(amount)
 	change_scale(amount)
 	$Attraction/CollisionShape2D.shape.radius *= amount
@@ -404,12 +429,9 @@ func change_scale(amount: float) -> void:
 		var initial_x: float = -25.0
 		mat.set("emission_shape_offset", Vector3(initial_x * amount, 0.0, 0.0))
 
-
-
 	var tween: Tween = create_tween()
 	tween.tween_property(sprite, "scale", scale_change, 1.2).set_trans(Tween.TRANS_ELASTIC).set_ease(Tween.EASE_OUT)
 	base_scale = scale_change
-
 
 
 ## Riproduce il suono di hit.

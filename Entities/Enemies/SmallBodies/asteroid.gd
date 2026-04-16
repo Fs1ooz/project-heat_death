@@ -38,8 +38,8 @@ const STAGE_CONFIG: Dictionary = {
 @onready var outgassing_component: OutgassingComponent = %OutgassingComponent
 
 
-const ASTEROID_SCENE_PATH: String = "res://Entities/Enemies/SmallBodies/Asteroid.tscn"
-const METEOROID_SCENE_PATH: String = "res://Entities/Enemies/SmallBodies/Meteoroid.tscn"
+const ASTEROID_SCENE_PATH: String = "res://Entities/Enemies/SmallBodies/asteroid.tscn"
+const METEOROID_SCENE_PATH: String = "res://Entities/Enemies/SmallBodies/meteoroid.tscn"
 
 const FRAGMENT_SPAWN_OFFSET: float = 70.0
 
@@ -65,6 +65,7 @@ func _ready() -> void:
 	kick_component.kick_rotation()
 	outgassing_component.setup(self, sprite)
 	outgassing_component.prespawn(spawn_points.size())
+
 
 func _on_entropy_changed(entropy: float) -> void:
 	if entropy < ENTROPY_THRESHOLD:
@@ -122,7 +123,6 @@ func _should_spawn_fragments(config: Dictionary) -> bool:
 func _spawn_fragments(config: Dictionary) -> void:
 	var next_stage: SizeStage = config["next_stage"]
 
-	# Scegliamo la scena corretta in base allo stadio
 	var scene_to_spawn: PackedScene = _asteroid_scene
 	if next_stage == SizeStage.METEOROID:
 		scene_to_spawn = _meteoroid_scene

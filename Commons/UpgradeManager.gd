@@ -65,6 +65,7 @@ enum UpgradeType {
 	SPEED,
 	ACCELERATION,
 	MASS,
+	MAX_ORBITS,
 	#DENSITY,
 }
 
@@ -105,7 +106,15 @@ var upgrades_data: Dictionary = {
 		"base_power": 1.0,
 		"current_power": 1.0,
 	},
+	UpgradeType.MAX_ORBITS: {
+		"name": "Max Orbits",
+		"description": "Increases the number of celestial bodies that can orbit around the player.",
+		"level": 1,
+		"base_power": 1,
+		"current_power": 1,
+	},
 #
+
 	#UpgradeType.DENSITY: {
 		#"name": "Density",
 		#"description": "Increases density.",
@@ -160,7 +169,8 @@ func apply_upgrade(upgrade_type: UpgradeType) -> bool:
 			power = upgrade_data["current_power"] + upgrade_data["level"] * 200
 		UpgradeType.MASS:
 			power = 1.35
-
+		UpgradeType.MAX_ORBITS:
+			power = upgrade_data["current_power"] + 1
 
 		#UpgradeType.DENSITY:
 			#power = upgrade_data["current_power"] + upgrade_data["level"] * 1.1
@@ -182,6 +192,8 @@ func apply_upgrade(upgrade_type: UpgradeType) -> bool:
 			player.acceleration += power
 		UpgradeType.MASS:
 			player.change_size(power)
+		UpgradeType.MAX_ORBITS:
+			player.max_orbiting_bodies = int(power)
 		#UpgradeType.DENSITY:
 			#player.change_size(-1.05)
 

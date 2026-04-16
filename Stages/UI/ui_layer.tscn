@@ -6,6 +6,7 @@
 [ext_resource type="PackedScene" uid="uid://l2m8c2o136a2" path="res://Stages/UI/life_vignette.tscn" id="1_wud8y"]
 [ext_resource type="PackedScene" uid="uid://dyd3uoe8y1asi" path="res://Stages/World/game_over_screen.tscn" id="2_bhpt4"]
 [ext_resource type="PackedScene" uid="uid://byiufddhmby2s" path="res://Stages/UI/UpgradeUI/progress_bars.tscn" id="5_l25jl"]
+[ext_resource type="PackedScene" uid="uid://d2b630rm7makv" path="res://Utils/ceres_arrow.tscn" id="7_n77kx"]
 
 [node name="UILayer" type="CanvasLayer" unique_id=1973272501]
 
@@ -15,9 +16,13 @@ focus_behavior_recursive = 1
 [node name="GameOverScreen" parent="." unique_id=1128077076 instance=ExtResource("2_bhpt4")]
 
 [node name="ProgressBars" parent="." unique_id=845535328 instance=ExtResource("5_l25jl")]
+offset_top = -44.0
+offset_bottom = -6.0
 
 [node name="LifeVignette" parent="." unique_id=1900134162 instance=ExtResource("1_wud8y")]
 
 [node name="EntropyCounter" parent="." unique_id=1222725892 instance=ExtResource("1_bhpt4")]
 
 [node name="Arrow" parent="." unique_id=328836627 instance=ExtResource("1_l25jl")]
+
+[node name="CeresArrow" parent="." unique_id=993177644 instance=ExtResource("7_n77kx")]

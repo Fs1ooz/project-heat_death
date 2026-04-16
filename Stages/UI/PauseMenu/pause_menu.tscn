@@ -42,12 +42,12 @@ theme_override_styles/panel = SubResource("StyleBoxFlat_g6y5d")
 [node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer" unique_id=1658609882]
 layout_mode = 2
 theme = ExtResource("1_g6y5d")
-theme_override_constants/separation = 15
+theme_override_constants/separation = 10
 alignment = 1
 
-[node name="Label" type="Label" parent="PanelContainer/VBoxContainer" unique_id=544008663]
+[node name="Pause" type="Label" parent="PanelContainer/VBoxContainer" unique_id=544008663]
 layout_mode = 2
-theme_override_font_sizes/font_size = 64
+theme_override_font_sizes/font_size = 56
 text = "PAUSE"
 horizontal_alignment = 1
 
@@ -64,9 +64,9 @@ theme_override_styles/panel = SubResource("StyleBoxFlat_gl7fh")
 layout_mode = 2
 theme_override_constants/separation = 0
 
-[node name="Label2" type="Label" parent="PanelContainer/VBoxContainer/MarginContainer/PanelContainer/VBoxContainer4" unique_id=1776909442]
+[node name="Volume" type="Label" parent="PanelContainer/VBoxContainer/MarginContainer/PanelContainer/VBoxContainer4" unique_id=1776909442]
 layout_mode = 2
-theme_override_font_sizes/font_size = 48
+theme_override_font_sizes/font_size = 42
 text = "Volume"
 horizontal_alignment = 1
 
@@ -76,7 +76,7 @@ theme_override_constants/separation = 2
 
 [node name="Label2" type="Label" parent="PanelContainer/VBoxContainer/MarginContainer/PanelContainer/VBoxContainer4/VBoxContainer3" unique_id=1794660204]
 layout_mode = 2
-theme_override_font_sizes/font_size = 32
+theme_override_font_sizes/font_size = 28
 text = "Master"
 horizontal_alignment = 1
 
@@ -94,7 +94,7 @@ theme_override_constants/separation = 2
 
 [node name="Label2" type="Label" parent="PanelContainer/VBoxContainer/MarginContainer/PanelContainer/VBoxContainer4/VBoxContainer2" unique_id=440931669]
 layout_mode = 2
-theme_override_font_sizes/font_size = 32
+theme_override_font_sizes/font_size = 28
 text = "Music"
 horizontal_alignment = 1
 
@@ -112,7 +112,7 @@ theme_override_constants/separation = 2
 
 [node name="Label2" type="Label" parent="PanelContainer/VBoxContainer/MarginContainer/PanelContainer/VBoxContainer4/VBoxContainer" unique_id=48309715]
 layout_mode = 2
-theme_override_font_sizes/font_size = 32
+theme_override_font_sizes/font_size = 28
 text = "Sound"
 horizontal_alignment = 1
 
@@ -124,9 +124,52 @@ value = 1.0
 tick_count = 4
 ticks_position = 3
 
+[node name="MarginContainer2" type="MarginContainer" parent="PanelContainer/VBoxContainer" unique_id=42088743]
+layout_mode = 2
+theme_override_constants/margin_left = 5
+theme_override_constants/margin_right = 5
+
+[node name="PanelContainer" type="PanelContainer" parent="PanelContainer/VBoxContainer/MarginContainer2" unique_id=777200529]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_gl7fh")
+
+[node name="VBoxContainer4" type="VBoxContainer" parent="PanelContainer/VBoxContainer/MarginContainer2/PanelContainer" unique_id=111955992]
+layout_mode = 2
+theme_override_constants/separation = 0
+
+[node name="Label2" type="Label" parent="PanelContainer/VBoxContainer/MarginContainer2/PanelContainer/VBoxContainer4" unique_id=865952785]
+layout_mode = 2
+theme_override_font_sizes/font_size = 42
+text = "Performance"
+horizontal_alignment = 1
+
+[node name="PostProcessing" type="CheckButton" parent="PanelContainer/VBoxContainer/MarginContainer2/PanelContainer/VBoxContainer4" unique_id=240350713]
+layout_mode = 2
+theme_override_font_sizes/font_size = 28
+button_pressed = true
+text = " Post-Processing "
+
+[node name="hiDPI" type="CheckButton" parent="PanelContainer/VBoxContainer/MarginContainer2/PanelContainer/VBoxContainer4" unique_id=1564077971]
+layout_mode = 2
+theme_override_font_sizes/font_size = 28
+button_pressed = true
+action_mode = 0
+text = " hiDPI"
+
+[node name="Models3D" type="CheckButton" parent="PanelContainer/VBoxContainer/MarginContainer2/PanelContainer/VBoxContainer4" unique_id=1573162752]
+layout_mode = 2
+theme_override_font_sizes/font_size = 28
+button_pressed = true
+action_mode = 0
+text = " 3d Models"
+
 [node name="Resume" type="Button" parent="PanelContainer/VBoxContainer" unique_id=1515791323]
 layout_mode = 2
 text = "Resume"
+
+[node name="Main Menu" type="Button" parent="PanelContainer/VBoxContainer" unique_id=1653147753]
+layout_mode = 2
+text = "Main Menu"
 
 [node name="Restart" type="Button" parent="PanelContainer/VBoxContainer" unique_id=362422397]
 layout_mode = 2
@@ -135,5 +178,9 @@ text = "Restart"
 [connection signal="value_changed" from="PanelContainer/VBoxContainer/MarginContainer/PanelContainer/VBoxContainer4/VBoxContainer3/Master" to="." method="_on_master_value_changed"]
 [connection signal="value_changed" from="PanelContainer/VBoxContainer/MarginContainer/PanelContainer/VBoxContainer4/VBoxContainer2/Music" to="." method="_on_music_value_changed"]
 [connection signal="value_changed" from="PanelContainer/VBoxContainer/MarginContainer/PanelContainer/VBoxContainer4/VBoxContainer/Sound" to="." method="_on_sound_value_changed"]
+[connection signal="pressed" from="PanelContainer/VBoxContainer/MarginContainer2/PanelContainer/VBoxContainer4/PostProcessing" to="." method="_on_post_processing_pressed"]
+[connection signal="pressed" from="PanelContainer/VBoxContainer/MarginContainer2/PanelContainer/VBoxContainer4/hiDPI" to="." method="_on_hi_dpi_pressed"]
+[connection signal="toggled" from="PanelContainer/VBoxContainer/MarginContainer2/PanelContainer/VBoxContainer4/Models3D" to="." method="_on_models_3d_toggled"]
 [connection signal="pressed" from="PanelContainer/VBoxContainer/Resume" to="." method="_on_close_pressed"]
+[connection signal="pressed" from="PanelContainer/VBoxContainer/Main Menu" to="." method="_on_main_menu_pressed"]
 [connection signal="pressed" from="PanelContainer/VBoxContainer/Restart" to="." method="_on_restart_pressed"]

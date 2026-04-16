@@ -7,3 +7,5 @@ extends SubViewport
 
 func _process(delta: float) -> void:
 	mesh.rotate_y(delta * rotation_speed)
+	if Engine.get_frames_drawn() % 2 == 0:
+		render_target_update_mode = SubViewport.UPDATE_ONCE

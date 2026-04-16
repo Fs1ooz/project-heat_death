@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://cx41k1qt88o8g" path="res://Stages/World/SolarSystem/solar_system.gd" id="1_56jnl"]
 [ext_resource type="PackedScene" uid="uid://bvfq3qbl7klob" path="res://Stages/World/world_environment.tscn" id="2_3u0hu"]
-[ext_resource type="PackedScene" uid="uid://1qip86sh808" path="res://Utils/im_gui.tscn" id="2_bfis2"]
+[ext_resource type="PackedScene" uid="uid://1qip86sh808" path="res://Utils/im_gui.tscn" id="2_lnrn1"]
 [ext_resource type="PackedScene" uid="uid://d2i2r2ucklcu0" path="res://Entities/Enemies/SmallBodies/Ceres/ceres.tscn" id="2_o1t32"]
 [ext_resource type="AudioStream" uid="uid://btl310t212txn" path="res://Assets/Music/BETA - Base.mp3" id="4_00fk0"]
 [ext_resource type="PackedScene" uid="uid://byiki3druigls" path="res://Stages/UI/ui_layer.tscn" id="4_l0eld"]
@@ -74,11 +74,10 @@ environment = SubResource("Environment_lnrn1")
 
 [node name="CelestialBodiesSpawner" parent="." unique_id=2073526921 instance=ExtResource("12_niy7f")]
 
-[node name="ImGui" parent="." unique_id=560633621 instance=ExtResource("2_bfis2")]
-
-[node name="PauseMenu" parent="." unique_id=700342633 instance=ExtResource("8_qs46f")]
+[node name="PauseMenu" parent="." unique_id=700342633 node_paths=PackedStringArray("world_env") instance=ExtResource("8_qs46f")]
 layer = 3
 visible = false
+world_env = NodePath("../WorldEnvironment")
 
 [node name="UILayer" parent="." unique_id=1419037089 instance=ExtResource("4_l0eld")]
 layer = 2
@@ -113,6 +112,8 @@ position = Vector2(-964, 2039)
 
 [node name="Player" parent="." unique_id=952817380 node_paths=PackedStringArray("life_bar") instance=ExtResource("7_o1t32")]
 life_bar = NodePath("../UILayer/ProgressBars/PlayerLifeBar")
+
+[node name="ImGui" parent="." unique_id=560633621 instance=ExtResource("2_lnrn1")]
 
 [editable path="UILayer"]
 [editable path="UILayer/ProgressBars"]

@@ -25,6 +25,21 @@ grow_vertical = 2
 theme = ExtResource("1_1g70f")
 script = ExtResource("2_715ji")
 
+[node name="Label" type="Label" parent="." unique_id=74208232]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -254.0
+offset_right = 254.0
+offset_bottom = 545.0
+grow_horizontal = 2
+text = "Comandi: 
+WASD/FRECCIETTE/TASTO SX (premuto) - movimento
+Q/TASTO DX - potere orbita 
+SPAZIO - spara l'entropia negativa
+"
+
 [node name="TributoGormita" type="Button" parent="." unique_id=742340853]
 layout_mode = 1
 anchors_preset = 15
@@ -81,7 +96,24 @@ scale = Vector2(0.15, 0.15)
 transform = Transform2D(0.15, 0, 0, 0.15, 0, 0)
 follow_viewport_enabled = false
 
+[node name="no3D" type="CheckBox" parent="." unique_id=91869165]
+visible = false
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -103.0
+offset_top = -141.0
+offset_right = 100.0
+offset_bottom = -91.0
+grow_horizontal = 2
+grow_vertical = 0
+text = "Disattiva 3D"
+alignment = 1
+
 [connection signal="pressed" from="TributoGormita" to="." method="_on_tributo_gormita_pressed"]
 [connection signal="pressed" from="VBoxContainer/Button" to="." method="_on_button_pressed"]
-
-[editable path="BackgroundLayer"]
+[connection signal="pressed" from="no3D" to="." method="_on_no_3d_pressed"]
+[connection signal="toggled" from="no3D" to="." method="_on_no_3d_toggled"]

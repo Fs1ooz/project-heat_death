@@ -11,6 +11,8 @@ radius = 19.924858
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_k4k26"]
 shader = ExtResource("2_dnr8b")
+shader_parameter/flash_color = Color(1, 1, 1, 1)
+shader_parameter/flash_value = 0.0
 shader_parameter/pixel_scale = 128.0
 
 [sub_resource type="Gradient" id="Gradient_dnr8b"]

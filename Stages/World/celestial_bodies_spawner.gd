@@ -101,19 +101,19 @@ const STAGE_DATA: Dictionary = {
 		"label": "Piccoli Detriti"
 	},
 	GameStage.METEROIDS_3: {
-		"weights": [30.0, 10.0, 0.0],
+		"weights": [30.0, 20.0, 0.0],
 		"label": "Fascia di Meteoroidi"
 	},
 	GameStage.ASTEROIDS_1: {
-		"weights": [10.0, 20.0, 0.1],
+		"weights": [10.0, 10.0, 0.1],
 		"label": "Primi Asteroidi"
 	},
 	GameStage.ASTEROIDS_2: {
-		"weights": [5.0, 15.0, 0.5],
+		"weights": [5.0, 5.0, 0.5],
 		"label": "Pioggia Rocciosa"
 	},
 	GameStage.ASTEROIDS_3: {
-		"weights": [0.0, 10.0, 1.0],
+		"weights": [0.0, 3.0, 1.0],
 		"label": "Pericolo Impatto"
 	}
 }

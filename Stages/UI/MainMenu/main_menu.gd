@@ -31,3 +31,7 @@ func _on_button_pressed() -> void:
 
 func _on_tributo_gormita_pressed() -> void:
 	OS.shell_open("https://youtu.be/1UasLgvrg0w?si=fMJ31DeOpD6dlUiO&t=69")
+
+
+func _on_no_3d_toggled(toggled_on: bool) -> void:
+	GlobalSignals.use_3d.emit(toggled_on)

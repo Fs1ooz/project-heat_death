@@ -17,22 +17,22 @@ script = ExtResource("1_qb0g1")
 [node name="UpgradesHBoxContainer" type="HBoxContainer" parent="." unique_id=1315539730]
 unique_name_in_owner = true
 layout_mode = 1
-anchors_preset = 8
+anchors_preset = 7
 anchor_left = 0.5
-anchor_top = 0.5
+anchor_top = 1.0
 anchor_right = 0.5
-anchor_bottom = 0.5
+anchor_bottom = 1.0
 offset_left = -177.0
-offset_top = -100.0
+offset_top = -176.0
 offset_right = 177.0
-offset_bottom = 100.0
+offset_bottom = -40.000244
 grow_horizontal = 2
-grow_vertical = 2
+grow_vertical = 0
 alignment = 1
 
 [node name="Speed" type="Button" parent="UpgradesHBoxContainer" unique_id=346856658]
 visible = false
-custom_minimum_size = Vector2(200.69, 200.69)
+custom_minimum_size = Vector2(150, 150)
 layout_mode = 2
 text = "Upgrade Speed"
 
@@ -42,7 +42,6 @@ layout_mode = 2
 text = "Upgrade Mass"
 
 [node name="ExpHboxContainer" type="HBoxContainer" parent="." unique_id=618956585]
-visible = false
 layout_mode = 1
 anchors_preset = 1
 anchor_left = 1.0
@@ -52,6 +51,7 @@ offset_bottom = 20.0
 grow_horizontal = 0
 
 [node name="EnergyLabel" type="Label" parent="ExpHboxContainer" unique_id=1122081585]
+visible = false
 layout_mode = 2
 text = "Energy:"
 

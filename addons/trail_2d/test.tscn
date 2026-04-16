@@ -1,6 +1,6 @@
-[gd_scene load_steps=8 format=3 uid="uid://brkkcdmjbkvok"]
+[gd_scene format=3 uid="uid://brkkcdmjbkvok"]
 
-[ext_resource type="Script" path="res://addons/trail_2d/trail_2d.gd" id="1_4d7r7"]
+[ext_resource type="Script" uid="uid://dbkcdpcrycl4e" path="res://addons/trail_2d/trail_2d.gd" id="1_4d7r7"]
 
 [sub_resource type="GDScript" id="GDScript_62opy"]
 resource_name = "Test scene"
@@ -48,17 +48,17 @@ shadow_size = 3
 shadow_color = Color(0, 0, 0, 0.611765)
 shadow_offset = Vector2(2, 2)
 
-[node name="Test" type="Node2D"]
+[node name="Test" type="Node2D" unique_id=1738148583]
 script = SubResource("GDScript_62opy")
 
-[node name="Marker2D" type="Marker2D" parent="."]
+[node name="Marker2D" type="Marker2D" parent="." unique_id=1895773242]
 
-[node name="Trail2D" type="Line2D" parent="Marker2D"]
+[node name="Trail2D" type="Line2D" parent="Marker2D" unique_id=700119255]
 unique_name_in_owner = true
 width_curve = SubResource("Curve_ni00x")
 script = ExtResource("1_4d7r7")
 
-[node name="Slider" type="HSlider" parent="."]
+[node name="Slider" type="HSlider" parent="." unique_id=867816913]
 unique_name_in_owner = true
 offset_left = 184.0
 offset_top = 19.0
@@ -68,7 +68,7 @@ theme = SubResource("Theme_vniel")
 min_value = 1.0
 value = 10.0
 
-[node name="LengthDisplay" type="Label" parent="Slider"]
+[node name="LengthDisplay" type="Label" parent="Slider" unique_id=1165189043]
 unique_name_in_owner = true
 layout_mode = 0
 offset_top = 19.0

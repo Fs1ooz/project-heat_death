@@ -8,6 +8,8 @@ signal death(body: CelestialBody)
 signal low_health(value: bool)
 @warning_ignore("unused_signal")
 signal windup_shake(intensity: float, time: float)
+@warning_ignore("unused_signal")
+signal use_3d(value: bool)
 
 func _input(event: InputEvent) -> void:
 	if event.is_action_pressed("fullscreen"):

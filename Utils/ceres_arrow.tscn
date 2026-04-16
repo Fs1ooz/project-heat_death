@@ -1,0 +1,25 @@
+[gd_scene format=3 uid="uid://d2b630rm7makv"]
+
+[ext_resource type="Script" uid="uid://d3q7ihhbmlyqr" path="res://Utils/ceres_arrow.gd" id="1_u8c2a"]
+[ext_resource type="Theme" uid="uid://brvjefc4224hi" path="res://Stages/UI/UpgradeUI/upgrade_ui.tres" id="2_myi2v"]
+
+[node name="CeresArrow" type="Polygon2D" unique_id=993177644]
+color = Color(0.88235295, 0, 0.10980392, 0.24705882)
+script = ExtResource("1_u8c2a")
+
+[node name="Label" type="Label" parent="." unique_id=1553138069]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -5.5
+offset_top = -7.0
+offset_right = 5.5
+offset_bottom = 7.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("2_myi2v")
+theme_override_font_sizes/font_size = 16
+horizontal_alignment = 1
+vertical_alignment = 1

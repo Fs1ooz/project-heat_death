@@ -31,7 +31,7 @@ func _ready() -> void:
 func _create_button(upgrade_type: int) -> Button:
 	var upgrade_data: Dictionary = UpgradeManager.get_upgrade_data(upgrade_type)
 	var btn: Button = Button.new()
-	btn.custom_minimum_size = Vector2(200.0, 200.0)
+	btn.custom_minimum_size = Vector2(150.0, 150.0)
 	btn.text = "%s\n lvl: %d" % [upgrade_data["name"], upgrade_data["level"]]
 	btn.set_meta("upgrade_type", upgrade_type)  # ← Salvo il tipo nel button
 	btn.pressed.connect(_on_upgrade_pressed.bind(btn))

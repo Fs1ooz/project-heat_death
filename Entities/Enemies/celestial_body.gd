@@ -83,7 +83,6 @@ func _setup_physics() -> void:
 
 
 func _setup_scale(scale_factor: float) -> void:
-
 	# IMPORTANTE: salva la scala ORIGINALE dello sprite dall'editor
 	var original_sprite_scale: Vector2 = sprite.scale
 	# Applica la nuova scala RELATIVA a quella originale
@@ -96,6 +95,9 @@ func _setup_scale(scale_factor: float) -> void:
 		if shape is CircleShape2D:
 			var original_radius: float = collision.shape.radius
 			shape.radius = original_radius * scale_factor
+		elif shape is CapsuleShape2D:
+			shape.radius = collision.shape.radius * scale_factor
+			shape.height = collision.shape.height * scale_factor
 
 		collision.shape = shape
 
@@ -145,7 +147,6 @@ func _setup_mass() -> void:
 	size_metric = max(0, size_metric - 50)
 	var raw_mass: float = size_metric * density
 	mass = max(round_base, snappedi(raw_mass, round_base))
-
 
 
 func _calculate_polygon_area(points: PackedVector2Array) -> float:
@@ -201,7 +202,6 @@ func flash(duration: float) -> void:
 	tween.tween_property(mat, "shader_parameter/flash_value", 0.0, duration * 2).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
 
 
-# Morte e esplosione
 func die() -> void:
 	await get_tree().create_timer(0.05).timeout
 	_spawn_energy_drop()

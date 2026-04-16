@@ -13,10 +13,12 @@ const ATTACKS: Array = [State.SPAWN_ENEMIES, State.GAS]
 
 @export var attack_duration: float = 10.0
 
-@export var spawn_count: int = 6
-@export var spawn_radius: float = 150_000.0
+@export var spawn_count: int = 3
+@export var spawn_radius: float = 15_000.0
 
-const ASTEROID_SCENE: PackedScene = preload("res://Entities/Enemies/SmallBodies/Asteroid.tscn")
+
+const ASTEROID_SCENE: PackedScene = preload("res://Entities/Enemies/SmallBodies/asteroid.tscn")
+
 
 var current_state: State = State.WAIT
 var state_timer: float = 0.0
@@ -31,6 +33,7 @@ func _ready() -> void:
 
 
 func _process(delta: float) -> void:
+	print(mass)
 	state_timer -= delta
 	match current_state:
 		State.WAIT:
@@ -45,7 +48,6 @@ func _process(delta: float) -> void:
 		State.SPAWN_ENEMIES:
 			if state_timer <= 0:
 				_on_attack_finished()
-
 
 
 func _change_state(new_state: State) -> void:
@@ -81,7 +83,7 @@ func _windup() -> void:
 	var tween: Tween = create_tween().set_parallel()
 	tween.tween_property($SubViewport, "rotation_speed", 100.0, windup_duration) \
 		.set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN)
-	tween.tween_property($SubViewport, "rotation_speed", 0.3, 0.25) \
+	tween.tween_property($SubViewport, "rotation_speed", 0.33, 0.25) \
 		.set_delay(windup_duration)
 	GlobalSignals.windup_shake.emit(25.0, windup_duration)
 	# Tween pulsante: oscilla flash_value in loop durante il caricamento
@@ -98,6 +100,7 @@ func _windup() -> void:
 	var snap: Tween = create_tween()
 	snap.tween_property(mat, "shader_parameter/flash_value", 0.0, 0.25)
 
+
 func _on_attack_finished() -> void:
 	_change_state(State.WAIT)
 
@@ -108,7 +111,7 @@ func _spawn_enemies() -> void:
 
 	for i: int in spawn_count:
 		var angle: float = angle_step * i + randf_range(-angle_step * 0.5, angle_step * 0.5)
-		var offset: Vector2 = sprite.scale + (Vector2(cos(angle), sin(angle)) * randf_range(spawn_radius * 0.6, spawn_radius * 1.4))
+		var offset: Vector2 = sprite.scale + (Vector2(cos(angle), sin(angle)) * randf_range(max_size * spawn_radius * 0.6, max_size * spawn_radius * 1.4))
 
 		var asteroid: Node2D = ASTEROID_SCENE.instantiate()
 		parent.add_child(asteroid)

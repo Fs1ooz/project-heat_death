@@ -8,7 +8,7 @@
 [ext_resource type="Script" uid="uid://blifotmla3xit" path="res://Commons/Components/outgassing_component.gd" id="5_403pl"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_xm1ix"]
-radius = 5000.0
+radius = 1059.0925
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_ad5k8"]
 radius = 184.0
@@ -30,13 +30,13 @@ shader_parameter/atmosphere_color = Color(0.3, 0.5, 1, 1)
 shader_parameter/atmosphere_width = 0.08
 shader_parameter/atmosphere_intensity = 0.6
 
-[sub_resource type="ViewportTexture" id="ViewportTexture_403pl"]
+[sub_resource type="ViewportTexture" id="ViewportTexture_ad5k8"]
 viewport_path = NodePath("SubViewport")
 
 [node name="Ceres" type="RigidBody2D" unique_id=933810055 node_paths=PackedStringArray("collision", "gravity_area_collision", "sprite")]
 script = ExtResource("1_403pl")
-min_size = 500.0
-max_size = 500.0
+min_size = 800.0
+max_size = 800.0
 internal_energy = 5
 game_energy = 10000
 collision = NodePath("Collision")
@@ -50,20 +50,21 @@ metadata/_custom_type_script = "uid://tvtxttl46aya"
 
 [node name="GravityAreaCollision" type="CollisionShape2D" parent="GravityArea" unique_id=759066499]
 shape = SubResource("CircleShape2D_xm1ix")
+debug_color = Color(0.59607846, 0.91764706, 1, 0.14901961)
 
 [node name="Collision" type="CollisionShape2D" parent="." unique_id=684607771]
 rotation = 1.5707964
 shape = SubResource("CapsuleShape2D_ad5k8")
+debug_color = Color(0.7058824, 0.09411765, 0.34117648, 0.88235295)
 
 [node name="Sprite" type="Sprite2D" parent="Collision" unique_id=1492625745]
 texture_filter = 1
 material = SubResource("ShaderMaterial_ad5k8")
 rotation = -1.5707964
-texture = SubResource("ViewportTexture_403pl")
+texture = SubResource("ViewportTexture_ad5k8")
 
 [node name="VisibleScreenEnablerComponent" parent="Collision/Sprite" unique_id=2049458175 instance=ExtResource("4_ad5k8")]
-position = Vector2(0, 1)
-rect = Rect2(-5040, -4844.636, 10011, 9710.546)
+rect = Rect2(-1026, -961, 2029, 1939)
 enable_node_path = NodePath("../../..")
 
 [node name="OutgassingComponent" type="Node" parent="." unique_id=128960764]
