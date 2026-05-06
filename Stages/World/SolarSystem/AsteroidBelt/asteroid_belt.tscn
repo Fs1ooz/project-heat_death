@@ -1,8 +1,8 @@
 [gd_scene format=3 uid="uid://b45rkwvpqpxtu"]
 
 [ext_resource type="Script" uid="uid://coh2apbgc0mok" path="res://Stages/World/SolarSystem/asteroid_belt.gd" id="1_o3y0t"]
-[ext_resource type="PackedScene" uid="uid://dooqkflafelol" path="res://Entities/Enemies/SmallBodies/asteroid.tscn" id="2_myita"]
-[ext_resource type="PackedScene" uid="uid://bpeudpxsbd3x2" path="res://Entities/Enemies/SmallBodies/meteoroid.tscn" id="3_jgllk"]
+[ext_resource type="PackedScene" uid="uid://dooqkflafelol" path="res://Entities/Enemies/SmallBodies/Asteroids/asteroid.tscn" id="2_myita"]
+[ext_resource type="PackedScene" uid="uid://bpeudpxsbd3x2" path="res://Entities/Enemies/SmallBodies/Meteoroids/meteoroid.tscn" id="3_jgllk"]
 
 [node name="AsteroidBelt" type="Node2D" unique_id=1563005827]
 script = ExtResource("1_o3y0t")

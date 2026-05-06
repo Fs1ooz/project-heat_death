@@ -10,6 +10,9 @@ signal low_health(value: bool)
 signal windup_shake(intensity: float, time: float)
 @warning_ignore("unused_signal")
 signal use_3d(value: bool)
+@warning_ignore("unused_signal")
+signal ceres_spawned(ceres: Node2D)
+
 
 func _input(event: InputEvent) -> void:
 	if event.is_action_pressed("fullscreen"):

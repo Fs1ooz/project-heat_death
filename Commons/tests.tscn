@@ -3,18 +3,17 @@
 [ext_resource type="Script" uid="uid://coenheqp3k73" path="res://Commons/tests.gd" id="1_gjt46"]
 [ext_resource type="PackedScene" uid="uid://470x1obeipdg" path="res://Entities/Player/player.tscn" id="2_yer1y"]
 [ext_resource type="PackedScene" uid="uid://befachtfe40l2" path="res://Stages/World/SolarSystem/AsteroidBelt/base_background_layer.tscn" id="3_gjt46"]
-[ext_resource type="PackedScene" uid="uid://d2i2r2ucklcu0" path="res://Entities/Enemies/SmallBodies/Ceres/ceres.tscn" id="3_yfsno"]
+[ext_resource type="PackedScene" uid="uid://d2i2r2ucklcu0" path="res://Entities/Enemies/SmallBodies/Ceres/ceres.tscn" id="4_gjt46"]
 
 [node name="Test" type="Node2D" unique_id=1449383081]
 script = ExtResource("1_gjt46")
-
-[node name="Ceres" parent="." unique_id=933810055 instance=ExtResource("3_yfsno")]
-attack_duration = 5.0
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=218431552]
 zoom = Vector2(0.005, 0.005)
 
 [node name="Player" parent="." unique_id=1096128152 instance=ExtResource("2_yer1y")]
-position = Vector2(-108459, 388)
+position = Vector2(-50000, 0)
 
 [node name="BaseBackgroundLayer" parent="." unique_id=501950975 instance=ExtResource("3_gjt46")]
+
+[node name="Ceres" parent="." unique_id=933810055 instance=ExtResource("4_gjt46")]

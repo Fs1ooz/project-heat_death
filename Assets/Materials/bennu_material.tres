@@ -1,0 +1,7 @@
+[gd_resource type="StandardMaterial3D" format=3 uid="uid://bnn8vd4l274ml"]
+
+[ext_resource type="Texture2D" uid="uid://bk3iq0qmi5war" path="res://Entities/Enemies/SmallBodies/Bennu/Bennu_global_FB34_FB56_ShapeV28_GndControl_MinnaertPhase30_PAN_8bit.png" id="1_lv56w"]
+
+[resource]
+albedo_texture = ExtResource("1_lv56w")
+texture_filter = 0

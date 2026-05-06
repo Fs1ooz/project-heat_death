@@ -49,6 +49,7 @@ texture = SubResource("GradientTexture2D_k4k26")
 
 [node name="CometTrail" parent="Collision/Sprite" unique_id=724905405 instance=ExtResource("4_qk7d4")]
 unique_name_in_owner = true
+amount = 500
 
 [node name="VisibleScreenEnablerComponent" parent="Collision/Sprite" unique_id=928764482 instance=ExtResource("5_i1p0e")]
 rect = Rect2(-944, -939, 1899, 1869)

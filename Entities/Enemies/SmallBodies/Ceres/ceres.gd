@@ -3,13 +3,14 @@ extends SmallBody
 
 @onready var outgassing_component: OutgassingComponent = %OutgassingComponent
 
+
 enum State { WAIT, WINDUP, SPAWN_ENEMIES, GAS}
 
 const ATTACKS: Array = [State.SPAWN_ENEMIES, State.GAS]
 
-@export var wait_duration: float = 1.5
+@export var wait_duration: float = 2.5
 @export var windup_duration: float = 1.0
-@export var max_gas: int = 10
+@export var max_gas: int = 8
 
 @export var attack_duration: float = 10.0
 
@@ -17,8 +18,7 @@ const ATTACKS: Array = [State.SPAWN_ENEMIES, State.GAS]
 @export var spawn_radius: float = 15_000.0
 
 
-const ASTEROID_SCENE: PackedScene = preload("res://Entities/Enemies/SmallBodies/asteroid.tscn")
-
+const ASTEROID_SCENE: PackedScene = preload("res://Entities/Enemies/SmallBodies/Asteroids/asteroid.tscn")
 
 var current_state: State = State.WAIT
 var state_timer: float = 0.0
@@ -27,14 +27,17 @@ var next_attack: State
 
 func _ready() -> void:
 	super()
-	_change_state(State.WAIT)
+	if not outgassing_component:
+		push_error("OutgassingComponent non trovato!")
+		return
+	sprite.play("rotation")
 	outgassing_component.setup(self, sprite)
-	outgassing_component.prespawn.call_deferred(max_gas)
+	_change_state(State.WAIT)
 
 
 func _process(delta: float) -> void:
-	print(mass)
 	state_timer -= delta
+
 	match current_state:
 		State.WAIT:
 			if state_timer <= 0:
@@ -54,37 +57,36 @@ func _change_state(new_state: State) -> void:
 	current_state = new_state
 	match new_state:
 		State.WAIT:
-			var tween: Tween = create_tween()
-			tween.tween_property($SubViewport, "rotation_speed", 0.3, 0.5).set_trans(Tween.TRANS_SPRING)
+			rotation_component.reset(0.5)
+
 			state_timer = wait_duration
 			outgassing_component.stop()
 			outgassing_component.erase_spawn_points()
 			outgassing_component.prespawn(max_gas)
+
 		State.WINDUP:
 			next_attack = ATTACKS.pick_random()
 			state_timer = windup_duration
 			_windup()
+
 		State.GAS:
 			var active_tweens: Array = get_tree().get_processed_tweens()
 			for t: Tween in active_tweens:
 				if t.is_valid():
 					t.kill()
-			state_timer = attack_duration       # <-- countdown parte qui
+			state_timer = attack_duration
+
 			outgassing_component.activate_all()
-			$SubViewport.rotation_speed = 0.01
+			rotation_component.freeze(0.2)
 			mat.set_shader_parameter("flash_value", 0.0)
+
 		State.SPAWN_ENEMIES:
-			state_timer = attack_duration       # <-- idem
+			state_timer = attack_duration
 			_spawn_enemies()
 
 
 func _windup() -> void:
-	# Tween principale: rampa sulla rotation speed + snap finale
-	var tween: Tween = create_tween().set_parallel()
-	tween.tween_property($SubViewport, "rotation_speed", 100.0, windup_duration) \
-		.set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN)
-	tween.tween_property($SubViewport, "rotation_speed", 0.33, 0.25) \
-		.set_delay(windup_duration)
+	rotation_component.windup(windup_duration)
 	GlobalSignals.windup_shake.emit(25.0, windup_duration)
 	# Tween pulsante: oscilla flash_value in loop durante il caricamento
 	var pulse: Tween = create_tween()
@@ -106,7 +108,7 @@ func _on_attack_finished() -> void:
 
 
 func _spawn_enemies() -> void:
-	var parent: Node = get_tree().current_scene
+	var parent: Node = get_parent()
 	var angle_step: float = TAU / spawn_count
 
 	for i: int in spawn_count:

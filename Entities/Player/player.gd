@@ -118,13 +118,16 @@ func _handle_movement() -> void:
 
 	if dir.length() > 0.2:
 		apply_central_force(dir.normalized() * acceleration * mass)
-		# Passiamo true perché stiamo accelerando
 		_animate_player(true)
 	else:
-		# Passiamo false perché siamo in inerzia/frenata
 		_animate_player(false)
 
 	linear_velocity = linear_velocity.limit_length(speed)
+
+	# Calcoliamo quanta percentuale della velocità massima stiamo usando (0.0 a 1.0)
+	var speed_percent: float = linear_velocity.length() / speed
+	# Aumentiamo lo spread man mano che andiamo veloci (es: da 20 gradi a 80 gradi)
+	mat.spread = lerp(10.0, 180.0, speed_percent)
 
 
 var is_stretched: bool = false
@@ -158,7 +161,6 @@ var orbit_active: bool = false
 
 func _input(event: InputEvent) -> void:
 	if event.is_action_pressed("space") and EntropyManager.entropy_value < 0:
-		# Trigger shockwave usando la posizione modificata
 		shockwave.trigger_shockwave(global_position, 3)
 		EntropyManager.change_entropy(abs(EntropyManager.entropy_value) * 2)
 		get_viewport().set_input_as_handled()
@@ -260,7 +262,6 @@ func _on_attraction_body_exited(body: Node2D) -> void:
 
 
 
-
 func _integrate_forces(state: PhysicsDirectBodyState2D) -> void:
 	_handle_collision_resistance(state)
 	_handle_rotation(state)
@@ -340,8 +341,9 @@ func _handle_collision_resistance(state: PhysicsDirectBodyState2D) -> void:
 			continue
 
 		var mass_ratio: float = mass / collider.mass
-		player_camera.apply_shake(1.0 / mass_ratio, 0.75)
-
+		var impact_intensity: float = (_last_velocity.length() / speed) * clamp(1.0 / mass_ratio, 0.5, 3.0) * 4.0
+		player_camera.apply_shake(impact_intensity, 0.85)
+		printerr(impact_intensity)
 
 		# 1. NUOVA LOGICA: Ingloba se la massa è immensamente superiore (es. 10x)
 		if mass_ratio >= 8.0:

@@ -1,9 +1,9 @@
-[gd_scene load_steps=18 format=3 uid="uid://bwqwr2e2v3rvp"]
+[gd_scene format=3 uid="uid://bwqwr2e2v3rvp"]
 
 [ext_resource type="Script" uid="uid://cyj080sf0wp5o" path="res://Stages/World/SolarSystem/AsteroidBelt/asteroid_belt_world.gd" id="1_leih4"]
 [ext_resource type="PackedScene" uid="uid://470x1obeipdg" path="res://Entities/Player/player.tscn" id="2_aw4pb"]
-[ext_resource type="PackedScene" uid="uid://dooqkflafelol" path="res://Entities/Enemies/SmallBodies/asteroid.tscn" id="2_dgf5r"]
-[ext_resource type="PackedScene" uid="uid://bpeudpxsbd3x2" path="res://Entities/Enemies/SmallBodies/meteoroid.tscn" id="3_0oqe1"]
+[ext_resource type="PackedScene" uid="uid://dooqkflafelol" path="res://Entities/Enemies/SmallBodies/Asteroids/asteroid.tscn" id="2_dgf5r"]
+[ext_resource type="PackedScene" uid="uid://bpeudpxsbd3x2" path="res://Entities/Enemies/SmallBodies/Meteoroids/meteoroid.tscn" id="3_0oqe1"]
 [ext_resource type="PackedScene" uid="uid://bosimyr8qkuso" path="res://Stages/World/energy_spawner.tscn" id="4_017r3"]
 [ext_resource type="PackedScene" uid="uid://bvfq3qbl7klob" path="res://Stages/World/world_environment.tscn" id="4_jug47"]
 [ext_resource type="PackedScene" uid="uid://bkljj71ppklsf" path="res://Stages/World/SolarSystem/AsteroidBelt/background_layer.tscn" id="4_leih4"]

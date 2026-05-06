@@ -1,0 +1,21 @@
+[gd_resource type="StandardMaterial3D" format=3 uid="uid://8gyqilai8008"]
+
+[ext_resource type="Texture2D" uid="uid://bpba0l0fjffg0" path="res://Assets/Materials/Rock Materials/Rock001_2K-JPG/Rock001_2K-JPG_Color.jpg" id="Color"]
+[ext_resource type="Texture2D" uid="uid://dexqumqi77ivh" path="res://Assets/Materials/Rock Materials/Rock001_2K-JPG/Rock001_2K-JPG_Displacement.jpg" id="Displacement"]
+[ext_resource type="Texture2D" uid="uid://nu8ytw3dd0gx" path="res://Assets/Materials/Rock Materials/Rock001_2K-JPG/Rock001_2K-JPG_NormalGL.jpg" id="NormalGL"]
+[ext_resource type="Texture2D" uid="uid://brntyep53pyod" path="res://Assets/Materials/Rock Materials/Rock001_2K-JPG/Rock001_2K-JPG_Roughness.jpg" id="Roughness"]
+
+[resource]
+albedo_color = Color(0.8828125, 0.8828125, 0.8828125, 1)
+albedo_texture = ExtResource("Color")
+metallic = 0.3
+metallic_specular = 0.52
+roughness_texture = ExtResource("Roughness")
+roughness_texture_channel = 4
+normal_enabled = true
+normal_scale = 1.25
+normal_texture = ExtResource("NormalGL")
+heightmap_enabled = true
+heightmap_texture = ExtResource("Displacement")
+uv1_triplanar = true
+uv1_triplanar_sharpness = 1.4936234

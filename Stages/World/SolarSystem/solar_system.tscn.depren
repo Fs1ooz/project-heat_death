@@ -1,0 +1,119 @@
+[gd_scene format=3 uid="uid://b82imh4wvcljk"]
+
+[ext_resource type="Script" uid="uid://cx41k1qt88o8g" path="res://Stages/World/SolarSystem/solar_system.gd" id="1_56jnl"]
+[ext_resource type="PackedScene" uid="uid://bvfq3qbl7klob" path="res://Stages/World/world_environment.tscn" id="2_3u0hu"]
+[ext_resource type="PackedScene" uid="uid://1qip86sh808" path="res://Utils/im_gui.tscn" id="2_lnrn1"]
+[ext_resource type="PackedScene" uid="uid://d2i2r2ucklcu0" path="res://Entities/Enemies/SmallBodies/Ceres/ceres.tscn" id="2_o1t32"]
+[ext_resource type="AudioStream" uid="uid://btl310t212txn" path="res://Assets/Music/BETA - Base.mp3" id="4_00fk0"]
+[ext_resource type="PackedScene" uid="uid://byiki3druigls" path="res://Stages/UI/ui_layer.tscn" id="4_l0eld"]
+[ext_resource type="AudioStream" uid="uid://cawomildbxiao" path="res://Assets/Music/BETA - Phase1.mp3" id="5_3u0hu"]
+[ext_resource type="PackedScene" uid="uid://befachtfe40l2" path="res://Stages/World/SolarSystem/AsteroidBelt/base_background_layer.tscn" id="5_qs46f"]
+[ext_resource type="PackedScene" uid="uid://bkljj71ppklsf" path="res://Stages/World/SolarSystem/AsteroidBelt/background_layer.tscn" id="6_bfis2"]
+[ext_resource type="PackedScene" uid="uid://dtfn8lijt6vxu" path="res://Stages/World/dust_layer.tscn" id="6_l0eld"]
+[ext_resource type="AudioStream" uid="uid://wvogywji06eb" path="res://Assets/Music/BETA - Phase2.mp3" id="6_niy7f"]
+[ext_resource type="Script" uid="uid://cvs60xrp5qjxm" path="res://Stages/World/music_audio_stream_player.gd" id="7_l0eld"]
+[ext_resource type="PackedScene" uid="uid://470x1obeipdg" path="res://Entities/Player/player.tscn" id="7_o1t32"]
+[ext_resource type="PackedScene" uid="uid://nvw877asubb0" path="res://Stages/UI/PauseMenu/pause_menu.tscn" id="8_qs46f"]
+[ext_resource type="PackedScene" uid="uid://bpeudpxsbd3x2" path="res://Entities/Enemies/SmallBodies/Meteoroids/meteoroid.tscn" id="12_l0eld"]
+[ext_resource type="PackedScene" uid="uid://yor1cl12dj1i" path="res://Stages/World/celestial_bodies_spawner.tscn" id="12_niy7f"]
+
+[sub_resource type="Environment" id="Environment_lnrn1"]
+background_mode = 3
+tonemap_mode = 2
+tonemap_exposure = 1.05
+tonemap_white = 5.0
+glow_enabled = true
+glow_levels/1 = 0.7
+glow_levels/2 = 0.7
+glow_levels/3 = 1.2
+glow_levels/6 = 1.0
+glow_levels/7 = 0.5
+glow_intensity = 0.5
+glow_bloom = 0.01
+glow_hdr_threshold = 0.0
+glow_hdr_scale = 4.0
+fog_light_energy = 8.4
+fog_sun_scatter = 0.6
+fog_density = 0.5975
+fog_height = 384.0
+volumetric_fog_density = 1.0
+volumetric_fog_emission_energy = 1024.0
+volumetric_fog_gi_inject = 7.8
+volumetric_fog_length = 1024.0
+volumetric_fog_ambient_inject = 13.45
+
+[sub_resource type="AudioStreamInteractive" id="AudioStreamInteractive_q7etp"]
+clip_count = 3
+clip_0/name = &"Base"
+clip_0/stream = ExtResource("4_00fk0")
+clip_0/auto_advance = 0
+clip_1/name = &"Phase 1"
+clip_1/stream = ExtResource("5_3u0hu")
+clip_1/auto_advance = 0
+clip_2/name = &"Phase 2"
+clip_2/stream = ExtResource("6_niy7f")
+clip_2/auto_advance = 0
+_transitions = {
+Vector2i(-1, -1): {
+"fade_beats": 0.5,
+"fade_mode": 3,
+"from_time": 0,
+"hold_previous": true,
+"to_time": 0
+}
+}
+
+[node name="SolarSystem" type="Node2D" unique_id=1695941383]
+script = ExtResource("1_56jnl")
+
+[node name="Ceres" parent="." unique_id=933810055 instance=ExtResource("2_o1t32")]
+position = Vector2(0, -800000)
+
+[node name="WorldEnvironment" parent="." unique_id=1475192584 instance=ExtResource("2_3u0hu")]
+environment = SubResource("Environment_lnrn1")
+
+[node name="CelestialBodiesSpawner" parent="." unique_id=2073526921 instance=ExtResource("12_niy7f")]
+
+[node name="PauseMenu" parent="." unique_id=700342633 node_paths=PackedStringArray("world_env") instance=ExtResource("8_qs46f")]
+layer = 3
+visible = false
+world_env = NodePath("../WorldEnvironment")
+
+[node name="UILayer" parent="." unique_id=1419037089 instance=ExtResource("4_l0eld")]
+layer = 2
+
+[node name="BaseBackgroundLayer" parent="." unique_id=907845646 instance=ExtResource("5_qs46f")]
+
+[node name="BackgroundLayer" parent="." unique_id=1271258351 instance=ExtResource("6_bfis2")]
+
+[node name="DustLayer" parent="." unique_id=1687043170 instance=ExtResource("6_l0eld")]
+
+[node name="DeathCamera" type="Camera2D" parent="." unique_id=709057593]
+z_index = 2
+limit_enabled = false
+
+[node name="MusicAudioStreamPlayer" type="AudioStreamPlayer" parent="." unique_id=1539569926]
+stream = SubResource("AudioStreamInteractive_q7etp")
+volume_db = -5.0
+bus = &"Music"
+script = ExtResource("7_l0eld")
+
+[node name="Meteoroid" parent="." unique_id=1089196131 instance=ExtResource("12_l0eld")]
+position = Vector2(-1778, -1631)
+
+[node name="Meteoroid2" parent="." unique_id=1926234572 instance=ExtResource("12_l0eld")]
+position = Vector2(1879, -2125)
+
+[node name="Meteoroid3" parent="." unique_id=490547837 instance=ExtResource("12_l0eld")]
+position = Vector2(3010, 1519)
+
+[node name="Meteoroid4" parent="." unique_id=2059052312 instance=ExtResource("12_l0eld")]
+position = Vector2(-964, 2039)
+
+[node name="Player" parent="." unique_id=952817380 node_paths=PackedStringArray("life_bar") instance=ExtResource("7_o1t32")]
+life_bar = NodePath("../UILayer/ProgressBars/PlayerLifeBar")
+
+[node name="ImGui" parent="." unique_id=560633621 instance=ExtResource("2_lnrn1")]
+
+[editable path="UILayer"]
+[editable path="UILayer/ProgressBars"]

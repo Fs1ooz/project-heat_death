@@ -1,0 +1,15 @@
+[gd_resource type="StandardMaterial3D" format=3 uid="uid://crpkhusvanuhs"]
+
+[ext_resource type="Texture2D" uid="uid://c1kejppi8n13b" path="res://Assets/Materials/Rock Materials/rock_surface_4k.blend/textures/rock_surface_diff_4k.jpg" id="1_m5dsi"]
+[ext_resource type="Texture2D" uid="uid://81spk453msxw" path="res://Entities/Enemies/SmallBodies/Meteoroids/rock_surface_diff_4k_normal.png" id="2_0dajc"]
+
+[resource]
+albedo_color = Color(0.41470024, 0.4797513, 0.53125, 1)
+albedo_texture = ExtResource("1_m5dsi")
+metallic = 0.37
+roughness = 0.8
+normal_enabled = true
+normal_scale = 2.0
+normal_texture = ExtResource("2_0dajc")
+uv1_triplanar = true
+uv1_triplanar_sharpness = 5.0982404

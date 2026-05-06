@@ -23,7 +23,7 @@ var bodies_in_gravity: Array[RigidBody2D] = []
 @export var collision: Node2D
 @export var gravity_area_collision: CollisionShape2D
 
-@export var sprite: Sprite2D
+@export var sprite: Node2D
 
 @export var base_noise: float = 5.0
 

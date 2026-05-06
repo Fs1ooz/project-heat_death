@@ -10,7 +10,7 @@ curve = SubResource("Curve_d4ywq")
 [sub_resource type="Gradient" id="Gradient_88gdh"]
 interpolation_mode = 1
 offsets = PackedFloat32Array(0.34948096, 0.8650519)
-colors = PackedColorArray(0.98039216, 0.98039216, 0.98039216, 1, 0.7539839, 0.75398386, 0.75398386, 1)
+colors = PackedColorArray(0.98039216, 0.98039216, 0.98039216, 1, 0.82606, 0.82606006, 0.82606, 1)
 
 [sub_resource type="GradientTexture1D" id="GradientTexture1D_jx0wn"]
 gradient = SubResource("Gradient_88gdh")
@@ -22,7 +22,7 @@ colors = PackedColorArray(1, 1, 1, 1, 0.70980394, 0.70980394, 0.70980394, 0.9411
 gradient = SubResource("Gradient_d4ywq")
 
 [sub_resource type="Curve" id="Curve_4wf4l"]
-_data = [Vector2(0, 1), 0.0, -1.0, 0, 1, Vector2(1, 0), -1.0, 0.0, 1, 0]
+_data = [Vector2(0, 1), 0.0, -0.39999998, 0, 1, Vector2(1, 0.6), -0.39999998, 0.0, 1, 0]
 point_count = 2
 metadata/_snap_enabled = true
 
@@ -30,14 +30,18 @@ metadata/_snap_enabled = true
 curve = SubResource("Curve_4wf4l")
 
 [resource]
-lifetime_randomness = 0.1
+lifetime_randomness = 0.2
 emission_shape_offset = Vector3(-20, 0, 0)
 emission_shape = 2
-emission_sphere_radius = 22.0
+emission_sphere_radius = 25.0
+inherit_velocity_ratio = 0.2
+direction = Vector3(-1, 0, 0)
+initial_velocity_min = 100.0
+initial_velocity_max = 120.0
 gravity = Vector3(0, 0, 0)
 attractor_interaction_enabled = false
-scale_min = 15.0
-scale_max = 20.0
+scale_min = 5.0
+scale_max = 8.0
 scale_curve = SubResource("CurveTexture_4wf4l")
 color_ramp = SubResource("GradientTexture1D_d4ywq")
 color_initial_ramp = SubResource("GradientTexture1D_jx0wn")

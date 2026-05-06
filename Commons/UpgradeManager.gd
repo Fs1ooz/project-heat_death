@@ -17,7 +17,7 @@ var growth_factor: float = 1.2
 signal tier_changed()
 signal energy_changed(current: float, max: float, level: int)
 
-var tiers: Array = [3, 5, 10, 20, 30, 40, 50]
+var tiers: Array = [3, 5, 10, 15, 20, 30, 40, 50]
 
 func gain_energy(value: float) -> void:
 	energy += value

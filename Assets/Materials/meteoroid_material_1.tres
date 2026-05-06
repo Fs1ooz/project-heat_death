@@ -1,0 +1,7 @@
+[gd_resource type="StandardMaterial3D" format=3 uid="uid://bc4ind8nj2axl"]
+
+[resource]
+diffuse_mode = 3
+uv1_triplanar = true
+uv1_triplanar_sharpness = 2.5119696
+texture_filter = 0

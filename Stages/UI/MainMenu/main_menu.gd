@@ -12,7 +12,7 @@ func _ready() -> void:
 
 	# Fase 1: si allontana (rimpicciolisce, ruota, deriva)
 	tween.tween_property($BackgroundLayer, "scale", Vector2(0.01, 0.01), 90)
-	tween.parallel().tween_property($BackgroundLayer, "rotation", deg_to_rad(15), 90)
+	tween.parallel().tween_property($BackgroundLayer, "rotation", deg_to_rad(180), 90)
 	tween.parallel().tween_property($BackgroundLayer, "offset", Vector2(80, 40), 90)
 
 	# Fase 2: torna vicino

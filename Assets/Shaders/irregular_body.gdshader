@@ -2,7 +2,7 @@ shader_type canvas_item;
 render_mode unshaded;
 
 // ============================================================
-//  VESTA BODY SHADER
+//  ASTEROID SHADER
 //  Da applicare allo Sprite2D che mostra il SubViewport 3D.
 //  La luce e la rotazione sono gestite dal 3D — questo shader
 //  aggiunge gli effetti 2D: flash, pixel art, palette, atmosfera.
@@ -16,7 +16,9 @@ uniform float flash_value : hint_range(0.0, 1.0, 0.01) = 0.0;
 
 // ---- Pixel art -----------------------------------------------
 // Deve corrispondere alla dimensione del SubViewport (es. 64, 128, 256)
-uniform float pixel_scale = 256.0;
+uniform bool  pixelate = true;
+uniform float pixel_scale   = 256.0;
+
 
 
 // ---- Palette -------------------------------------------------
@@ -97,7 +99,9 @@ uniform float     atmosphere_intensity : hint_range(0.0, 2.0, 0.01) = 0.6;
 
 void fragment() {
     // UV pixelate (pixel art crisp)
-    vec2 grid_uv = round(UV * pixel_scale) / pixel_scale;
+	vec2 grid_uv = pixelate
+	    ? round(UV * pixel_scale) / pixel_scale
+	    : UV;
 
     // Campiona il render 3D del SubViewport
     vec4 color = texture(TEXTURE, grid_uv);

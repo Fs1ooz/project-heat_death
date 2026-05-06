@@ -6,11 +6,11 @@ extends Node2D
 
 @export var spawn_config: Array[Dictionary] = [
 	{
-		"scene": preload("res://Entities/Enemies/SmallBodies/meteoroid.tscn"),
+		"scene": preload("res://Entities/Enemies/SmallBodies/Meteoroids/meteoroid.tscn"),
 		"radius": 500.0 # 'R' (distanza minima Poisson)
 	},
 	{
-		"scene": preload("res://Entities/Enemies/SmallBodies/asteroid.tscn"),
+		"scene": preload("res://Entities/Enemies/SmallBodies/Asteroids/asteroid.tscn"),
 		"radius": 30_000.0
 	},
 	{

@@ -16,6 +16,7 @@ corner_radius_bottom_right = 5
 corner_radius_bottom_left = 5
 
 [node name="MainMenu" type="Control" unique_id=748498538]
+process_mode = 3
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -83,13 +84,13 @@ text = "Start"
 [node name="Vesta" parent="." unique_id=919368619 instance=ExtResource("4_qsswq")]
 position = Vector2(-37, 253)
 rotation = -1.5446163
-min_size = 1.0
-max_size = 1.0
+min_size = 1.2
+max_size = 1.2
 
 [node name="Ceres" parent="." unique_id=933810055 instance=ExtResource("4_25f73")]
 position = Vector2(943, 250)
-min_size = 1.0
-max_size = 1.0
+min_size = 3.5
+max_size = 3.5
 
 [node name="BackgroundLayer" parent="." unique_id=110186335 instance=ExtResource("3_25f73")]
 scale = Vector2(0.15, 0.15)

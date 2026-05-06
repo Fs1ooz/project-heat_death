@@ -95,7 +95,7 @@ func _set_shader_fill_mode() -> void:
 # =============================================================================
 
 func _start_smooth_transition(old_fill: float, new_fill: float) -> void:
-	var use_smooth = (flow_mode == "Continuous" or fill_type == "Fade")
+	var use_smooth: bool = (flow_mode == "Continuous" or fill_type == "Fade")
 
 	if not use_smooth:
 		current_fill = new_fill
@@ -105,13 +105,13 @@ func _start_smooth_transition(old_fill: float, new_fill: float) -> void:
 	_kill_transitions()
 	is_transitioning = true
 
-	var duration = max(abs(new_fill - old_fill) / fill_speed, 0.1)
+	var duration: float = max(abs(new_fill - old_fill) / fill_speed, 0.1)
 	transition_tween = create_tween()
 
 	if fill_type == "Fade" and segment_count == 1:
 		_start_single_segment_fade(old_fill, new_fill, duration)
 	else:
-		var update_func = _update_fade_fill if fill_type == "Fade" else _update_smooth_fill
+		var update_func: Callable = _update_fade_fill if fill_type == "Fade" else _update_smooth_fill
 		transition_tween.tween_method(update_func, current_fill, new_fill, duration)
 		transition_tween.tween_callback(_on_transition_complete)
 
@@ -133,7 +133,7 @@ func _update_current_fill_only(fill_value: float) -> void:
 	current_fill = fill_value
 
 func _on_single_segment_fade_complete() -> void:
-	var final_fill = material.get_shader_parameter("single_segment_fade_to")
+	var final_fill: float = material.get_shader_parameter("single_segment_fade_to")
 	material.set_shader_parameter("fade_fill_amount", final_fill)
 	material.set_shader_parameter("pour_fill_amount", final_fill)
 	material.set_shader_parameter("single_segment_fade_progress", 0.0)
@@ -163,14 +163,14 @@ func _update_continuous_effects(fill_value: float) -> void:
 func _on_transition_complete() -> void:
 	is_transitioning = false
 	if continuous_effect_active and current_fill == target_fill:
-		var cleanup_timer = create_tween()
+		var cleanup_timer: Tween = create_tween()
 		cleanup_timer.tween_interval(0.1)
 		cleanup_timer.tween_callback(func() -> void:
 			if not is_transitioning:
 				continuous_effect_active = false)
 
 func _kill_transitions() -> void:
-	for tween in [transition_tween, single_segment_fade_tween]:
+	for tween: Tween in [transition_tween, single_segment_fade_tween]:
 		if tween: tween.kill()
 
 # =============================================================================
@@ -236,8 +236,8 @@ func is_smooth_transitioning() -> bool: return is_transitioning
 func _handle_value_change(old_value: float, new_value: float, is_decreasing: bool) -> void:
 	if old_value == new_value: return
 
-	var old_fill = old_value / max_value
-	var new_fill = new_value / max_value
+	var old_fill: float = old_value / max_value
+	var new_fill: float = new_value / max_value
 	target_fill = new_fill
 
 	_update_display_based_on_mode(old_fill, new_fill, is_decreasing)
@@ -275,8 +275,8 @@ func _handle_discrete_mode(old_fill: float, new_fill: float, is_decreasing: bool
 			_start_single_segment_effect(old_fill, new_fill)
 	else:
 		material.set_shader_parameter("fill_mode", 0)
-		var old_segments = int(old_fill * max_segments)
-		var new_segments = int(new_fill * max_segments)
+		var old_segments: int = int(old_fill * max_segments)
+		var new_segments: int = int(new_fill * max_segments)
 
 		current_segment_fill = new_segments
 		current_fill = new_fill
@@ -347,8 +347,8 @@ func _start_single_flash(old_fill: float, new_fill: float) -> void:
 	_create_flash_tween("single_segment_flash_intensity")
 
 func _start_multi_flash(old_fill: float, new_fill: float, is_continuous: bool) -> void:
-	var current_segments = int(new_fill * float(segment_count))
-	var start_segments = int((continuous_effect_start_fill if is_continuous else old_fill) * float(segment_count))
+	var current_segments: int = int(new_fill * float(segment_count))
+	var start_segments: int = int((continuous_effect_start_fill if is_continuous else old_fill) * float(segment_count))
 
 	if start_segments > current_segments:
 		_start_multi_segment_flash(current_segments, start_segments)
@@ -436,8 +436,8 @@ func _update_ongoing_effect(new_fill: float) -> void:
 		material.set_shader_parameter("drain_current_fill", new_fill)
 	else:
 		if segment_count > 1:
-			var current_segments = int(new_fill * float(segment_count))
-			var previous_segments = int(current_fill * float(segment_count))
+			var current_segments: int = int(new_fill * float(segment_count))
+			var previous_segments: int = int(current_fill * float(segment_count))
 			if current_segments != previous_segments:
 				_start_segment_flash(current_segments)
 
@@ -446,8 +446,8 @@ func _update_fade_ongoing_effect(old_fill: float, new_fill: float) -> void:
 		material.set_shader_parameter("drain_current_fill", new_fill)
 	else:
 		if segment_count > 1:
-			var current_segments = int(new_fill * float(segment_count))
-			var previous_segments = int(old_fill * float(segment_count))
+			var current_segments: int = int(new_fill * float(segment_count))
+			var previous_segments: int = int(old_fill * float(segment_count))
 			if current_segments != previous_segments:
 				_start_segment_flash(current_segments)
 

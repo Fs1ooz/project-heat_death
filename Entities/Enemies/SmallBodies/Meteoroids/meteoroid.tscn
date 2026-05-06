@@ -1,0 +1,134 @@
+[gd_scene format=3 uid="uid://bpeudpxsbd3x2"]
+
+[ext_resource type="Script" uid="uid://bdmvnvgdm1aav" path="res://Entities/Enemies/SmallBodies/Meteoroids/meteoroid.gd" id="1_otcpb"]
+[ext_resource type="PackedScene" uid="uid://bgievdkpstd3t" path="res://Entities/Enemies/visible_screen_enabler_component.tscn" id="2_pnclo"]
+[ext_resource type="Script" uid="uid://bco42jgxrsxq3" path="res://Assets/Resources/texture_with_polygon.gd" id="2_w1qyh"]
+[ext_resource type="Shader" uid="uid://bj6kjixcams5n" path="res://Entities/celestialbodies.gdshader" id="2_xu417"]
+[ext_resource type="SpriteFrames" uid="uid://bhww7ox60h3qk" path="res://Entities/Enemies/SmallBodies/Meteoroids/meteoroid_2.tres" id="3_iowbo"]
+[ext_resource type="SpriteFrames" uid="uid://y8667oosjikf" path="res://Entities/Enemies/SmallBodies/Meteoroids/meteoroid_1.tres" id="3_qufua"]
+[ext_resource type="SpriteFrames" uid="uid://dwgkwo1p406yh" path="res://Entities/Enemies/SmallBodies/Meteoroids/meteoroid_3.tres" id="5_cy2pc"]
+[ext_resource type="Script" uid="uid://b5dsgsl5q46xm" path="res://Commons/Components/kick_component.gd" id="5_xu417"]
+[ext_resource type="Script" uid="uid://crqwool6072av" path="res://Commons/Components/rotation_component.gd" id="6_qufua"]
+
+[sub_resource type="Resource" id="Resource_crilg"]
+script = ExtResource("2_w1qyh")
+sprite_frames = ExtResource("3_qufua")
+metadata/_custom_type_script = "uid://bco42jgxrsxq3"
+
+[sub_resource type="Resource" id="Resource_y2ch6"]
+script = ExtResource("2_w1qyh")
+sprite_frames = ExtResource("3_iowbo")
+metadata/_custom_type_script = "uid://bco42jgxrsxq3"
+
+[sub_resource type="Resource" id="Resource_1kvyk"]
+script = ExtResource("2_w1qyh")
+sprite_frames = ExtResource("5_cy2pc")
+metadata/_custom_type_script = "uid://bco42jgxrsxq3"
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_6m435"]
+radius = 968.0005
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_lyb38"]
+radius = 53.037724
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_qufua"]
+resource_local_to_scene = true
+shader = ExtResource("2_xu417")
+shader_parameter/flash_color = Color(1, 1, 1, 1)
+shader_parameter/flash_value = 0.0
+
+[sub_resource type="Curve" id="Curve_d4ywq"]
+_data = [Vector2(0, 0.5), 0.0, -0.13285534, 0, 0, Vector2(1, 0), -1.0819256, 0.0, 0, 0]
+point_count = 2
+metadata/_snap_enabled = true
+
+[sub_resource type="CurveTexture" id="CurveTexture_88gdh"]
+curve = SubResource("Curve_d4ywq")
+
+[sub_resource type="Gradient" id="Gradient_d4ywq"]
+colors = PackedColorArray(0.4, 0.4, 0.4, 1, 0.25, 0.25, 0.25, 0.9411765)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_88gdh"]
+gradient = SubResource("Gradient_d4ywq")
+
+[sub_resource type="Curve" id="Curve_88gdh"]
+_data = [Vector2(0, 1), 0.0, -0.58042216, 0, 0, Vector2(1, 0.022471905), 0.0, 1.4, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_jx0wn"]
+curve = SubResource("Curve_88gdh")
+
+[sub_resource type="Curve" id="Curve_4wf4l"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(0.99999, 0), 0.0, 0.0, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
+point_count = 3
+metadata/_snap_enabled = true
+
+[sub_resource type="CurveTexture" id="CurveTexture_4wf4l"]
+curve = SubResource("Curve_4wf4l")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_pnclo"]
+emission_shape_offset = Vector3(-15, 0, 0)
+emission_shape = 2
+emission_sphere_radius = 20.0
+gravity = Vector3(0, 0, 0)
+attractor_interaction_enabled = false
+scale_min = 12.0
+scale_max = 15.0
+scale_curve = SubResource("CurveTexture_4wf4l")
+color_ramp = SubResource("GradientTexture1D_88gdh")
+alpha_curve = SubResource("CurveTexture_88gdh")
+emission_curve = SubResource("CurveTexture_jx0wn")
+
+[node name="Meteoroid" type="RigidBody2D" unique_id=1905325980 node_paths=PackedStringArray("collision", "gravity_area_collision", "sprite") groups=["celestialbodies"]]
+script = ExtResource("1_otcpb")
+elenco_texture = Array[ExtResource("2_w1qyh")]([SubResource("Resource_crilg"), SubResource("Resource_y2ch6"), SubResource("Resource_1kvyk")])
+collision = NodePath("Collision")
+gravity_area_collision = NodePath("Gravity/GravityAreaCollision")
+sprite = NodePath("Collision/Sprite")
+metadata/_custom_type_script = "uid://be8uvibib1twp"
+
+[node name="Gravity" type="Area2D" parent="." unique_id=4395370]
+collision_layer = 0
+
+[node name="GravityAreaCollision" type="CollisionShape2D" parent="Gravity" unique_id=403031620]
+shape = SubResource("CircleShape2D_6m435")
+debug_color = Color(0.047058824, 0.047058824, 0.047058824, 0.078431375)
+
+[node name="Collision" type="CollisionShape2D" parent="." unique_id=360425180]
+shape = SubResource("CircleShape2D_lyb38")
+
+[node name="Sprite" type="AnimatedSprite2D" parent="Collision" unique_id=529313692]
+texture_filter = 2
+material = SubResource("ShaderMaterial_qufua")
+scale = Vector2(2, 2)
+sprite_frames = ExtResource("3_qufua")
+animation = &"rotation"
+
+[node name="VisibleScreenEnablerComponent" parent="Collision/Sprite" unique_id=1920965672 instance=ExtResource("2_pnclo")]
+position = Vector2(25, -9)
+rect = Rect2(-993.5, -959, 1935, 1935)
+enable_node_path = NodePath("../../..")
+
+[node name="Trail" type="GPUParticles2D" parent="." unique_id=1372681417]
+z_index = -1
+amount = 50
+lifetime = 2.0
+randomness = 0.2
+process_material = SubResource("ParticleProcessMaterial_pnclo")
+
+[node name="KickComponent" type="Node" parent="." unique_id=1366482448 node_paths=PackedStringArray("body")]
+unique_name_in_owner = true
+script = ExtResource("5_xu417")
+body = NodePath("..")
+min_speed = 5.0
+max_speed = 40.0
+metadata/_custom_type_script = "uid://b5dsgsl5q46xm"
+
+[node name="RotationComponent" type="Node" parent="." unique_id=1886340711]
+unique_name_in_owner = true
+script = ExtResource("6_qufua")
+metadata/_custom_type_script = "uid://crqwool6072av"
+
+[connection signal="body_entered" from="." to="." method="_on_body_entered"]
+[connection signal="body_entered" from="Gravity" to="." method="_on_gravity_body_entered"]
+[connection signal="body_exited" from="Gravity" to="." method="_on_gravity_body_exited"]

@@ -1,0 +1,169 @@
+[gd_scene format=3 uid="uid://dooqkflafelol"]
+
+[ext_resource type="Script" uid="uid://b76ax10rq762s" path="res://Entities/Enemies/SmallBodies/Asteroids/asteroid.gd" id="1_16cqs"]
+[ext_resource type="Resource" uid="uid://b44x22edf12i3" path="res://Entities/Enemies/SmallBodies/Asteroids/asteroid_2_polygons.tres" id="2_13xgk"]
+[ext_resource type="Script" uid="uid://bco42jgxrsxq3" path="res://Assets/Resources/texture_with_polygon.gd" id="2_vet0b"]
+[ext_resource type="SpriteFrames" uid="uid://cqjj4pfpie1vo" path="res://Entities/Enemies/SmallBodies/Asteroids/asteroid_1.tres" id="2_w7la8"]
+[ext_resource type="Script" uid="uid://b5dsgsl5q46xm" path="res://Commons/Components/kick_component.gd" id="3_13xgk"]
+[ext_resource type="Resource" uid="uid://dgk1h5besomxr" path="res://Entities/Enemies/SmallBodies/Asteroids/asteroid_1_polygons.tres" id="3_gtkhq"]
+[ext_resource type="Shader" uid="uid://bj6kjixcams5n" path="res://Entities/celestialbodies.gdshader" id="4_7vqsk"]
+[ext_resource type="SpriteFrames" uid="uid://5k7yeptk216p" path="res://Entities/Enemies/SmallBodies/Asteroids/asteroid_1_alt.tres" id="4_13xgk"]
+[ext_resource type="PackedScene" uid="uid://bgievdkpstd3t" path="res://Entities/Enemies/visible_screen_enabler_component.tscn" id="6_gtkhq"]
+[ext_resource type="Script" uid="uid://blifotmla3xit" path="res://Commons/Components/outgassing_component.gd" id="7_5lvsl"]
+[ext_resource type="SpriteFrames" uid="uid://1pbn6dp4qefp" path="res://Entities/Enemies/SmallBodies/Asteroids/asteroid_2.tres" id="7_7vqsk"]
+[ext_resource type="Resource" uid="uid://ceno62i0ce78k" path="res://Entities/Enemies/SmallBodies/Asteroids/asteroid_3_polygons.tres" id="8_5lvsl"]
+[ext_resource type="PackedScene" uid="uid://uf4irjwjm6pd" path="res://Entities/Enemies/SmallBodies/geyser_gas.tscn" id="8_o0aku"]
+[ext_resource type="SpriteFrames" uid="uid://dfg6y0ephd53a" path="res://Entities/Enemies/SmallBodies/Asteroids/asteroid_3.tres" id="9_o0aku"]
+[ext_resource type="Script" uid="uid://crqwool6072av" path="res://Commons/Components/rotation_component.gd" id="9_uy6ij"]
+[ext_resource type="SpriteFrames" uid="uid://enk0tr5lfq05" path="res://Entities/Enemies/SmallBodies/Asteroids/asteroid_3_alt.tres" id="10_5lvsl"]
+
+[sub_resource type="Resource" id="Resource_5lvsl"]
+script = ExtResource("2_vet0b")
+sprite_frames = ExtResource("2_w7la8")
+polygon_data = ExtResource("3_gtkhq")
+metadata/_custom_type_script = "uid://bco42jgxrsxq3"
+
+[sub_resource type="Resource" id="Resource_o0aku"]
+script = ExtResource("2_vet0b")
+sprite_frames = ExtResource("4_13xgk")
+polygon_data = ExtResource("3_gtkhq")
+metadata/_custom_type_script = "uid://bco42jgxrsxq3"
+
+[sub_resource type="Resource" id="Resource_uy6ij"]
+script = ExtResource("2_vet0b")
+sprite_frames = ExtResource("7_7vqsk")
+polygon_data = ExtResource("2_13xgk")
+metadata/_custom_type_script = "uid://bco42jgxrsxq3"
+
+[sub_resource type="Resource" id="Resource_obgk1"]
+script = ExtResource("2_vet0b")
+sprite_frames = ExtResource("9_o0aku")
+polygon_data = ExtResource("8_5lvsl")
+metadata/_custom_type_script = "uid://bco42jgxrsxq3"
+
+[sub_resource type="Resource" id="Resource_fu0r2"]
+script = ExtResource("2_vet0b")
+sprite_frames = ExtResource("10_5lvsl")
+polygon_data = ExtResource("8_5lvsl")
+metadata/_custom_type_script = "uid://bco42jgxrsxq3"
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_vwlwn"]
+radius = 551.1098
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_1hqyt"]
+resource_local_to_scene = true
+shader = ExtResource("4_7vqsk")
+shader_parameter/flash_color = Color(1, 1, 1, 1)
+shader_parameter/flash_value = 0.13333338
+
+[sub_resource type="Curve" id="Curve_aw0bt"]
+_data = [Vector2(0, 0.8), 0.0, -0.13285534, 0, 0, Vector2(1, 0), -1.0819256, 0.0, 0, 0]
+point_count = 2
+metadata/_snap_enabled = true
+
+[sub_resource type="CurveTexture" id="CurveTexture_88gdh"]
+curve = SubResource("Curve_aw0bt")
+
+[sub_resource type="Gradient" id="Gradient_w63yn"]
+colors = PackedColorArray(0.49019608, 0.49019608, 0.49019608, 1, 0.3137255, 0.3137255, 0.3137255, 0.9411765)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_88gdh"]
+gradient = SubResource("Gradient_w63yn")
+
+[sub_resource type="Curve" id="Curve_wndlk"]
+_data = [Vector2(0, 1), 0.0, -0.58042216, 0, 0, Vector2(1, 0.022471905), 0.0, 1.4, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_jx0wn"]
+curve = SubResource("Curve_wndlk")
+
+[sub_resource type="Curve" id="Curve_xamy3"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(0.99999, 0), 0.0, 0.0, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
+point_count = 3
+metadata/_snap_enabled = true
+
+[sub_resource type="CurveTexture" id="CurveTexture_4wf4l"]
+curve = SubResource("Curve_xamy3")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_mveyi"]
+emission_shape_offset = Vector3(-15, 0, 0)
+emission_shape = 2
+emission_sphere_radius = 20.0
+gravity = Vector3(0, 0, 0)
+attractor_interaction_enabled = false
+scale_min = 28.0
+scale_max = 30.0
+scale_curve = SubResource("CurveTexture_4wf4l")
+color_ramp = SubResource("GradientTexture1D_88gdh")
+alpha_curve = SubResource("CurveTexture_88gdh")
+emission_curve = SubResource("CurveTexture_jx0wn")
+
+[node name="Asteroid" type="RigidBody2D" unique_id=1561733638 node_paths=PackedStringArray("collision", "gravity_area_collision", "sprite") groups=["celestialbodies"]]
+z_index = 1
+continuous_cd = 2
+contact_monitor = true
+max_contacts_reported = 4
+script = ExtResource("1_16cqs")
+current_stage = null
+randomize_stage = null
+min_size = null
+max_size = null
+elenco_texture = Array[ExtResource("2_vet0b")]([SubResource("Resource_5lvsl"), SubResource("Resource_o0aku"), SubResource("Resource_uy6ij"), SubResource("Resource_obgk1"), SubResource("Resource_fu0r2")])
+internal_energy = null
+game_energy = 250
+round_base = null
+collision = NodePath("Collision")
+gravity_area_collision = NodePath("Gravity/GravityAreaCollision")
+sprite = NodePath("Collision/Sprite")
+base_noise = null
+layers_2d_physics = null
+masks_2d_physics = null
+
+[node name="Gravity" type="Area2D" parent="." unique_id=1329953899]
+
+[node name="GravityAreaCollision" type="CollisionShape2D" parent="Gravity" unique_id=1242594090]
+shape = SubResource("CircleShape2D_vwlwn")
+debug_color = Color(0.08855995, 0.0885599, 0.08855987, 0.078431375)
+
+[node name="Collision" type="CollisionPolygon2D" parent="." unique_id=747712959]
+
+[node name="Sprite" type="AnimatedSprite2D" parent="Collision" unique_id=1890033603]
+material = SubResource("ShaderMaterial_1hqyt")
+sprite_frames = ExtResource("10_5lvsl")
+animation = &"rotation"
+
+[node name="VisibleScreenEnablerComponent" parent="Collision/Sprite" unique_id=1944736001 instance=ExtResource("6_gtkhq")]
+position = Vector2(13, -11)
+scale = Vector2(0.39999995, 0.39999995)
+rect = Rect2(-1394.5002, -1434.0002, 2760.0005, 2847.5005)
+enable_node_path = NodePath("../../..")
+
+[node name="OutgassingComponent" type="Node" parent="." unique_id=206739514]
+unique_name_in_owner = true
+script = ExtResource("7_5lvsl")
+activate_impulse = true
+gas_scenes = Array[PackedScene]([ExtResource("8_o0aku")])
+metadata/_custom_type_script = "uid://blifotmla3xit"
+
+[node name="RotationComponent" type="Node" parent="." unique_id=1143156245]
+unique_name_in_owner = true
+script = ExtResource("9_uy6ij")
+metadata/_custom_type_script = "uid://crqwool6072av"
+
+[node name="KickComponent" type="Node" parent="." unique_id=429744060 node_paths=PackedStringArray("body")]
+unique_name_in_owner = true
+script = ExtResource("3_13xgk")
+body = NodePath("..")
+metadata/_custom_type_script = "uid://b5dsgsl5q46xm"
+
+[node name="Trail" type="GPUParticles2D" parent="." unique_id=256127035]
+z_index = -1
+amount = 50
+lifetime = 2.0
+randomness = 0.2
+process_material = SubResource("ParticleProcessMaterial_mveyi")
+
+[connection signal="body_entered" from="." to="." method="_on_body_entered"]
+[connection signal="body_entered" from="Gravity" to="." method="_on_gravity_body_entered"]
+[connection signal="body_exited" from="Gravity" to="." method="_on_gravity_body_exited"]
+[connection signal="frame_changed" from="Collision/Sprite" to="." method="_on_frame_changed"]

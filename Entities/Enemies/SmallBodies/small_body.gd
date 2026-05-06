@@ -2,7 +2,12 @@ class_name SmallBody
 extends CelestialBody
 
 @export var min_size: float = 1.0
-@export var max_size: float = 2.7
+@export var max_size: float = 3.0
+
+@onready var rotation_component: RotationComponent = get_node_or_null("%RotationComponent")
+
+@export var elenco_texture: Array[TextureWithPolygon]
+var polygon_data: FramePolygonData
 
 
 enum OrbitState { FREE, ATTRACTED, ORBITING }
@@ -17,7 +22,28 @@ func _ready() -> void:
 	freeze_mode = RigidBody2D.FREEZE_MODE_KINEMATIC
 	_setup_random_scale()
 	GlobalSignals.use_3d.connect(toggle_3d)
+
 	super()
+	if not rotation_component:
+		return
+
+	rotation_component.setup(sprite)
+
+	if elenco_texture.size() > 0:
+		var chosen: TextureWithPolygon = elenco_texture.pick_random()
+		sprite.sprite_frames = chosen.sprite_frames
+		if chosen.polygon_data:
+			polygon_data = chosen.polygon_data
+			_setup_mass()
+			_setup_health()
+	else:
+
+		push_warning("Ehi, ti sei dimenticato di caricare le texture nell'Inspector!")
+
+	sprite.play("rotation")
+	var rotation_speed: float = randf_range(0.75, 1.0)
+	rotation_component.base_speed = rotation_speed
+	rotation_component.speed = rotation_speed
 
 
 func toggle_3d(toggled: bool) -> void:
@@ -38,6 +64,7 @@ func _setup_random_scale() -> void:
 
 
 func _physics_process(delta: float) -> void:
+	print(mass)
 	match orbit_state:
 		OrbitState.ATTRACTED:
 			_attract_to_player(delta)
