@@ -1,6 +1,6 @@
 extends Control
 
-
+# sono stato qui
 const SOLAR_SYSTEM: String = "res://Stages/World/SolarSystem/solar_system.tscn"
 
 
