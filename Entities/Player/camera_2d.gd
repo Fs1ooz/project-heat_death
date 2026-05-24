@@ -122,6 +122,7 @@ func _update_target() -> void:
 
 	if not is_boss_cam and _is_ceres_on_screen(1.0):
 		is_boss_cam = true
+		manual_zoom = false
 		target = ceres
 	elif is_boss_cam and not _is_ceres_on_screen(1.4):
 		is_boss_cam = false
@@ -181,6 +182,8 @@ func apply_shake(intensity: float, time: float) -> void:
 
 
 func _unhandled_input(event: InputEvent) -> void:
+	if is_boss_cam:
+		return
 	if event is InputEventMouseButton:
 		if event.button_index == MOUSE_BUTTON_WHEEL_DOWN:
 			manual_zoom = true
