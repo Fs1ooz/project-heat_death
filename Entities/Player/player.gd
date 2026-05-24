@@ -51,6 +51,8 @@ var initial_mass: float
 var old_mass: float = 1.0
 var mass_percentage: float = 1.0
 
+var emission_offset_dist: float = 20.0
+
 @onready var initial_particle_scale: Vector2
 @onready var mat: ParticleProcessMaterial = trail.process_material.duplicate()
 
@@ -124,10 +126,19 @@ func _handle_movement() -> void:
 
 	linear_velocity = linear_velocity.limit_length(speed)
 
-	# Calcoliamo quanta percentuale della velocità massima stiamo usando (0.0 a 1.0)
 	var speed_percent: float = linear_velocity.length() / speed
-	# Aumentiamo lo spread man mano che andiamo veloci (es: da 20 gradi a 80 gradi)
-	mat.spread = lerp(10.0, 180.0, speed_percent)
+
+	trail.emitting = speed_percent > 0.05
+
+	if speed_percent > 0.05:
+		mat.spread = lerp(5.0, 35.0, speed_percent)
+		var vel_local: Vector2 = linear_velocity.rotated(-rotation).normalized()
+		mat.direction = Vector3(-vel_local.x, -vel_local.y, 0.0)
+		mat.set("emission_shape_offset", Vector3(
+			-vel_local.x * emission_offset_dist,
+			-vel_local.y * emission_offset_dist,
+			0.0
+		))
 
 
 var is_stretched: bool = false
@@ -428,9 +439,7 @@ func change_scale(amount: float) -> void:
 	mat.scale_min = initial_particle_scale.x * total_scale_factor
 	mat.scale_max = initial_particle_scale.y * total_scale_factor
 
-	if mat:
-		var initial_x: float = -25.0
-		mat.set("emission_shape_offset", Vector3(initial_x * amount, 0.0, 0.0))
+	emission_offset_dist = 20.0 * total_scale_factor
 
 	var tween: Tween = create_tween()
 	tween.tween_property(sprite, "scale", scale_change, 1.2).set_trans(Tween.TRANS_ELASTIC).set_ease(Tween.EASE_OUT)
