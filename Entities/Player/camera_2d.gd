@@ -113,13 +113,33 @@ func _process(delta: float) -> void:
 func _update_target() -> void:
 	var ceres_alive: bool = ceres != null and is_instance_valid(ceres)
 
-	if ceres_alive and not is_boss_cam:
+	if not ceres_alive:
+		if is_boss_cam:
+			is_boss_cam = false
+			target = player
+			base_offset = Vector2.ZERO
+		return
+
+	if not is_boss_cam and _is_ceres_on_screen(1.0):
 		is_boss_cam = true
 		target = ceres
-	elif not ceres_alive and is_boss_cam:
+	elif is_boss_cam and not _is_ceres_on_screen(1.4):
 		is_boss_cam = false
 		target = player
 		base_offset = Vector2.ZERO
+
+
+func _is_ceres_on_screen(margin: float) -> bool:
+	var screen: Vector2 = get_viewport_rect().size
+	var half_w: float = screen.x * 0.5 / zoom.x * margin
+	var half_h: float = screen.y * 0.5 / zoom.y * margin
+	var vis: Rect2 = Rect2(
+		global_position.x - half_w,
+		global_position.y - half_h,
+		half_w * 2.0,
+		half_h * 2.0
+	)
+	return vis.has_point(ceres.global_position)
 
 
 func _process_player_cam(delta: float) -> void:
