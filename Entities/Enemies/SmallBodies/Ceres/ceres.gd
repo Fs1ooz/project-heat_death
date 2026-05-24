@@ -23,6 +23,7 @@ const ASTEROID_SCENE: PackedScene = preload("res://Entities/Enemies/SmallBodies/
 var current_state: State = State.WAIT
 var state_timer: float = 0.0
 var next_attack: State
+var _spawned_enemies: Array[Node2D] = []
 
 
 func _ready() -> void:
@@ -57,6 +58,10 @@ func _change_state(new_state: State) -> void:
 	current_state = new_state
 	match new_state:
 		State.WAIT:
+			for e: Node2D in _spawned_enemies:
+				if is_instance_valid(e):
+					e.queue_free()
+			_spawned_enemies.clear()
 			rotation_component.reset(0.5)
 
 			state_timer = wait_duration
@@ -117,4 +122,5 @@ func _spawn_enemies() -> void:
 
 		var asteroid: Node2D = ASTEROID_SCENE.instantiate()
 		parent.add_child(asteroid)
+		_spawned_enemies.append(asteroid)
 		asteroid.global_position = global_position + offset
