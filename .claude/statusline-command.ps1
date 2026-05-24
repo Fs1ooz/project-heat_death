@@ -16,7 +16,15 @@ $GRAY   = "`e[38;5;240m"
 $SEP   = " $GRAY|$RESET "
 $parts = [System.Collections.Generic.List[string]]::new()
 
-# Context usage bar (first)
+# Rate limit 5-hour (first)
+$five_hr = $input_data.rate_limits.five_hour.used_percentage
+if ($null -ne $five_hr) {
+    $five_int = [math]::Round($five_hr)
+    $rl_color = if ($five_int -ge 80) { $RED } elseif ($five_int -ge 50) { $ORANGE } else { $GREEN }
+    $parts.Add("${rl_color}5h:$five_int%$RESET")
+}
+
+# Context usage bar
 $used_pct = $input_data.context_window.used_percentage
 if ($null -ne $used_pct) {
     $used_int   = [math]::Round($used_pct)
@@ -101,14 +109,6 @@ if ($null -ne $total_in -or $null -ne $total_out) {
     $in_fmt  = & $fmt (if ($null -ne $total_in)  { $total_in }  else { 0 })
     $out_fmt = & $fmt (if ($null -ne $total_out) { $total_out } else { 0 })
     $parts.Add("${GRAY}tok in:${WHITE}$in_fmt${GRAY} out:${WHITE}$out_fmt$RESET")
-}
-
-# Rate limit 5-hour
-$five_hr = $input_data.rate_limits.five_hour.used_percentage
-if ($null -ne $five_hr) {
-    $five_int = [math]::Round($five_hr)
-    $rl_color = if ($five_int -ge 80) { $RED } elseif ($five_int -ge 50) { $ORANGE } else { $GREEN }
-    $parts.Add("${rl_color}5h:$five_int%$RESET")
 }
 
 # Vim mode
