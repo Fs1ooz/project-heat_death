@@ -12,8 +12,7 @@ extends Camera2D
 @export var zoom_value_multiplier: float = 0.6
 
 @export_group("Boss Cam")
-@export var boss_focus_radius: float = 1200.0   # Distanza entro cui la cam va su Ceres
-@export var boss_zoom_value: float = 0.12        # Zoom out durante boss
+@export var boss_zoom_value: float = 0.12        # Zoom minimo durante boss (massimo zoom out)
 @export var cam_lerp_speed: float = 3.0
 
 var manual_zoom: bool = false
@@ -45,7 +44,7 @@ var shake_offset: Vector2 = Vector2.ZERO
 
 func _ready() -> void:
 	GlobalSignals.windup_shake.connect(apply_shake)
-	GlobalSignals.ceres_spawned.connect(_on_ceres_spawned)  # Ceres emette questo quando entra in scena
+	GlobalSignals.ceres_spawned.connect(_on_ceres_spawned)
 	UpgradeManager.tier_changed.connect(_on_tier_changed)
 	randomize()
 	noise.seed = randi()
@@ -54,6 +53,15 @@ func _ready() -> void:
 	global_position = player.global_position
 	make_current()
 	_on_tier_changed()
+	# Cerca Ceres già presente in scena dopo che tutti i _ready() sono completati
+	call_deferred("_find_ceres")
+
+
+func _find_ceres() -> void:
+	for body: Node in get_tree().get_nodes_in_group("celestialbodies"):
+		if body is Ceres:
+			ceres = body
+			return
 
 
 func _on_ceres_spawned(ceres_node: Node2D) -> void:
@@ -103,21 +111,15 @@ func _process(delta: float) -> void:
 
 
 func _update_target() -> void:
-	if ceres == null or not is_instance_valid(ceres):
-		# Ceres non esiste: sempre sul player
-		if is_boss_cam:
-			is_boss_cam = false
-			target = player
-		return
+	var ceres_alive: bool = ceres != null and is_instance_valid(ceres)
 
-	var dist: float = player.global_position.distance_to(ceres.global_position)
-
-	if not is_boss_cam and dist < boss_focus_radius:
+	if ceres_alive and not is_boss_cam:
 		is_boss_cam = true
 		target = ceres
-	elif is_boss_cam and dist > boss_focus_radius * 1.2:  # Isteresi: torna indietro solo un po' dopo
+	elif not ceres_alive and is_boss_cam:
 		is_boss_cam = false
 		target = player
+		base_offset = Vector2.ZERO
 
 
 func _process_player_cam(delta: float) -> void:
@@ -138,9 +140,19 @@ func _process_player_cam(delta: float) -> void:
 
 
 func _process_boss_cam(delta: float) -> void:
-	base_offset = base_offset.lerp(Vector2.ZERO, 0.05)
+	if ceres == null or not is_instance_valid(ceres):
+		return
+	# Midpoint camera: mostra sia player che Ceres nel frame
+	var mid: Vector2 = (player.global_position + ceres.global_position) * 0.5
+	base_offset = base_offset.lerp(mid - ceres.global_position, cam_lerp_speed * delta)
+
 	if not manual_zoom:
-		zoom = zoom.lerp(Vector2.ONE * boss_zoom_value, zoom_lerp_speed * delta)
+		var dist: float = player.global_position.distance_to(ceres.global_position)
+		var vp: Vector2 = get_viewport_rect().size
+		# Zoom per tenere entrambi nel frame con ~35% di padding
+		var needed: float = min(vp.x, vp.y) / max(dist * 1.7, 1.0)
+		needed = clamp(needed, boss_zoom_value, tier_base_zoom.x)
+		zoom = zoom.lerp(Vector2.ONE * needed, zoom_lerp_speed * delta)
 
 
 func apply_shake(intensity: float, time: float) -> void:

@@ -34,6 +34,7 @@ func _ready() -> void:
 	sprite.play("rotation")
 	outgassing_component.setup(self, sprite)
 	_change_state(State.WAIT)
+	GlobalSignals.ceres_spawned.emit(self)
 
 
 func _process(delta: float) -> void:
