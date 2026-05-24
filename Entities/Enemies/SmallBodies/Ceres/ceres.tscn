@@ -2606,3 +2606,5 @@ metadata/_custom_type_script = "uid://blifotmla3xit"
 unique_name_in_owner = true
 script = ExtResource("6_ad5k8")
 metadata/_custom_type_script = "uid://crqwool6072av"
+
+[connection signal="body_entered" from="." to="." method="_on_body_entered"]

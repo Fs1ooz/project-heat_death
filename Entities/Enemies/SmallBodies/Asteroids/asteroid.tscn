@@ -104,20 +104,11 @@ continuous_cd = 2
 contact_monitor = true
 max_contacts_reported = 4
 script = ExtResource("1_16cqs")
-current_stage = null
-randomize_stage = null
-min_size = null
-max_size = null
 elenco_texture = Array[ExtResource("2_vet0b")]([SubResource("Resource_5lvsl"), SubResource("Resource_o0aku"), SubResource("Resource_uy6ij"), SubResource("Resource_obgk1"), SubResource("Resource_fu0r2")])
-internal_energy = null
 game_energy = 250
-round_base = null
 collision = NodePath("Collision")
 gravity_area_collision = NodePath("Gravity/GravityAreaCollision")
 sprite = NodePath("Collision/Sprite")
-base_noise = null
-layers_2d_physics = null
-masks_2d_physics = null
 
 [node name="Gravity" type="Area2D" parent="." unique_id=1329953899]
 
@@ -129,7 +120,7 @@ debug_color = Color(0.08855995, 0.0885599, 0.08855987, 0.078431375)
 
 [node name="Sprite" type="AnimatedSprite2D" parent="Collision" unique_id=1890033603]
 material = SubResource("ShaderMaterial_1hqyt")
-sprite_frames = ExtResource("10_5lvsl")
+sprite_frames = ExtResource("9_o0aku")
 animation = &"rotation"
 
 [node name="VisibleScreenEnablerComponent" parent="Collision/Sprite" unique_id=1944736001 instance=ExtResource("6_gtkhq")]

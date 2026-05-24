@@ -1,0 +1,111 @@
+$input_data = $input | Out-String | ConvertFrom-Json
+
+$RESET  = "`e[0m"
+$BOLD   = "`e[1m"
+$RED    = "`e[38;5;196m"
+$ORANGE = "`e[38;5;214m"
+$YELLOW = "`e[38;5;226m"
+$GREEN  = "`e[38;5;82m"
+$CYAN   = "`e[38;5;51m"
+$BLUE   = "`e[38;5;39m"
+$PURPLE = "`e[38;5;135m"
+$PINK   = "`e[38;5;213m"
+$WHITE  = "`e[38;5;255m"
+$GRAY   = "`e[38;5;240m"
+
+$SEP   = " $GRAY|$RESET "
+$parts = [System.Collections.Generic.List[string]]::new()
+
+# Session name
+$session = $input_data.session_name
+if ($session) { $parts.Add("${PURPLE}${BOLD}[$session]$RESET") }
+
+# Directory
+$cwd = $input_data.workspace.current_dir
+if (-not $cwd) { $cwd = $input_data.cwd }
+$home_dir = $env:USERPROFILE -replace '\\', '/'
+$short_cwd = ($cwd -replace '\\', '/') -replace [regex]::Escape($home_dir), '~'
+$parts.Add("${CYAN}${BOLD}$short_cwd$RESET")
+
+# Git repo / worktree
+$repo = $input_data.workspace.repo
+if ($repo -and $repo.owner) {
+    $repo_str = "$($repo.owner)/$($repo.name)"
+    $wt = $input_data.workspace.git_worktree
+    if ($wt) { $repo_str = "$repo_str`:$wt" }
+    $parts.Add("${YELLOW}($repo_str)$RESET")
+}
+
+# PR badge
+$pr = $input_data.pr
+if ($pr -and $pr.number) {
+    $pr_color = switch ($pr.review_state) {
+        "approved"          { $GREEN }
+        "changes_requested" { $RED }
+        "draft"             { $GRAY }
+        default             { $ORANGE }
+    }
+    $parts.Add("${pr_color}PR#$($pr.number)$RESET")
+}
+
+# Model
+$model = $input_data.model.display_name
+if (-not $model) { $model = $input_data.model.id }
+if ($model) { $parts.Add("${BLUE}$model$RESET") }
+
+# Effort level
+$effort = $input_data.effort.level
+if ($effort) {
+    $eff_color = switch ($effort) {
+        "low"    { $GRAY }
+        "medium" { $GREEN }
+        "high"   { $ORANGE }
+        "xhigh"  { $RED }
+        "max"    { $PINK }
+        default  { $WHITE }
+    }
+    $parts.Add("${eff_color}effort:$effort$RESET")
+}
+
+# Context usage bar
+$used_pct = $input_data.context_window.used_percentage
+if ($null -ne $used_pct) {
+    $used_int   = [math]::Round($used_pct)
+    $bar_filled = [math]::Round($used_int / 10)
+    $bar_empty  = 10 - $bar_filled
+    $bar        = ("#" * $bar_filled) + ("-" * $bar_empty)
+    $bar_color  = if ($used_int -ge 80) { $RED } elseif ($used_int -ge 50) { $ORANGE } else { $GREEN }
+    $parts.Add("${bar_color}ctx[$bar]$used_int%$RESET")
+}
+
+# Token usage
+$total_in  = $input_data.context_window.total_input_tokens
+$total_out = $input_data.context_window.total_output_tokens
+if ($null -ne $total_in -or $null -ne $total_out) {
+    $fmt = { param($n) if ($n -ge 1000) { "{0:0.0}k" -f ($n / 1000) } else { "$n" } }
+    $in_fmt  = & $fmt (if ($null -ne $total_in)  { $total_in }  else { 0 })
+    $out_fmt = & $fmt (if ($null -ne $total_out) { $total_out } else { 0 })
+    $parts.Add("${GRAY}tok in:${WHITE}$in_fmt${GRAY} out:${WHITE}$out_fmt$RESET")
+}
+
+# Rate limit 5-hour
+$five_hr = $input_data.rate_limits.five_hour.used_percentage
+if ($null -ne $five_hr) {
+    $five_int = [math]::Round($five_hr)
+    $rl_color = if ($five_int -ge 80) { $RED } elseif ($five_int -ge 50) { $ORANGE } else { $GREEN }
+    $parts.Add("${rl_color}5h:$five_int%$RESET")
+}
+
+# Vim mode
+$vim_mode = $input_data.vim.mode
+if ($vim_mode) {
+    $vm_color = switch -Wildcard ($vim_mode) {
+        "INSERT"  { $GREEN }
+        "NORMAL"  { $CYAN }
+        "VISUAL*" { $ORANGE }
+        default   { $WHITE }
+    }
+    $parts.Add("${vm_color}${BOLD}[$vim_mode]$RESET")
+}
+
+Write-Host ($parts -join $SEP)

@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://dikxydainmhce" path="res://Utils/sprite_generator.gd" id="1_u7d1n"]
 [ext_resource type="PackedScene" uid="uid://fuf8q4uwij4w" path="res://Entities/Enemies/SmallBodies/Asteroids/asteroid_3.glb" id="2_jfkwb"]
-[ext_resource type="Material" uid="uid://crpkhusvanuhs" path="res://Assets/Materials/meteoroid_material_2.tres" id="3_jfkwb"]
+[ext_resource type="Material" uid="uid://8gyqilai8008" path="res://Assets/Materials/Rock Materials/Rock001_2K-JPG/Rock001_2K-JPG.tres" id="3_jfkwb"]
 
 [node name="SpriteGenerator" type="SubViewport" unique_id=1085061697 node_paths=PackedStringArray("model")]
 transparent_bg = true
@@ -12,7 +12,7 @@ render_target_update_mode = 4
 script = ExtResource("1_u7d1n")
 genera_poligoni = false
 model = NodePath("asteroid_3")
-save_path = "res://Assets/Images/Spritesheets/asteroid_3_atlas.png"
+save_path = "res://Assets/Images/Spritesheets/asteroid_3_alt_atlas.png"
 polygons_save_path = "res://Entities/Enemies/SmallBodies/Asteroids/asteroid_3_polygons.tres"
 
 [node name="Camera3D" type="Camera3D" parent="." unique_id=179553338]
@@ -27,7 +27,7 @@ directional_shadow_mode = 0
 sky_mode = 1
 
 [node name="asteroid_3" parent="." unique_id=1239717692 instance=ExtResource("2_jfkwb")]
-transform = Transform3D(0.99452186, 0, -0.10452865, 0, 1, 0, 0.10452865, 0, 0.99452186, 0, 0, 0)
+transform = Transform3D(0.9945218, 0, -0.10452864, 0, 1, 0, 0.10452864, 0, 0.9945218, 0, 0, 0)
 
 [node name="Icosphere" parent="asteroid_3" index="0" unique_id=2143827114]
 surface_material_override/0 = ExtResource("3_jfkwb")

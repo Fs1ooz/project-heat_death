@@ -12,7 +12,7 @@ var polygon_data: FramePolygonData
 
 enum OrbitState { FREE, ATTRACTED, ORBITING }
 var orbit_state: int = OrbitState.FREE
-var orbit_target: Node2D = null
+var orbit_target: Player = null
 var orbit_angle: float = 0.0
 var orbit_radius: float= 200.0
 var orbit_speed: float = 1.5
@@ -21,7 +21,7 @@ var orbit_speed: float = 1.5
 func _ready() -> void:
 	freeze_mode = RigidBody2D.FREEZE_MODE_KINEMATIC
 	_setup_random_scale()
-	GlobalSignals.use_3d.connect(toggle_3d)
+	#GlobalSignals.use_3d.connect(toggle_3d)
 
 	super()
 	if not rotation_component:
@@ -46,16 +46,16 @@ func _ready() -> void:
 	rotation_component.speed = rotation_speed
 
 
-func toggle_3d(toggled: bool) -> void:
-	if not has_node("SubViewport"):
-		return
-
-	if toggled:
-		sprite.texture = load("res://Entities/Enemies/SmallBodies/Ceres/Ceres.png")
-		sprite.scale *= 3
-	else:
-		sprite.scale = Vector2.ONE
-		sprite.texture = $SubViewport.get_texture()
+#func toggle_3d(toggled: bool) -> void:
+	#if not has_node("SubViewport"):
+		#return
+#
+	#if toggled:
+		#sprite.texture = load("res://Entities/Enemies/SmallBodies/Ceres/Ceres.png")
+		#sprite.scale *= 3
+	#else:
+		#sprite.scale = Vector2.ONE
+		#sprite.texture = $SubViewport.get_texture()
 
 
 func _setup_random_scale() -> void:
@@ -64,7 +64,6 @@ func _setup_random_scale() -> void:
 
 
 func _physics_process(delta: float) -> void:
-	print(mass)
 	match orbit_state:
 		OrbitState.ATTRACTED:
 			_attract_to_player(delta)
@@ -121,7 +120,6 @@ func _enter_orbit() -> void:
 
 
 func leave_orbit() -> void:
-	print("uscito")
 	orbit_state = OrbitState.FREE
 	freeze = false
 	orbit_target = null

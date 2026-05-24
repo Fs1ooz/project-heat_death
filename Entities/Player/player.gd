@@ -321,6 +321,8 @@ func apply_entropy(delta: float) -> void:
 func get_current_orbiting_count() -> int:
 	var count: int = 0
 	for body: CelestialBody in nearby_bodies:
+		if not is_instance_valid(body):
+			continue
 		if body is SmallBody and body.orbit_target == self and body.orbit_state != SmallBody.OrbitState.FREE:
 			count += 1
 	return count
@@ -343,7 +345,6 @@ func _handle_collision_resistance(state: PhysicsDirectBodyState2D) -> void:
 		var mass_ratio: float = mass / collider.mass
 		var impact_intensity: float = (_last_velocity.length() / speed) * clamp(1.0 / mass_ratio, 0.5, 3.0) * 4.0
 		player_camera.apply_shake(impact_intensity, 0.85)
-		printerr(impact_intensity)
 
 		# 1. NUOVA LOGICA: Ingloba se la massa è immensamente superiore (es. 10x)
 		if mass_ratio >= 8.0:

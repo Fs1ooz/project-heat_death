@@ -4,7 +4,6 @@
 [ext_resource type="Texture2D" uid="uid://81spk453msxw" path="res://Entities/Enemies/SmallBodies/Meteoroids/rock_surface_diff_4k_normal.png" id="2_0dajc"]
 
 [resource]
-albedo_color = Color(0.41470024, 0.4797513, 0.53125, 1)
 albedo_texture = ExtResource("1_m5dsi")
 metallic = 0.37
 roughness = 0.8

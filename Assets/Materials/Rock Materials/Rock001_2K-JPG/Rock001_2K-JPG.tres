@@ -6,14 +6,13 @@
 [ext_resource type="Texture2D" uid="uid://brntyep53pyod" path="res://Assets/Materials/Rock Materials/Rock001_2K-JPG/Rock001_2K-JPG_Roughness.jpg" id="Roughness"]
 
 [resource]
-albedo_color = Color(0.8828125, 0.8828125, 0.8828125, 1)
+albedo_color = Color(0.78515625, 0.78515625, 0.78515625, 1)
 albedo_texture = ExtResource("Color")
-metallic = 0.3
-metallic_specular = 0.52
+metallic = 0.11
+metallic_specular = 0.05
 roughness_texture = ExtResource("Roughness")
 roughness_texture_channel = 4
 normal_enabled = true
-normal_scale = 1.25
 normal_texture = ExtResource("NormalGL")
 heightmap_enabled = true
 heightmap_texture = ExtResource("Displacement")

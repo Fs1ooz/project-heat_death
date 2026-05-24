@@ -156,13 +156,6 @@ button_pressed = true
 action_mode = 0
 text = " hiDPI"
 
-[node name="Models3D" type="CheckButton" parent="PanelContainer/VBoxContainer/MarginContainer2/PanelContainer/VBoxContainer4" unique_id=1573162752]
-layout_mode = 2
-theme_override_font_sizes/font_size = 28
-button_pressed = true
-action_mode = 0
-text = " 3d Models"
-
 [node name="Resume" type="Button" parent="PanelContainer/VBoxContainer" unique_id=1515791323]
 layout_mode = 2
 text = "Resume"
@@ -180,7 +173,6 @@ text = "Restart"
 [connection signal="value_changed" from="PanelContainer/VBoxContainer/MarginContainer/PanelContainer/VBoxContainer4/VBoxContainer/Sound" to="." method="_on_sound_value_changed"]
 [connection signal="pressed" from="PanelContainer/VBoxContainer/MarginContainer2/PanelContainer/VBoxContainer4/PostProcessing" to="." method="_on_post_processing_pressed"]
 [connection signal="pressed" from="PanelContainer/VBoxContainer/MarginContainer2/PanelContainer/VBoxContainer4/hiDPI" to="." method="_on_hi_dpi_pressed"]
-[connection signal="toggled" from="PanelContainer/VBoxContainer/MarginContainer2/PanelContainer/VBoxContainer4/Models3D" to="." method="_on_models_3d_toggled"]
 [connection signal="pressed" from="PanelContainer/VBoxContainer/Resume" to="." method="_on_close_pressed"]
 [connection signal="pressed" from="PanelContainer/VBoxContainer/Main Menu" to="." method="_on_main_menu_pressed"]
 [connection signal="pressed" from="PanelContainer/VBoxContainer/Restart" to="." method="_on_restart_pressed"]

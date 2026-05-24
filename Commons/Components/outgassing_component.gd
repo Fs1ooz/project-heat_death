@@ -33,7 +33,7 @@ func prespawn(spawn_points_count: int) -> void:
 		gas.global_position = _body.global_position
 		var sprite_radius: float
 		if _sprite is AnimatedSprite2D:
-			var tex: AtlasTexture = _sprite.sprite_frames.get_frame_texture(_sprite.animation, 0)
+			var tex: Texture2D = _sprite.sprite_frames.get_frame_texture(_sprite.animation, 0)
 			sprite_radius = tex.get_width() / 2.0
 		else:
 			sprite_radius = _sprite.texture.get_width() / 2.0
