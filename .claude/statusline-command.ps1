@@ -16,15 +16,41 @@ $GRAY   = "`e[38;5;240m"
 $SEP   = " $GRAY|$RESET "
 $parts = [System.Collections.Generic.List[string]]::new()
 
+# Context usage bar (first)
+$used_pct = $input_data.context_window.used_percentage
+if ($null -ne $used_pct) {
+    $used_int   = [math]::Round($used_pct)
+    $bar_filled = [math]::Round($used_int / 10)
+    $bar_empty  = 10 - $bar_filled
+    $bar        = ("#" * $bar_filled) + ("-" * $bar_empty)
+    $bar_color  = if ($used_int -ge 80) { $RED } elseif ($used_int -ge 50) { $ORANGE } else { $GREEN }
+    $parts.Add("${bar_color}ctx[$bar]$used_int%$RESET")
+}
+
 # Session name
 $session = $input_data.session_name
 if ($session) { $parts.Add("${PURPLE}${BOLD}[$session]$RESET") }
 
-# Directory
+# Directory (shortened if > 35 chars)
 $cwd = $input_data.workspace.current_dir
 if (-not $cwd) { $cwd = $input_data.cwd }
 $home_dir = $env:USERPROFILE -replace '\\', '/'
-$short_cwd = ($cwd -replace '\\', '/') -replace [regex]::Escape($home_dir), '~'
+$norm_cwd = ($cwd -replace '\\', '/') -replace [regex]::Escape($home_dir), '~'
+
+$max_path_len = 35
+if ($norm_cwd.Length -gt $max_path_len) {
+    $clean = @($norm_cwd -split '/' | Where-Object { $_.Length -gt 0 })
+    if ($clean.Count -ge 4) {
+        $short_cwd = "$($clean[0])/.../$($clean[-2])/$($clean[-1])"
+    } elseif ($clean.Count -eq 3) {
+        $short_cwd = "$($clean[0])/.../$($clean[-1])"
+    } else {
+        $short_cwd = $norm_cwd
+    }
+} else {
+    $short_cwd = $norm_cwd
+}
+
 $parts.Add("${CYAN}${BOLD}$short_cwd$RESET")
 
 # Git repo / worktree
@@ -65,17 +91,6 @@ if ($effort) {
         default  { $WHITE }
     }
     $parts.Add("${eff_color}effort:$effort$RESET")
-}
-
-# Context usage bar
-$used_pct = $input_data.context_window.used_percentage
-if ($null -ne $used_pct) {
-    $used_int   = [math]::Round($used_pct)
-    $bar_filled = [math]::Round($used_int / 10)
-    $bar_empty  = 10 - $bar_filled
-    $bar        = ("#" * $bar_filled) + ("-" * $bar_empty)
-    $bar_color  = if ($used_int -ge 80) { $RED } elseif ($used_int -ge 50) { $ORANGE } else { $GREEN }
-    $parts.Add("${bar_color}ctx[$bar]$used_int%$RESET")
 }
 
 # Token usage
