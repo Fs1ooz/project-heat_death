@@ -64,6 +64,9 @@ func _ready() -> void:
 	initial_radius = collision.shape.radius
 	initial_height = collision.shape.height
 	initial_scale = sprite.scale
+	mat.scale_min = 8.0
+	mat.scale_max = 14.0
+	trail.lifetime = 1.5
 	initial_particle_scale = Vector2(mat.scale_min, mat.scale_max)
 	trail.process_material = mat
 
@@ -128,10 +131,11 @@ func _handle_movement() -> void:
 
 	var speed_percent: float = linear_velocity.length() / speed
 
+	mat.color = sprite.material.get_shader_parameter("global_tint")
 	trail.emitting = speed_percent > 0.05
 
 	if speed_percent > 0.05:
-		mat.spread = lerp(5.0, 35.0, speed_percent)
+		mat.spread = lerp(20.0, 70.0, speed_percent)
 		var vel_local: Vector2 = linear_velocity.rotated(-rotation).normalized()
 		mat.direction = Vector3(-vel_local.x, -vel_local.y, 0.0)
 		mat.set("emission_shape_offset", Vector3(
@@ -178,7 +182,6 @@ func _input(event: InputEvent) -> void:
 	if not orbit_unlocked:
 		return
 	if event.is_action_pressed("orbit"):
-		printerr("PORCACCIO DI DIO PORCODIO")
 		_activate_orbit()
 	elif event.is_action_released("orbit"):
 		_deactivate_orbit()
@@ -359,20 +362,17 @@ func _handle_collision_resistance(state: PhysicsDirectBodyState2D) -> void:
 
 		# 1. NUOVA LOGICA: Ingloba se la massa è immensamente superiore (es. 10x)
 		if mass_ratio >= 8.0:
-			print("🌌 INGLOBATO: ", collider.name)
 			bodies_to_engulf.append(collider)
 
 		# 2. LOGICA ESISTENTE: Bulldozer mode (es. 5x)
 		elif mass_ratio >= 4.0:
 			max_resistance = 1.0
-			print("💥 BULLDOZER MODE vs ", collider.name)
 			break
 
 		# 3. LOGICA ESISTENTE: Resistenza normale
 		elif mass_ratio > min_res_ratio:
 			var resistance: float = smoothstep(min_res_ratio, 3.0, mass_ratio)
 			max_resistance = max(max_resistance, resistance)
-			print("⚡ Resistenza: %.0f%% vs %s" % [resistance * 100, collider.name])
 			_animate_player(false)
 
 	# Applica la resistenza se necessaria
@@ -427,7 +427,6 @@ func change_mass(amount: float) -> void:
 
 
 func change_scale(amount: float) -> void:
-	printerr("cambio? essì")
 	var scale_change: Vector2 = base_scale * amount
 	collision.shape.radius = initial_radius * scale_change.x
 	collision.shape.height = initial_height * scale_change.x
@@ -446,9 +445,7 @@ func change_scale(amount: float) -> void:
 	base_scale = scale_change
 
 
-## Riproduce il suono di hit.
 func play_hit_sound() -> void:
-	print("Muori fra")
 	hit_audio_stream_player.play()
 
 
@@ -470,7 +467,6 @@ func take_damage(amount: int) -> void:
 	update_life_bar()
 	if hp <= 0:
 		if auto_revive:
-			printerr("RINATO!!")
 			auto_revive = false
 			hp = 1
 		else:
