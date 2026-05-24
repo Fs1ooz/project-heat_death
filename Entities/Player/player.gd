@@ -185,12 +185,12 @@ func _activate_orbit() -> void:
 
 	for body: CelestialBody in nearby_bodies:
 		if current_count >= max_orbiting_bodies:
-			break # Ferma il ciclo se abbiamo raggiunto il limite di 3
+			break
 
 		if body is SmallBody and body.orbit_state == SmallBody.OrbitState.FREE:
 			if _can_orbit(body):
-				body.start_attraction(self)
-				current_count += 1 # Aggiorna il contatore man mano che li aggancia
+				body.start_attraction(self, current_count)
+				current_count += 1
 
 func _on_attraction_body_entered(body: Node2D) -> void:
 	if body is CelestialBody:
@@ -198,9 +198,9 @@ func _on_attraction_body_entered(body: Node2D) -> void:
 
 	if body is SmallBody and orbit_active:
 		if _can_orbit(body):
-			# Controlla il limite prima di attrarre un nuovo corpo entrato nell'area
-			if get_current_orbiting_count() < max_orbiting_bodies:
-				body.start_attraction(self)
+			var count: int = get_current_orbiting_count()
+			if count < max_orbiting_bodies:
+				body.start_attraction(self, count)
 
 func _deactivate_orbit() -> void:
 	orbit_active = false

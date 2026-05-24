@@ -73,9 +73,10 @@ func _physics_process(delta: float) -> void:
 
 
 var orbit_ratio: float = 0.45
+var orbit_slot: int = 0
 
 
-func start_attraction(target: Node2D) -> void:
+func start_attraction(target: Node2D, slot: int = 0) -> void:
 
 	if self is Ceres:
 		return
@@ -85,17 +86,26 @@ func start_attraction(target: Node2D) -> void:
 
 	orbit_state = OrbitState.ATTRACTED
 	orbit_target = target
-	# Non calcoliamo più la distanza iniziale qui, lo facciamo dinamicamente!
+	orbit_slot = slot
 
 
-func _attract_to_player(_delta: float) -> void:
+func _get_orbit_radius() -> float:
+	return orbit_target.attraction_radius * orbit_ratio * (1.0 + orbit_slot * 0.3)
+
+
+func _attract_to_player(delta: float) -> void:
 	if not is_instance_valid(orbit_target):
 		leave_orbit()
 		return
 
-	orbit_radius = orbit_target.attraction_radius * orbit_ratio
+	orbit_radius = _get_orbit_radius()
 
-	if global_position.distance_to(orbit_target.global_position) <= orbit_radius + 20.0:
+	var dist: float = global_position.distance_to(orbit_target.global_position)
+	# Smorza la velocità man mano che ci avviciniamo al raggio target
+	var approach_t: float = clamp((dist - orbit_radius) / orbit_radius, 0.0, 1.0)
+	linear_velocity = linear_velocity.lerp(Vector2.ZERO, (1.0 - approach_t) * delta * 6.0)
+
+	if dist <= orbit_radius + 20.0:
 		_enter_orbit()
 
 
@@ -104,7 +114,7 @@ func _orbit(delta: float) -> void:
 		leave_orbit()
 		return
 
-	orbit_radius = orbit_target.attraction_radius * orbit_ratio
+	orbit_radius = _get_orbit_radius()
 
 	orbit_angle += orbit_speed * delta
 	global_position = orbit_target.global_position \
@@ -113,15 +123,19 @@ func _orbit(delta: float) -> void:
 
 func _enter_orbit() -> void:
 	orbit_state = OrbitState.ORBITING
-
-	freeze = true
 	var offset: Vector2 = global_position - orbit_target.global_position
 	orbit_angle = atan2(offset.y, offset.x)
+	freeze = true
+	# Agganciamo subito sulla circonferenza esatta per evitare lo scatto visivo
+	global_position = orbit_target.global_position \
+		+ Vector2(cos(orbit_angle), sin(orbit_angle)) * orbit_radius
 
 
 func leave_orbit() -> void:
 	orbit_state = OrbitState.FREE
 	freeze = false
-	orbit_target = null
 	var tangent: Vector2 = Vector2(-sin(orbit_angle), cos(orbit_angle))
-	linear_velocity = tangent * 250.0
+	var player_vel: Vector2 = orbit_target.linear_velocity if is_instance_valid(orbit_target) else Vector2.ZERO
+	linear_velocity = player_vel + tangent * 250.0
+	orbit_target = null
+	orbit_slot = 0
