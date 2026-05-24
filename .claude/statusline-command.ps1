@@ -24,6 +24,11 @@ if ($null -ne $five_hr) {
     $parts.Add("${rl_color}5h:$five_int%$RESET")
 }
 
+# Model
+$model = $input_data.model.display_name
+if (-not $model) { $model = $input_data.model.id }
+if ($model) { $parts.Add("${BLUE}$model$RESET") }
+
 # Context usage bar
 $used_pct = $input_data.context_window.used_percentage
 if ($null -ne $used_pct) {
@@ -81,11 +86,6 @@ if ($pr -and $pr.number) {
     }
     $parts.Add("${pr_color}PR#$($pr.number)$RESET")
 }
-
-# Model
-$model = $input_data.model.display_name
-if (-not $model) { $model = $input_data.model.id }
-if ($model) { $parts.Add("${BLUE}$model$RESET") }
 
 # Effort level
 $effort = $input_data.effort.level
