@@ -125,10 +125,10 @@ func _handle_movement() -> void:
 
 	linear_velocity = linear_velocity.limit_length(speed)
 
-	# Calcoliamo quanta percentuale della velocità massima stiamo usando (0.0 a 1.0)
 	var speed_percent: float = linear_velocity.length() / speed
-	# Aumentiamo lo spread man mano che andiamo veloci (es: da 20 gradi a 80 gradi)
 	mat.spread = lerp(10.0, 180.0, speed_percent)
+	trail.lifetime = lerp(0.35, 1.4, speed_percent)
+	trail.amount_ratio = lerp(0.2, 1.0, speed_percent)
 
 
 var is_stretched: bool = false
@@ -409,7 +409,12 @@ func _on_enemy_died(body: CelestialBody) -> void:
 func _on_tier_changed() -> void:
 	sprite.material.set_shader_parameter("frequency", sprite.material.get_shader_parameter("frequency") * 1.2)
 	_do_hitstop(0.06)
-	shockwave.trigger_shockwave(global_position, 2)
+	sprite.modulate = Color(1.2, 0.4, 3.0, 1.0)
+	var tw: Tween = create_tween()
+	tw.tween_property(sprite, "modulate", Color(0.5, 1.5, 2.5, 1.0), 0.15)\
+		.set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_OUT)
+	tw.tween_property(sprite, "modulate", Color.WHITE, 0.4)\
+		.set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_OUT)
 
 
 func change_size(amount: float) -> void:
