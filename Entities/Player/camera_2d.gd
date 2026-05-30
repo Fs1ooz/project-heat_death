@@ -73,6 +73,9 @@ func _on_tier_changed() -> void:
 	tier_base_zoom = base_zoom / player_scale
 	min_zoom = min_zoom_base / player_scale
 	max_zoom = max_zoom_base / player_scale
+	var tween: Tween = create_tween()
+	tween.tween_property(self, "zoom", zoom * 1.1, 0.12)\
+		.set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_OUT)
 
 
 func _process(delta: float) -> void:

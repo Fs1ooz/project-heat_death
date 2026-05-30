@@ -58,6 +58,7 @@ var orbit_unlocked: bool = true
 
 func _ready() -> void:
 	UpgradeManager.tier_changed.connect(_on_tier_changed)
+	GlobalSignals.death.connect(_on_enemy_died)
 	initial_mass = mass
 	initial_radius = collision.shape.radius
 	initial_height = collision.shape.height
@@ -345,8 +346,6 @@ func _handle_collision_resistance(state: PhysicsDirectBodyState2D) -> void:
 		var mass_ratio: float = mass / collider.mass
 		var impact_intensity: float = (_last_velocity.length() / speed) * clamp(1.0 / mass_ratio, 0.5, 3.0) * 4.0
 		player_camera.apply_shake(impact_intensity, 0.85)
-		if mass_ratio < 1.5 and impact_intensity > 1.5:
-			_do_hitstop(0.08)
 
 		# 1. NUOVA LOGICA: Ingloba se la massa è immensamente superiore (es. 10x)
 		if mass_ratio >= 8.0:
@@ -400,8 +399,16 @@ func get_damage() -> float:
 	return damage
 
 
-func _on_tier_changed()-> void:
+func _on_enemy_died(body: CelestialBody) -> void:
+	if body is Ceres:
+		_do_hitstop(0.22)
+	elif body is Asteroid or body is Comet or body is Vesta:
+		_do_hitstop(0.1)
+
+
+func _on_tier_changed() -> void:
 	sprite.material.set_shader_parameter("frequency", sprite.material.get_shader_parameter("frequency") * 1.2)
+	_do_hitstop(0.06)
 
 
 func change_size(amount: float) -> void:
