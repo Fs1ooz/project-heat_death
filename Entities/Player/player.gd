@@ -132,8 +132,11 @@ func _handle_movement() -> void:
 
 
 var is_stretched: bool = false
+var is_growing: bool = false
 
 func _animate_player(is_accelerating: bool) -> void:
+	if is_growing:
+		return
 	if is_accelerating == is_stretched:
 		return  # Già nello stato corretto
 
@@ -409,12 +412,22 @@ func _on_enemy_died(body: CelestialBody) -> void:
 func _on_tier_changed() -> void:
 	sprite.material.set_shader_parameter("frequency", sprite.material.get_shader_parameter("frequency") * 1.2)
 	_do_hitstop(0.06)
-	sprite.modulate = Color(1.2, 0.4, 3.0, 1.0)
-	var tw: Tween = create_tween()
-	tw.tween_property(sprite, "modulate", Color(0.5, 1.5, 2.5, 1.0), 0.15)\
+	sprite.modulate = Color(0.55, 0.0, 1.0, 1.0)
+	var tw_mod: Tween = create_tween()
+	tw_mod.tween_property(sprite, "modulate", Color(0.0, 0.85, 1.0, 1.0), 0.25)\
 		.set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_OUT)
-	tw.tween_property(sprite, "modulate", Color.WHITE, 0.4)\
+	tw_mod.tween_property(sprite, "modulate", Color.WHITE, 0.45)\
 		.set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_OUT)
+	is_growing = true
+	if current_tween:
+		current_tween.kill()
+	var tw_scale: Tween = create_tween()
+	tw_scale.tween_property(sprite, "scale", base_scale * 1.3, 0.12)\
+		.set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_OUT)
+	tw_scale.tween_property(sprite, "scale", base_scale, 0.55)\
+		.set_trans(Tween.TRANS_ELASTIC).set_ease(Tween.EASE_OUT)
+	await tw_scale.finished
+	is_growing = false
 
 
 func change_size(amount: float) -> void:
