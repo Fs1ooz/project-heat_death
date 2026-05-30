@@ -134,6 +134,8 @@ func _handle_movement() -> void:
 
 	mat.color = sprite.material.get_shader_parameter("global_tint")
 	trail.emitting = speed_percent > 0.05
+	trail.lifetime = lerp(0.35, 1.4, speed_percent)
+	trail.amount_ratio = lerp(0.2, 1.0, speed_percent)
 
 	if speed_percent > 0.05:
 		mat.spread = lerp(20.0, 70.0, speed_percent)
@@ -420,7 +422,12 @@ func _on_enemy_died(body: CelestialBody) -> void:
 func _on_tier_changed() -> void:
 	sprite.material.set_shader_parameter("frequency", sprite.material.get_shader_parameter("frequency") * 1.2)
 	_do_hitstop(0.06)
-	shockwave.trigger_shockwave(global_position, 2)
+	sprite.modulate = Color(1.2, 0.4, 3.0, 1.0)
+	var tw: Tween = create_tween()
+	tw.tween_property(sprite, "modulate", Color(0.5, 1.5, 2.5, 1.0), 0.15)\
+		.set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_OUT)
+	tw.tween_property(sprite, "modulate", Color.WHITE, 0.4)\
+		.set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_OUT)
 
 
 func change_size(amount: float) -> void:
