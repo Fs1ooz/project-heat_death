@@ -10,14 +10,14 @@ func _ready() -> void:
 	mat.set_shader_parameter("strength", 0.0)
 	EntropyManager.entropy_changed.connect(_on_entropy_changed)
 	GlobalSignals.death.connect(_on_enemy_died)
-	UpgradeManager.tier_changed.connect(_on_tier_changed)
+	GlobalSignals.game_over.connect(_on_game_over)
 
 func _on_entropy_changed(entropy: float) -> void:
 	if entropy >= 0.0:
 		mat.set_shader_parameter("strength", 0.0)
 		return
-	var t: float = clamp(abs(entropy) / 50.0, 0.0, 1.0)
-	mat.set_shader_parameter("strength", t * MAX_ENTROPY_STRENGTH)
+	var t: float = clamp(abs(entropy) / 100.0, 0.0, 1.0)
+	mat.set_shader_parameter("strength", pow(t, 1.8) * MAX_ENTROPY_STRENGTH)
 
 func _on_enemy_died(body: CelestialBody) -> void:
 	var peak: float
@@ -36,9 +36,9 @@ func _on_enemy_died(body: CelestialBody) -> void:
 		peak, 0.0, dur
 	).set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_OUT)
 
-func _on_tier_changed() -> void:
+func _on_game_over() -> void:
 	var tween: Tween = create_tween()
 	tween.tween_method(
 		func(v: float) -> void: mat.set_shader_parameter("strength", v),
-		0.01, 0.0, 0.6
+		0.025, 0.0, 1.5
 	).set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_OUT)
