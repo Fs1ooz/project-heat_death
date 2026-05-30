@@ -359,6 +359,8 @@ func _handle_collision_resistance(state: PhysicsDirectBodyState2D) -> void:
 		var mass_ratio: float = mass / collider.mass
 		var impact_intensity: float = (_last_velocity.length() / speed) * clamp(1.0 / mass_ratio, 0.5, 3.0) * 4.0
 		player_camera.apply_shake(impact_intensity, 0.85)
+		if mass_ratio < 1.5 and impact_intensity > 1.5:
+			_do_hitstop(0.08)
 
 		# 1. NUOVA LOGICA: Ingloba se la massa è immensamente superiore (es. 10x)
 		if mass_ratio >= 8.0:
@@ -461,10 +463,17 @@ func _handle_mouse_input() -> Vector2:
 	return mouse_dir
 
 
+func _do_hitstop(duration: float) -> void:
+	Engine.time_scale = 0.08
+	await get_tree().create_timer(duration, true).timeout
+	Engine.time_scale = 1.0
+
+
 func take_damage(amount: int) -> void:
 	hp -= amount
 	regen_time = 0.0
 	update_life_bar()
+	GlobalSignals.player_damaged.emit()
 	if hp <= 0:
 		if auto_revive:
 			auto_revive = false

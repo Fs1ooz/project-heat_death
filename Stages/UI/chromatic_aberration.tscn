@@ -1,0 +1,18 @@
+[gd_scene format=3 uid="uid://d5hi3z0uj4or"]
+
+[ext_resource type="Shader" uid="uid://chroma001shader" path="res://Assets/Shaders/chromatic_aberration.gdshader" id="1_chroma"]
+[ext_resource type="Script" uid="uid://e6ij4a1vk5ps" path="res://Stages/UI/chromatic_aberration.gd" id="2_chroma"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_chroma"]
+shader = ExtResource("1_chroma")
+shader_parameter/strength = 0.0
+
+[node name="ChromaticAberration" type="ColorRect" unique_id=2222222222]
+material = SubResource("ShaderMaterial_chroma")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("2_chroma")
