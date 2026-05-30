@@ -1,12 +1,12 @@
 class_name ChromaticAberration
-extends ColorRect
+extends CanvasLayer
 
 const MAX_ENTROPY_STRENGTH: float = 0.018
 
-@onready var mat: ShaderMaterial = material
+@onready var mat: ShaderMaterial = $ChromaticRect.material
 
 func _ready() -> void:
-	mouse_filter = MOUSE_FILTER_IGNORE
+	$ChromaticRect.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	mat.set_shader_parameter("strength", 0.0)
 	EntropyManager.entropy_changed.connect(_on_entropy_changed)
 	GlobalSignals.death.connect(_on_enemy_died)
