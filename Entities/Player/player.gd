@@ -409,6 +409,7 @@ func _on_enemy_died(body: CelestialBody) -> void:
 func _on_tier_changed() -> void:
 	sprite.material.set_shader_parameter("frequency", sprite.material.get_shader_parameter("frequency") * 1.2)
 	_do_hitstop(0.06)
+	shockwave.trigger_shockwave(global_position, 2)
 
 
 func change_size(amount: float) -> void:
@@ -474,7 +475,6 @@ func take_damage(amount: int) -> void:
 	hp -= amount
 	regen_time = 0.0
 	update_life_bar()
-	GlobalSignals.player_damaged.emit()
 	if hp <= 0:
 		if auto_revive:
 			printerr("RINATO!!")
