@@ -46,6 +46,7 @@ func scale_explosion(scale_factor: float) -> void:
 	debris.process_material.scale_max = debris_initial_scale.y * scale_factor
 	debris.process_material.initial_velocity_min = debris_initial_velocity.x * scale_factor
 	debris.process_material.initial_velocity_max = debris_initial_velocity.y * scale_factor
+	debris.emitting = true
 
 
 # Questo segnale deve essere collegato dal pannello "Nodi" dell'AnimationPlayer

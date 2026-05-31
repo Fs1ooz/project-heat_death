@@ -113,7 +113,7 @@ color = Color(1, 1, 1, 0.39215687)
 alpha_curve = SubResource("CurveTexture_i0eh6")
 
 [sub_resource type="Gradient" id="Gradient_debris"]
-offsets = PackedFloat32Array(0, 0.6, 1.0)
+offsets = PackedFloat32Array(0, 0.6, 1)
 colors = PackedColorArray(1, 0.4, 0.1, 1, 0.6, 0.2, 0.05, 0.6, 0, 0, 0, 0)
 
 [sub_resource type="GradientTexture1D" id="GradientTexture1D_debris"]
@@ -167,7 +167,7 @@ visibility_rect = Rect2(-1000, -1000, 2000, 2000)
 process_material = SubResource("ParticleProcessMaterial_uuhj7")
 
 [node name="Debris" type="GPUParticles2D" parent="." unique_id=362841057]
-emitting = true
+emitting = false
 amount = 20
 lifetime = 1.8
 one_shot = true
