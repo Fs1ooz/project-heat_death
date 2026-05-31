@@ -67,20 +67,27 @@ func _on_tier_changed() -> void:
 	show_upgrade_menu()
 
 
-func show_upgrade_menu()-> void:
+func show_upgrade_menu() -> void:
+	# Nasconde i bottoni prima dell'animazione così lo stagger è netto
+	for btn: Button in upgrades_h_box_container.get_children():
+		btn.modulate.a = 0.0
 	upgrades_h_box_container.show()
+	await get_tree().process_frame  # aspetta un frame per avere size valido
+	upgrades_h_box_container.pivot_offset = upgrades_h_box_container.size * 0.5
+	upgrades_h_box_container.modulate.a = 0.0
+	upgrades_h_box_container.scale = Vector2(0.8, 0.8)
 
+	var tween: Tween = create_tween().set_parallel(true)
+	tween.tween_property(upgrades_h_box_container, "modulate:a", 1.0, 0.3)\
+		.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	tween.tween_property(upgrades_h_box_container, "scale", Vector2.ONE, 0.45)\
+		.set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 
-func _fade_in_button(btn: Button, duration: float = 0.3) -> void:
-	btn.modulate.a = 0.0  # invisibile inizialmente
-	btn.visible = true
-	btn.create_tween().tween_property(btn, "modulate:a", 1.0, duration)
+	await tween.finished
 
-func _shake_button(btn: Button, duration: float = 0.1) -> void:
-	var original_pos: Vector2 = btn.global_position
-	var tween: Tween = btn.create_tween()
-
-	tween.tween_property(btn, "global_position", original_pos + Vector2(5, 0), duration / 4)
-	tween.tween_property(btn, "global_position", original_pos + Vector2(-5, 0), duration / 4)
-	tween.tween_property(btn, "global_position", original_pos + Vector2(5, 0), duration / 4)
-	tween.tween_property(btn, "global_position", original_pos, duration / 4)
+	var i: int = 0
+	for btn: Button in upgrades_h_box_container.get_children():
+		var btn_tw: Tween = btn.create_tween()
+		btn_tw.tween_interval(i * 0.07)
+		btn_tw.tween_property(btn, "modulate:a", 1.0, 0.2).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+		i += 1
