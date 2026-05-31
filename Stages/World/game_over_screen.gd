@@ -20,11 +20,12 @@ func _setup_ca_overlay() -> void:
 	_ca_overlay = ColorRect.new()
 	_ca_overlay.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	_ca_overlay.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_ca_overlay.visible = false
 	var mat: ShaderMaterial = ShaderMaterial.new()
 	mat.shader = preload("res://Assets/Shaders/chromatic_aberration.gdshader")
 	mat.set_shader_parameter("strength", 0.0)
 	_ca_overlay.material = mat
-	get_parent().add_child(_ca_overlay)
+	get_parent().add_child.call_deferred(_ca_overlay)
 
 
 func _on_retry_button_pressed() -> void:
@@ -38,6 +39,7 @@ func _on_main_menu_button_pressed() -> void:
 
 
 func _on_game_over() -> void:
+	_ca_overlay.visible = true
 	death_camera.global_position = player_camera.global_position
 	death_camera.make_current()
 	death_camera.zoom = player_camera.zoom * 0.75
