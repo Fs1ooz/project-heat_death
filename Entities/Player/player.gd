@@ -424,9 +424,13 @@ func _on_enemy_died(body: CelestialBody) -> void:
 
 func _on_tier_changed() -> void:
 	sprite.material.set_shader_parameter("frequency", sprite.material.get_shader_parameter("frequency") * 1.2)
+	_emit_tier_burst()
 	_do_hitstop(0.06)
-	sprite.modulate = Color(0.55, 0.0, 1.0, 1.0)
+	# Flash overbright bianco → colori → bianco normale
+	sprite.modulate = Color(4.0, 4.0, 4.0, 1.0)
 	var tw_mod: Tween = create_tween()
+	tw_mod.tween_property(sprite, "modulate", Color(0.55, 0.0, 1.0, 1.0), 0.12)\
+		.set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_OUT)
 	tw_mod.tween_property(sprite, "modulate", Color(0.0, 0.85, 1.0, 1.0), 0.25)\
 		.set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_OUT)
 	tw_mod.tween_property(sprite, "modulate", Color.WHITE, 0.45)\
@@ -441,6 +445,38 @@ func _on_tier_changed() -> void:
 		.set_trans(Tween.TRANS_ELASTIC).set_ease(Tween.EASE_OUT)
 	await tw_scale.finished
 	is_growing = false
+
+
+func _emit_tier_burst() -> void:
+	var burst: GPUParticles2D = GPUParticles2D.new()
+	add_child(burst)
+	var mat: ParticleProcessMaterial = ParticleProcessMaterial.new()
+	mat.emission_shape = ParticleProcessMaterial.EMISSION_SHAPE_SPHERE
+	mat.emission_sphere_radius = collision.shape.radius * 0.5
+	mat.direction = Vector3(0.0, 0.0, 0.0)
+	mat.initial_velocity_min = 250.0
+	mat.initial_velocity_max = 600.0
+	mat.spread = 180.0
+	mat.gravity = Vector3.ZERO
+	mat.scale_min = 5.0
+	mat.scale_max = 10.0
+	var color_ramp_tex: GradientTexture1D = GradientTexture1D.new()
+	var grad: Gradient = Gradient.new()
+	grad.set_color(0, Color.WHITE)
+	grad.add_point(0.3, sprite.material.get_shader_parameter("global_tint"))
+	grad.add_point(1.0, Color.TRANSPARENT)
+	color_ramp_tex.gradient = grad
+	mat.color_ramp = color_ramp_tex
+	burst.process_material = mat
+	burst.texture = trail.texture
+	burst.amount = 45
+	burst.lifetime = 0.9
+	burst.one_shot = true
+	burst.explosiveness = 0.92
+	burst.emitting = true
+	await get_tree().create_timer(burst.lifetime + 0.15).timeout
+	if is_instance_valid(burst):
+		burst.queue_free()
 
 
 func change_size(amount: float) -> void:
@@ -508,6 +544,12 @@ func take_damage(amount: int) -> void:
 
 
 func game_over() -> void:
+	set_physics_process(false)
+	set_process(false)
+	player_camera.apply_shake(6.0, 1.2)
+	Engine.time_scale = 0.05
+	await get_tree().create_timer(0.55, true, false, true).timeout
+	Engine.time_scale = 1.0
 	GlobalSignals.game_over.emit()
 	queue_free()
 
