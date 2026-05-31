@@ -417,7 +417,7 @@ func get_damage() -> float:
 
 func _on_enemy_died(body: CelestialBody) -> void:
 	if body is Ceres:
-		_do_hitstop(0.22)
+		_do_hitstop(0.3)
 	elif body is Asteroid or body is Comet or body is Vesta:
 		_do_hitstop(0.1)
 
