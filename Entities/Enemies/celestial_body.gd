@@ -189,7 +189,6 @@ func take_damage(damage: float) -> void:
 	health -= damage
 	if health_bar:
 		health_bar.value = health
-	print("Vita attuale: ", health)
 	flash(0.05)
 	if health <= 0:
 		die()
@@ -319,21 +318,8 @@ func get_damage() -> float:
 	var velocity: float = linear_velocity.length()
 	#var velocity_squared = linear_velocity.length_squared()
 
-	print("massa: ", mass)
-	#print("velocità: ", velocity)
-
-	#var kinetic_energy = 0.5 * mass * velocity_squared
-
-	#var damage_scaling = 1000.0
-	#var scaled_damage = kinetic_energy / damage_scaling
 	var scaled_damage: float = mass * (velocity * 0.005)
-
-	#print("Danno originale: ", scaled_damage)
-
 	var damage: int = maxi(snappedi(scaled_damage, round_base), 1)
-
-	print("Danno finale: ", damage)
-
 	return damage
 
 

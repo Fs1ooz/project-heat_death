@@ -54,7 +54,7 @@ radius = 551.1098
 resource_local_to_scene = true
 shader = ExtResource("4_7vqsk")
 shader_parameter/flash_color = Color(1, 1, 1, 1)
-shader_parameter/flash_value = 0.13333338
+shader_parameter/flash_value = 0.0
 
 [sub_resource type="Curve" id="Curve_aw0bt"]
 _data = [Vector2(0, 0.8), 0.0, -0.13285534, 0, 0, Vector2(1, 0), -1.0819256, 0.0, 0, 0]

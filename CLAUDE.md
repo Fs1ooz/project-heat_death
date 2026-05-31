@@ -23,9 +23,9 @@ Defined in `project.godot`, always accessible by name:
 
 | Singleton | File | Purpose |
 |---|---|---|
-| `GlobalSignals` | `Commons/global_signals.tscn` | Game-wide event bus (`game_over`, `death`, `low_health`, `windup_shake`, `use_3d`, `ceres_spawned`) |
-| `UpgradeManager` | `Commons/upgrade_manager.tscn` | Player progression: energy → level-up → size/stat growth; fires `tier_changed` at milestone levels |
-| `EntropyManager` | `Commons/entropy_manager.tscn` | Entropy float that rises over time; goes negative on enemy death; negative entropy applies chaotic forces to the player |
+| `GlobalSignals` | `Commons/global_signals.gd` | Game-wide event bus: `game_over`, `death(body)`, `low_health(bool)`, `windup_shake(intensity, time)`, `use_3d(bool)`, `ceres_spawned(node)` |
+| `UpgradeManager` | `Commons/upgrade_manager.tscn` | Player progression: emits `tier_changed`, `energy_changed(current, max, level)`, `energy_gained(amount)` |
+| `EntropyManager` | `Commons/entropy_manager.tscn` | Entropy float that rises over time; emits `entropy_changed(value)` |
 
 ### Scene Flow
 
@@ -46,7 +46,7 @@ CelestialBody (extends RigidBody2D)  ← base for all physics objects
             ├── Meteoroid
             ├── Comet
             ├── Vesta
-            └── Ceres                 ← boss; state machine: WAIT → WINDUP → (SPAWN_ENEMIES | GAS)
+            └── Ceres                 ← boss; state machine: WAIT → WINDUP → (SPAWN_ENEMIES | GAS) → WAIT (loops)
 
 Player (extends RigidBody2D)          ← separate from CelestialBody hierarchy
 ```
@@ -56,17 +56,29 @@ All `CelestialBody` nodes are in the Godot group `"celestialbodies"`; the player
 
 ### Key Systems
 
-**Entropy** (`Commons/entropy_manager.gd`): The `entropy_value` float increases over time via a timer. When an enemy dies it decreases (negative values). Negative entropy applies oscillating + random forces to the player (`apply_entropy()` in `player.gd`). The player can discharge negative entropy with a shockwave (Space key).
+**Entropy** (`Commons/entropy_manager.gd`): The `entropy_value` float increases over time via a timer. When an enemy dies it decreases (negative values). Negative entropy applies exponentially-scaling oscillating + random forces to the player (`apply_entropy()` in `player.gd`). The player can discharge negative entropy with a shockwave (Space key).
 
-**Upgrade/Progression** (`Commons/UpgradeManager.gd`): Enemies drop energy pickups → `UpgradeManager.gain_energy()` → on level-up, `player.change_size(1.25)` grows the player. At tier thresholds (`tiers: Array`), `tier_changed` fires and the upgrade menu appears with 3 random stat upgrades.
+**Upgrade/Progression** (`Commons/UpgradeManager.gd`): Enemies drop energy pickups → `UpgradeManager.gain_energy()` → on level-up, player grows (`change_size(1.25)`), `max_hp *= 1.15`, `speed *= 1.25`, `acceleration *= 1.25`. The `max_energy` bar grows by `growth_factor = 1.2` each level. At tier thresholds `tiers = [3, 5, 10, 15, 20, 30, 40, 50]`, `tier_changed` fires and the upgrade menu appears with 3 random stat choices. Upgrades: `MAX_HEALTH`, `REGENERATION`, `SPEED`, `ACCELERATION`, `MASS`, `MAX_ORBITS`.
 
-**Orbit System** (`player.gd`): Hold right-click or Q to attract nearby `SmallBody` instances into orbit. Bodies cycle through `OrbitState.FREE → ATTRACTED → ORBITING`. `max_orbiting_bodies` limits how many can orbit simultaneously (upgradeable).
+**Orbit System** (`small_body.gd` + `player.gd`): Hold right-click or Q to attract nearby `SmallBody` instances into orbit. Bodies cycle through `OrbitState.FREE → ATTRACTED → ORBITING`. When orbiting, `freeze = true` (kinematic freeze). `max_orbiting_bodies` limits simultaneous orbits (upgradeable). Only bodies with mass ratio `0.1–2.0× player mass` can be attracted (`orbit_mass_ratio_min/max`).
 
-**Dynamic Spawner** (`Stages/World/celestial_bodies_spawner.gd`): Spawns objects in a rectangular "frame" around the player using Poisson-disc distribution. `GameStage` enum controls spawn weights (meteoroids early → asteroids/comets later). Objects despawn when too far from the player.
+**Dynamic Spawner** (`Stages/World/celestial_bodies_spawner.gd`): Spawns objects in a rectangular "frame" around the player using Poisson-disc distribution. `GameStage` enum controls spawn weights (meteoroids early → asteroids/comets later); stage advances each `tier_changed`. Objects despawn when too far from the player.
 
-**Mass & Physics**: `CelestialBody._setup_mass()` derives mass from collision shape size × density. Damage is `mass × velocity × 0.005`. Player engulfs bodies at mass ratio ≥ 8×; "bulldozer mode" at ≥ 4×.
+**Mass & Physics**: `CelestialBody._setup_mass()` derives mass from collision shape size × density. Enemy damage to player is `mass × velocity × 0.0075 × mass_ratio`. Player damage to enemies is `mass × velocity × 0.5`. Player engulfs bodies at mass ratio ≥ 8× (calls `queue_free.call_deferred()`); "bulldozer mode" at ≥ 4×.
+
+**Camera** (`Entities/Player/camera_2d.gd`, class `PlayerCamera`): Noise-based screen shake (`apply_shake(intensity, time)`). Auto-zoom based on player scale (recalculated on `tier_changed`). Manual scroll-wheel zoom with timeout to resume auto. Boss cam mode: when Ceres is on screen, the camera targets the midpoint between player and Ceres and zooms to fit both.
+
+**Player Survival**: One-time auto-revive (survives lethal hit once per life at 1 HP, `auto_revive` flag). Passive HP regen: restores 15% `max_hp` after 2 seconds without damage. Hitstop on kill: `Engine.time_scale = 0.08` briefly (`_do_hitstop()`).
 
 **Unit Conversion** (`Commons/unit_converter.gd`): `UnitConverter` static class converts between AU, km, and pixels. Scale: 1 pixel = 100 km (`GAME_SCALE = 0.01`).
+
+### Components (`Commons/Components/`)
+
+Reusable nodes looked up via `get_node_or_null("%ComponentName")` (scene-unique names):
+
+- `RotationComponent` — drives sprite visual rotation (independent of physics rotation); supports `windup()` and `freeze()` used by Ceres attacks
+- `OutgassingComponent` — manages gas jet spawn points on Ceres; `prespawn()`, `activate_all()`, `stop()`
+- `KickComponent` — applies impulse kick to a body
 
 ### Physics Layers (2D)
 
@@ -98,3 +110,4 @@ All `CelestialBody` nodes are in the Godot group `"celestialbodies"`; the player
 - Autoloads are accessed directly by name (e.g., `EntropyManager.change_entropy(-5.0)`).
 - `call_deferred()` / `queue_free.call_deferred()` is required when freeing nodes from inside physics callbacks.
 - Components are looked up via `get_node_or_null("%ComponentName")` (scene-unique names).
+- Most in-code comments are in Italian; this is intentional.

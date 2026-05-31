@@ -22,7 +22,6 @@ func _process(delta: float) -> void:
 		# Se vuoi che faccia almeno un tot minimo di danni (es. 10) nei primi livelli:
 		damage = max(damage, 10.0)
 
-		printerr("sto danneggiando ", damage)
 		player_inside.take_damage(int(damage))
 		timer = 0.0
 
@@ -31,11 +30,9 @@ func _on_gas_body_entered(body: Node2D) -> void:
 	if body is Player:
 		player_inside = body
 		timer = 0.0
-		print("Player entered gas")
 
 
 func _on_gas_body_exited(body: Node2D) -> void:
 	if body is Player and player_inside == body:
 		player_inside = null
 		timer = 0.0
-		print("Player exited gas")

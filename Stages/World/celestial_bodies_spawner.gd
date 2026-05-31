@@ -130,7 +130,6 @@ func get_weights_for_current_stage() -> Array:
 func next_game_stage() -> void:
 	if not is_instance_valid(player): return
 	current_stage = (current_stage + 1) as GameStage
-	print("EVOLUZIONE: ", GameStage.keys()[current_stage])
 
 
 ## =========================

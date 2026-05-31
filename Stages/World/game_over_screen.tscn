@@ -31,8 +31,33 @@ layout_mode = 2
 layout_mode = 2
 text = "GAME OVER"
 
+[node name="LevelLabel" type="Label" parent="PanelContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Livello: 1"
+
+[node name="TimeLabel" type="Label" parent="PanelContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Tempo: 0:00"
+
+[node name="KillsLabel" type="Label" parent="PanelContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Nemici: 0"
+
+[node name="EnergyLabel" type="Label" parent="PanelContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Energia: 0"
+
 [node name="RetryButton" type="Button" parent="PanelContainer/VBoxContainer"]
 layout_mode = 2
 text = "RETRY"
 
+[node name="MainMenuButton" type="Button" parent="PanelContainer/VBoxContainer"]
+layout_mode = 2
+text = "MAIN MENU"
+
 [connection signal="pressed" from="PanelContainer/VBoxContainer/RetryButton" to="." method="_on_retry_button_pressed"]
+[connection signal="pressed" from="PanelContainer/VBoxContainer/MainMenuButton" to="." method="_on_main_menu_button_pressed"]

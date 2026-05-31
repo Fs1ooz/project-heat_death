@@ -2565,8 +2565,8 @@ animations = [{
 
 [node name="Ceres" type="RigidBody2D" unique_id=933810055 node_paths=PackedStringArray("collision", "gravity_area_collision", "sprite")]
 script = ExtResource("1_403pl")
-min_size = 1200.0
-max_size = 1200.0
+min_size = 1500.0
+max_size = 1500.0
 internal_energy = 5
 game_energy = 10000
 collision = NodePath("Collision")

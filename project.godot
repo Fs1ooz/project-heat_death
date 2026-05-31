@@ -31,6 +31,7 @@ GlobalSignals="*res://Commons/global_signals.tscn"
 UpgradeManager="*res://Commons/upgrade_manager.tscn"
 EntropyManager="*res://Commons/entropy_manager.tscn"
 ImGuiRoot="*uid://dugmpnsxaagba"
+StatTracker="*uid://8kawij15m7h6"
 
 [debug]
 

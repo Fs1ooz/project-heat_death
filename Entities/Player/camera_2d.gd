@@ -175,7 +175,7 @@ func _process_boss_cam(delta: float) -> void:
 		var vp: Vector2 = get_viewport_rect().size
 		# Zoom per tenere entrambi nel frame con ~35% di padding
 		var needed: float = min(vp.x, vp.y) / max(dist * 1.7, 1.0)
-		needed = clamp(needed, boss_zoom_value, tier_base_zoom.x)
+		needed = clamp(needed, boss_zoom_value / player_scale, tier_base_zoom.x)
 		zoom = zoom.lerp(Vector2.ONE * needed, zoom_lerp_speed * delta)
 
 

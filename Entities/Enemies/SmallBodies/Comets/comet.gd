@@ -65,7 +65,6 @@ func _spawn_trail_drop() -> void:
 
 	game_energy = max(0, game_energy - energy_per_drop)
 	var energy_ratio: float = game_energy / initial_game_energy
-	print(game_energy)
 	# Tutto calcolato in modo ASSOLUTO rispetto ai valori iniziali
 	target_scale = initial_sprite_scale * energy_ratio
 	mass = initial_mass * energy_ratio

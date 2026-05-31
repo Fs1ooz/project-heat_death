@@ -5,7 +5,6 @@
 [ext_resource type="PackedScene" uid="uid://bkljj71ppklsf" path="res://Stages/World/SolarSystem/AsteroidBelt/background_layer.tscn" id="3_25f73"]
 [ext_resource type="PackedScene" uid="uid://befachtfe40l2" path="res://Stages/World/SolarSystem/AsteroidBelt/base_background_layer.tscn" id="4_2b7i7"]
 [ext_resource type="PackedScene" uid="uid://d2i2r2ucklcu0" path="res://Entities/Enemies/SmallBodies/Ceres/ceres.tscn" id="4_25f73"]
-[ext_resource type="PackedScene" uid="uid://714k31e6y8aj" path="res://Entities/Enemies/SmallBodies/Vesta/vesta.tscn" id="4_qsswq"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_2b7i7"]
 bg_color = Color(0.003921569, 0.003921569, 0.003921569, 1)
@@ -80,12 +79,6 @@ theme_override_font_sizes/font_size = 64
 text = "Start"
 
 [node name="BaseBackgroundLayer" parent="." unique_id=501950975 instance=ExtResource("4_2b7i7")]
-
-[node name="Vesta" parent="." unique_id=919368619 instance=ExtResource("4_qsswq")]
-position = Vector2(-37, 253)
-rotation = -1.5446163
-min_size = 1.2
-max_size = 1.2
 
 [node name="Ceres" parent="." unique_id=933810055 instance=ExtResource("4_25f73")]
 position = Vector2(943, 250)

@@ -1,4 +1,4 @@
-[gd_scene format=3 uid="uid://d5hi3z0uj4or"]
+[gd_scene format=3 uid="uid://d5hi300uj4or"]
 
 [ext_resource type="Shader" uid="uid://chroma001shader" path="res://Assets/Shaders/chromatic_aberration.gdshader" id="1_chroma"]
 [ext_resource type="Script" uid="uid://e6ij4a1vk5ps" path="res://Stages/UI/chromatic_aberration.gd" id="2_chroma"]

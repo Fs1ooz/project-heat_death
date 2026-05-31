@@ -526,4 +526,3 @@ func update_segment_count(new_segment_count: int) -> void:
 	max_segments = segment_count
 	material.set_shader_parameter("segment_count", segment_count)
 	_update_display_from_value()
-	print("Progress bar segments updated to: ", segment_count)

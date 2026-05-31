@@ -5,7 +5,6 @@ const SOLAR_SYSTEM: String = "res://Stages/World/SolarSystem/solar_system.tscn"
 
 
 func _ready() -> void:
-	$Vesta.set_process(false)
 	$Ceres.set_process(false)
 	var tween: Tween = create_tween()
 	tween.set_loops()
@@ -25,7 +24,6 @@ func _ready() -> void:
 func _on_button_pressed() -> void:
 	get_tree().change_scene_to_file(SOLAR_SYSTEM)
 	EntropyManager.reset_entropy()
-	$Vesta.set_process(true)
 	$Ceres.set_process(true)
 
 

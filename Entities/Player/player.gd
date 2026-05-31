@@ -468,8 +468,6 @@ func change_scale(amount: float) -> void:
 	mat.scale_min = initial_particle_scale.x * total_scale_factor
 	mat.scale_max = initial_particle_scale.y * total_scale_factor
 
-	emission_offset_dist = 20.0 * total_scale_factor
-
 	var tween: Tween = create_tween()
 	tween.tween_property(sprite, "scale", scale_change, 1.2).set_trans(Tween.TRANS_ELASTIC).set_ease(Tween.EASE_OUT)
 	base_scale = scale_change

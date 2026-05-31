@@ -16,13 +16,14 @@ var growth_factor: float = 1.2
 
 signal tier_changed()
 signal energy_changed(current: float, max: float, level: int)
+signal energy_gained(amount: float)
 
 var tiers: Array = [3, 5, 10, 15, 20, 30, 40, 50]
 
 func gain_energy(value: float) -> void:
+	energy_gained.emit(value)
 	energy += value
 	while energy >= max_energy:
-		printerr("LEVELUP!!!!")
 		energy -= max_energy
 		level += 1
 		level_up()
@@ -38,7 +39,6 @@ func level_up() -> void:
 	player.speed *= 1.25
 	player.acceleration *= 1.25
 	if level in tiers:
-		printerr("tier cangiato")
 		tier_changed.emit()
 
 
@@ -93,7 +93,7 @@ var upgrades_data: Dictionary = {
 		"current_power": 1000.0,
 	},
 	UpgradeType.ACCELERATION: {
-		"name": "Accelaration",
+		"name": "Acceleration",
 		"description": "Increases Acceleration.",
 		"level": 1,
 		"base_power": 800.0,
@@ -149,7 +149,6 @@ func apply_upgrade(upgrade_type: UpgradeType) -> bool:
 
 
 
-	printerr("sto facendo 1")
 	#if energy < upgrade_data["current_cost"]:
 		#print("Non abbastanza energia!")
 		#return false
@@ -178,7 +177,6 @@ func apply_upgrade(upgrade_type: UpgradeType) -> bool:
 	upgrade_data["current_power"] = power
 	upgrade_data["current_cost"] = calculate_next_cost(upgrade_data)
 
-	printerr("sto facendo 2")
 	match upgrade_type:
 
 		UpgradeType.MAX_HEALTH:
@@ -197,7 +195,6 @@ func apply_upgrade(upgrade_type: UpgradeType) -> bool:
 		#UpgradeType.DENSITY:
 			#player.change_size(-1.05)
 
-	printerr("sto facendo 3")
 	#upgrade_applied.emit(upgrade_type, power)
 	return true
 
