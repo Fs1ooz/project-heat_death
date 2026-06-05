@@ -3,7 +3,8 @@ extends Node2D
 
 const ORBIT_RATIO: float = 0.45
 const RING_COLOR: Color = Color(1.0, 1.0, 1.0, 0.35)
-const RING_WIDTH: float = 1.5
+const RING_WIDTH_RATIO: float = 0.004  # frazione del raggio → la linea cresce col player
+const RING_WIDTH_MIN: float = 1.5      # minimo in px-mondo per non sparire da piccolo
 
 var _active: bool = false
 var _base_radius: float = 0.0
@@ -50,9 +51,8 @@ func _process(_delta: float) -> void:
 func _draw() -> void:
 	if not _active:
 		return
-	# Scala la larghezza della linea in pixel-schermo costanti, indipendente dallo zoom camera
-	var screen_scale: float = get_canvas_transform().get_scale().x
-	var draw_width: float = maxf(RING_WIDTH / screen_scale, RING_WIDTH)
 	for i: int in range(_max_slots):
 		var radius: float = _base_radius * ORBIT_RATIO * (1.0 + i * 0.3)
+		# Spessore proporzionale al raggio: cresce col player ma resta sottile in proporzione
+		var draw_width: float = maxf(radius * RING_WIDTH_RATIO, RING_WIDTH_MIN)
 		draw_arc(Vector2.ZERO, radius, 0.0, TAU, 80, RING_COLOR, draw_width, true)

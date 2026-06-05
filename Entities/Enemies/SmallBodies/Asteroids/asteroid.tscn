@@ -126,7 +126,7 @@ animation = &"rotation"
 [node name="VisibleScreenEnablerComponent" parent="Collision/Sprite" unique_id=1944736001 instance=ExtResource("6_gtkhq")]
 position = Vector2(13, -11)
 scale = Vector2(0.39999995, 0.39999995)
-rect = Rect2(-1394.5002, -1434.0002, 2760.0005, 2847.5005)
+rect = Rect2(-4140, -4275, 8280, 8550)
 enable_node_path = NodePath("../../..")
 
 [node name="OutgassingComponent" type="Node" parent="." unique_id=206739514]
