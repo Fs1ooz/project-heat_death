@@ -82,6 +82,9 @@ func start_attraction(target: Node2D, slot: int = 0) -> void:
 	if orbit_state != OrbitState.FREE:
 		return
 
+	# VisibleOnScreenEnabler2D può aver disabilitato il nodo quando era fuori schermo:
+	# lo riattiviamo subito così _physics_process/_integrate_forces tornano a girare
+	process_mode = PROCESS_MODE_INHERIT
 	orbit_state = OrbitState.ATTRACTED
 	orbit_target = target
 	orbit_slot = slot
@@ -126,6 +129,10 @@ func _enter_orbit() -> void:
 	var offset: Vector2 = global_position - orbit_target.global_position
 	orbit_angle = atan2(offset.y, offset.x)
 	custom_integrator = true
+	# Disabilita VisibleOnScreenEnabler2D: durante l'orbita il nodo deve sempre processare,
+	# anche se va sul bordo dello schermo (altrimenti _integrate_forces si ferma)
+	for e: Node in find_children("*", "VisibleOnScreenEnabler2D", true, false):
+		e.process_mode = PROCESS_MODE_DISABLED
 	if rotation_component:
 		rotation_component.speed = rotation_component.base_speed
 	# Agganciamo subito sulla circonferenza esatta per evitare lo scatto visivo
@@ -136,6 +143,9 @@ func _enter_orbit() -> void:
 func leave_orbit() -> void:
 	orbit_state = OrbitState.FREE
 	custom_integrator = false
+	# Ripristina VisibleOnScreenEnabler2D: il corpo può essere disabilitato di nuovo se esce schermo
+	for e: Node in find_children("*", "VisibleOnScreenEnabler2D", true, false):
+		e.process_mode = PROCESS_MODE_INHERIT
 	var tangent: Vector2 = Vector2(-sin(orbit_angle), cos(orbit_angle))
 	var player_vel: Vector2 = orbit_target.linear_velocity if is_instance_valid(orbit_target) else Vector2.ZERO
 	linear_velocity = player_vel + tangent * 250.0
