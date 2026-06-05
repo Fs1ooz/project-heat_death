@@ -23,9 +23,12 @@ Defined in `project.godot`, always accessible by name:
 
 | Singleton | File | Purpose |
 |---|---|---|
-| `GlobalSignals` | `Commons/global_signals.gd` | Game-wide event bus: `game_over`, `death(body)`, `low_health(bool)`, `windup_shake(intensity, time)`, `use_3d(bool)`, `ceres_spawned(node)` |
+| `GlobalSignals` | `Commons/global_signals.tscn` | Game-wide event bus: `game_over`, `death(body)`, `low_health(bool)`, `windup_shake(intensity, time)`, `use_3d(bool)`, `ceres_spawned(node)` |
 | `UpgradeManager` | `Commons/upgrade_manager.tscn` | Player progression: emits `tier_changed`, `energy_changed(current, max, level)`, `energy_gained(amount)` |
 | `EntropyManager` | `Commons/entropy_manager.tscn` | Entropy float that rises over time; emits `entropy_changed(value)` |
+| `StatTracker` | `Commons/stat_tracker.gd` | Run-stats recorder: `time_survived`, `enemies_killed`, `energy_collected`, `level_reached`. Subscribes to GlobalSignals/UpgradeManager; freezes tracking on `game_over` (read by `game_over_screen.gd`). Call `reset()` to start a new run. |
+
+(`ImGuiRoot` is also registered as an autoload but belongs to the imgui-godot addon.)
 
 ### Scene Flow
 
@@ -95,6 +98,11 @@ Reusable nodes looked up via `get_node_or_null("%ComponentName")` (scene-unique 
 | `space` | Shockwave (discharge negative entropy) |
 | `pause` | P / Escape |
 | `fullscreen` | F11 |
+
+### Dead / WIP code (don't rely on it)
+
+- `Commons/streaming_manager.gd` — entirely commented out; a never-finished body-streaming experiment.
+- `Commons/GameState/game_state.gd` (`class_name GameState`) — a plain data holder that is not referenced anywhere yet.
 
 ### Addons
 
