@@ -120,12 +120,17 @@ func _orbit(delta: float) -> void:
 	global_position = orbit_target.global_position \
 		+ Vector2(cos(orbit_angle), sin(orbit_angle)) * orbit_radius
 
+	if rotation_component:
+		rotation += rotation_component.base_speed * delta * 3.0
+
 
 func _enter_orbit() -> void:
 	orbit_state = OrbitState.ORBITING
 	var offset: Vector2 = global_position - orbit_target.global_position
 	orbit_angle = atan2(offset.y, offset.x)
 	freeze = true
+	if rotation_component:
+		rotation_component.speed = rotation_component.base_speed
 	# Agganciamo subito sulla circonferenza esatta per evitare lo scatto visivo
 	global_position = orbit_target.global_position \
 		+ Vector2(cos(orbit_angle), sin(orbit_angle)) * orbit_radius

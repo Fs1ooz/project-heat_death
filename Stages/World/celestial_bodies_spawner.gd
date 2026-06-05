@@ -38,11 +38,20 @@ extends Node2D
 
 var spawned_objects: Array = []
 
-var spawn_interval: float = 0.01
+var spawn_interval: float = 0.25
 var spawn_timer: float = spawn_interval
+
+var _spawn_shape: CircleShape2D
+var _spawn_query: PhysicsShapeQueryParameters2D
+var _camera: Camera2D
 
 func _ready() -> void:
 	UpgradeManager.tier_changed.connect(next_game_stage)
+	_spawn_shape = CircleShape2D.new()
+	_spawn_query = PhysicsShapeQueryParameters2D.new()
+	_spawn_query.shape = _spawn_shape
+	_spawn_query.collision_mask = 2
+	_camera = get_viewport().get_camera_2d()
 
 
 func _process(delta: float) -> void:
@@ -154,15 +163,15 @@ func spawn_object_poisson() -> void:
 		# Aggiungi al parent (es. il mondo di gioco) per non farlo muovere con lo spawner
 		get_parent().add_child(instance)
 		spawned_objects.append(instance)
+		instance.tree_exiting.connect(func() -> void: spawned_objects.erase(instance))
 
 func find_valid_rectangular_pos(radius: float) -> Vector2:
 	var space_state: PhysicsDirectSpaceState2D = get_world_2d().direct_space_state
-	var camera: Camera2D = get_viewport().get_camera_2d()
 
 	# Calcoliamo le dimensioni attuali della vista (adattive allo zoom)
 	var view_size: Vector2 = get_viewport_rect().size
-	if camera:
-		view_size /= camera.zoom
+	if _camera:
+		view_size /= _camera.zoom
 
 	# Definiamo i limiti della cornice attorno al player/camera
 	var center: Vector2 = player.global_position
@@ -198,16 +207,11 @@ func find_valid_rectangular_pos(radius: float) -> Vector2:
 	return Vector2.ZERO
 
 func is_position_empty(pos: Vector2, radius: float, space_state: PhysicsDirectSpaceState2D) -> bool:
-	# 1) controllo fisico (opzionale)
-	var shape: CircleShape2D = CircleShape2D.new()
-	shape.radius = radius
+	# 1) controllo fisico
+	_spawn_shape.radius = radius
+	_spawn_query.transform = Transform2D(0.0, pos)
 
-	var query: PhysicsShapeQueryParameters2D = PhysicsShapeQueryParameters2D.new()
-	query.shape = shape
-	query.transform = Transform2D(0.0, pos)
-	query.collision_mask = 2
-
-	if not space_state.intersect_shape(query).is_empty():
+	if not space_state.intersect_shape(_spawn_query).is_empty():
 		return false
 
 	# 2) controllo MANUALE Poisson (quello che manca)
@@ -249,20 +253,13 @@ func cleanup_objects() -> void:
 	spawned_objects = spawned_objects.filter(is_instance_valid)
 
 	var view_size: Vector2 = get_viewport_rect().size
-	var camera: Camera2D = get_viewport().get_camera_2d()
-	if camera:
-		view_size /= camera.zoom
+	if _camera:
+		view_size /= _camera.zoom
 
 	var limit_x: float = (view_size.x * 0.5) + spawn_margin_inner + spawn_margin_outer + despawn_buffer
 	var limit_y: float = (view_size.y * 0.5) + spawn_margin_inner + spawn_margin_outer + despawn_buffer
 
-	var to_remove: Array = []
-
 	for obj: Node2D in spawned_objects:
 		var diff: Vector2 = (obj.global_position - player.global_position).abs()
 		if diff.x > limit_x or diff.y > limit_y:
-			to_remove.append(obj)
-
-	for obj: Node2D in to_remove:
-		spawned_objects.erase(obj)
-		obj.queue_free()
+			obj.queue_free()  # tree_exiting rimuove automaticamente da spawned_objects
