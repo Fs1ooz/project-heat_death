@@ -67,8 +67,6 @@ func _physics_process(delta: float) -> void:
 	match orbit_state:
 		OrbitState.ATTRACTED:
 			_attract_to_player(delta)
-		OrbitState.ORBITING:
-			_orbit(delta)
 	super(delta)
 
 
@@ -109,26 +107,25 @@ func _attract_to_player(delta: float) -> void:
 		_enter_orbit()
 
 
-func _orbit(delta: float) -> void:
-	if not is_instance_valid(orbit_target):
-		leave_orbit()
+func _integrate_forces(state: PhysicsDirectBodyState2D) -> void:
+	if orbit_state != OrbitState.ORBITING or not is_instance_valid(orbit_target):
 		return
-
 	orbit_radius = _get_orbit_radius()
-
-	orbit_angle += orbit_speed * delta
-	global_position = orbit_target.global_position \
-		+ Vector2(cos(orbit_angle), sin(orbit_angle)) * orbit_radius
-
+	orbit_angle += orbit_speed * state.step
 	if rotation_component:
-		rotation += rotation_component.base_speed * delta * 3.0
+		rotation += rotation_component.base_speed * state.step * 3.0
+	var new_pos: Vector2 = orbit_target.global_position \
+		+ Vector2(cos(orbit_angle), sin(orbit_angle)) * orbit_radius
+	state.transform = Transform2D(rotation, new_pos)
+	state.linear_velocity = Vector2.ZERO
+	state.angular_velocity = 0.0
 
 
 func _enter_orbit() -> void:
 	orbit_state = OrbitState.ORBITING
 	var offset: Vector2 = global_position - orbit_target.global_position
 	orbit_angle = atan2(offset.y, offset.x)
-	freeze = true
+	custom_integrator = true
 	if rotation_component:
 		rotation_component.speed = rotation_component.base_speed
 	# Agganciamo subito sulla circonferenza esatta per evitare lo scatto visivo
@@ -138,7 +135,7 @@ func _enter_orbit() -> void:
 
 func leave_orbit() -> void:
 	orbit_state = OrbitState.FREE
-	freeze = false
+	custom_integrator = false
 	var tangent: Vector2 = Vector2(-sin(orbit_angle), cos(orbit_angle))
 	var player_vel: Vector2 = orbit_target.linear_velocity if is_instance_valid(orbit_target) else Vector2.ZERO
 	linear_velocity = player_vel + tangent * 250.0
