@@ -13,6 +13,12 @@ uniform int pattern : hint_range(0, 2) = 0; // 0: diamond, 1: circle, 2: square
 uniform bool inside = false;
 uniform bool add_margins = true;
 
+// --- UNIFORMS FLASH ---
+group_uniforms Flash;
+uniform sampler2D flash_gradient_tex : repeat_enable;
+uniform float flash_offset = 0.0;
+uniform float flash_alpha : hint_range(0.0, 4.0) = 0.0;
+
 // --- UNIFORMS SPIRAL ---
 group_uniforms Spiral;
 uniform bool add_spiral = true;
@@ -151,6 +157,11 @@ void fragment() {
 		vec4 out_grad_col = texture(outline_gradient, UV);
 		COLOR.rgb = inside ? mix(COLOR.rgb, out_grad_col.rgb, out_grad_col.a) : out_grad_col.rgb;
 		COLOR.a += (1.0 - COLOR.a) * out_grad_col.a;
+	}
+
+	if (flash_alpha > 0.0 && COLOR.a > 0.0) {
+		vec3 flash_col = texture(flash_gradient_tex, vec2(fract(UV.x + flash_offset), 0.5)).rgb;
+		COLOR.rgb = mix(COLOR.rgb, flash_col, flash_alpha);
 	}
 
 	COLOR *= global_tint;

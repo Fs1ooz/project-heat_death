@@ -25,9 +25,6 @@ func _on_enemy_died(body: CelestialBody) -> void:
 	if body is Ceres:
 		peak = 0.025
 		dur = 0.9
-	elif body is Asteroid or body is Comet or body is Vesta:
-		peak = 0.012
-		dur = 0.4
 	else:
 		return
 	var tween: Tween = create_tween()

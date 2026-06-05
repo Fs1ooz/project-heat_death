@@ -169,9 +169,9 @@ process_material = SubResource("ParticleProcessMaterial_uuhj7")
 [node name="Debris" type="GPUParticles2D" parent="." unique_id=362841057]
 emitting = false
 amount = 20
-lifetime = 1.8
+lifetime = 1.5
 one_shot = true
-explosiveness = 0.6
+explosiveness = 0.7
 fixed_fps = 0
 visibility_rect = Rect2(-1000, -1000, 2000, 2000)
 process_material = SubResource("ParticleProcessMaterial_debris")

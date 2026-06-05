@@ -5,6 +5,10 @@ extends RigidBody2D
 ## - Gravity Scale: 0 (per top-down)
 ## - Mass: 1 (regolare a piacere)
 
+const GURREN_GRADIENT: Gradient = preload("res://Assets/Gradients/gurren_lagann_gradient.tres")
+
+var _flash_tex: GradientTexture1D
+
 @export var life_bar: ProgressBar = null
 @export var alignment_safe_zone: float = 0.8
 @export var collision: CollisionShape2D
@@ -24,6 +28,7 @@ extends RigidBody2D
 @export var max_orbiting_bodies: int = 1
 
 @onready var player_camera: PlayerCamera = $PlayerCamera
+@onready var orbit_rings: OrbitRings = $OrbitRings
 
 var attraction_radius: float:
 	get: return $Attraction/CollisionShape2D.shape.radius
@@ -70,6 +75,11 @@ func _ready() -> void:
 	trail.lifetime = 1.5
 	initial_particle_scale = Vector2(mat.scale_min, mat.scale_max)
 	trail.process_material = mat
+
+	_flash_tex = GradientTexture1D.new()
+	_flash_tex.gradient = GURREN_GRADIENT
+	_flash_tex.width = 256
+	sprite.material.set_shader_parameter("flash_gradient_tex", _flash_tex)
 
 	if life_bar:
 		life_bar.value = max_hp
@@ -193,7 +203,7 @@ func _input(event: InputEvent) -> void:
 		_deactivate_orbit()
 
 @export var orbit_mass_ratio_min: float = 0.1  # massa minima orbitabile (evita roba troppo piccola)
-@export var orbit_mass_ratio_max: float = 2.0  # massa massima orbitabile
+@export var orbit_mass_ratio_max: float = 5.0  # massa massima orbitabile
 
 func _can_orbit(body: CelestialBody) -> bool:
 	var ratio: float = body.mass / mass
@@ -201,6 +211,7 @@ func _can_orbit(body: CelestialBody) -> bool:
 
 func _activate_orbit() -> void:
 	orbit_active = true
+	orbit_rings.show_rings(attraction_radius, max_orbiting_bodies)
 	var current_count: int = get_current_orbiting_count()
 
 	for body: CelestialBody in nearby_bodies:
@@ -224,6 +235,7 @@ func _on_attraction_body_entered(body: Node2D) -> void:
 
 func _deactivate_orbit() -> void:
 	orbit_active = false
+	orbit_rings.hide_rings()
 	for body: CelestialBody in nearby_bodies:
 		if body is SmallBody:
 			if body.orbit_state != SmallBody.OrbitState.FREE:
@@ -418,23 +430,33 @@ func get_damage() -> float:
 func _on_enemy_died(body: CelestialBody) -> void:
 	if body is Ceres:
 		_do_hitstop(0.3)
-	elif body is Asteroid or body is Comet or body is Vesta:
-		_do_hitstop(0.1)
 
 
 func _on_tier_changed() -> void:
 	sprite.material.set_shader_parameter("frequency", sprite.material.get_shader_parameter("frequency") * 1.2)
 	_emit_tier_burst()
 	_do_hitstop(0.06)
-	# Flash overbright bianco → colori → bianco normale
+	# Lampo bianco iniziale su modulate (il "punch")
 	sprite.modulate = Color(4.0, 4.0, 4.0, 1.0)
-	var tw_mod: Tween = create_tween()
-	tw_mod.tween_property(sprite, "modulate", Color(0.55, 0.0, 1.0, 1.0), 0.12)\
+	var tw_white: Tween = create_tween()
+	tw_white.tween_property(sprite, "modulate", Color.WHITE, 0.15)\
 		.set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_OUT)
-	tw_mod.tween_property(sprite, "modulate", Color(0.0, 0.85, 1.0, 1.0), 0.25)\
-		.set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_OUT)
-	tw_mod.tween_property(sprite, "modulate", Color.WHITE, 0.45)\
-		.set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_OUT)
+	# Gradient scroll via shader (flash_alpha 0→1→0, offset 0→4)
+	sprite.material.set_shader_parameter("flash_offset", 0.0)
+	var tw_alpha: Tween = create_tween()
+	tw_alpha.tween_method(
+		func(a: float) -> void: sprite.material.set_shader_parameter("flash_alpha", a),
+		0.0, 1.0, 0.15
+	).set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_OUT)
+	tw_alpha.tween_method(
+		func(a: float) -> void: sprite.material.set_shader_parameter("flash_alpha", a),
+		1.0, 0.0, 0.95
+	).set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_IN)
+	var tw_offset: Tween = create_tween()
+	tw_offset.tween_method(
+		func(o: float) -> void: sprite.material.set_shader_parameter("flash_offset", o),
+		0.0, 4.0, 1.1
+	).set_trans(Tween.TRANS_LINEAR)
 	is_growing = true
 	if current_tween:
 		current_tween.kill()
@@ -450,16 +472,16 @@ func _on_tier_changed() -> void:
 func _emit_tier_burst() -> void:
 	var burst: GPUParticles2D = GPUParticles2D.new()
 	add_child(burst)
-	var mat: ParticleProcessMaterial = ParticleProcessMaterial.new()
-	mat.emission_shape = ParticleProcessMaterial.EMISSION_SHAPE_SPHERE
-	mat.emission_sphere_radius = collision.shape.radius * 0.5
-	mat.direction = Vector3(0.0, 0.0, 0.0)
-	mat.initial_velocity_min = 250.0
-	mat.initial_velocity_max = 600.0
-	mat.spread = 180.0
-	mat.gravity = Vector3.ZERO
-	mat.scale_min = 5.0
-	mat.scale_max = 10.0
+	var new_mat: ParticleProcessMaterial = ParticleProcessMaterial.new()
+	new_mat.emission_shape = ParticleProcessMaterial.EMISSION_SHAPE_SPHERE
+	new_mat.emission_sphere_radius = collision.shape.radius * 0.5
+	new_mat.direction = Vector3(0.0, 0.0, 0.0)
+	new_mat.initial_velocity_min = 250.0
+	new_mat.initial_velocity_max = 600.0
+	new_mat.spread = 180.0
+	new_mat.gravity = Vector3.ZERO
+	new_mat.scale_min = 5.0
+	new_mat.scale_max = 10.0
 	var color_ramp_tex: GradientTexture1D = GradientTexture1D.new()
 	var grad: Gradient = Gradient.new()
 	grad.set_color(0, Color.WHITE)
@@ -483,8 +505,9 @@ func change_size(amount: float) -> void:
 	change_mass(amount)
 	change_scale(amount)
 	$Attraction/CollisionShape2D.shape.radius *= amount
-
 	energy_threshold *= amount
+	if orbit_active:
+		orbit_rings.update_rings(attraction_radius, max_orbiting_bodies)
 
 func change_mass(amount: float) -> void:
 	old_mass = mass

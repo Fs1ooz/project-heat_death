@@ -8,6 +8,7 @@
 [ext_resource type="Script" uid="uid://cnf8kwhvre5kg" path="res://Entities/Player/camera_2d.gd" id="5_5c2io"]
 [ext_resource type="PackedScene" uid="uid://b0myyk17i84k7" path="res://Entities/Player/trail.tscn" id="5_7a1se"]
 [ext_resource type="AudioStream" uid="uid://b6sr0lglnwc8s" path="res://Assets/Sounds/freesound_community-cartoon-slurp-37066.wav" id="8_7a1se"]
+[ext_resource type="Script" path="res://Entities/Player/orbit_rings.gd" id="9_orbit"]
 
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_5c2io"]
 friction = 0.0
@@ -160,6 +161,9 @@ bus = &"Sound"
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=42343380]
 libraries/ = SubResource("AnimationLibrary_7a1se")
+
+[node name="OrbitRings" type="Node2D" parent="."]
+script = ExtResource("9_orbit")
 
 [node name="Attraction" type="Area2D" parent="." unique_id=1445965777]
 collision_mask = 3
