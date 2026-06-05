@@ -36,6 +36,7 @@ var attraction_radius: float:
 var rotation_responsiveness: float = 8.0
 
 var auto_revive: bool = true
+var _is_low_health: bool = false
 var _last_velocity: Vector2 = Vector2.ZERO
 
 var gravity_force: Vector2 = Vector2.ZERO
@@ -98,13 +99,11 @@ func _process(delta: float) -> void:
 		if regen_time > regen_timer:
 			_start_regen()
 			regen_time = 0.0
-	if hp >= max_hp * 0.25:
-		if $AnimationPlayer.current_animation == "low_health":
-			GlobalSignals.low_health.emit(false)
-			$AnimationPlayer.play("RESET")
-	else:
-		GlobalSignals.low_health.emit(true)
-		$AnimationPlayer.play("low_health")
+	var low: bool = hp < max_hp * 0.25
+	if low != _is_low_health:
+		_is_low_health = low
+		GlobalSignals.low_health.emit(low)
+		$AnimationPlayer.play("low_health" if low else "RESET")
 
 
 #region Movement

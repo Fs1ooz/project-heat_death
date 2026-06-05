@@ -42,9 +42,17 @@ func _on_hide_finished() -> void:
 	queue_redraw()
 
 
+func _process(_delta: float) -> void:
+	if _active:
+		queue_redraw()
+
+
 func _draw() -> void:
 	if not _active:
 		return
+	# Scala la larghezza della linea in pixel-schermo costanti, indipendente dallo zoom camera
+	var screen_scale: float = get_canvas_transform().get_scale().x
+	var draw_width: float = maxf(RING_WIDTH / screen_scale, RING_WIDTH)
 	for i: int in range(_max_slots):
 		var radius: float = _base_radius * ORBIT_RATIO * (1.0 + i * 0.3)
-		draw_arc(Vector2.ZERO, radius, 0.0, TAU, 80, RING_COLOR, RING_WIDTH, true)
+		draw_arc(Vector2.ZERO, radius, 0.0, TAU, 80, RING_COLOR, draw_width, true)

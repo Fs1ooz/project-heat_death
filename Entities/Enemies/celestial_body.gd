@@ -294,7 +294,7 @@ func _apply_gravity(body: RigidBody2D) -> void:
 	dist_sq = max(dist_sq, 100.0) # Impedisce che la forza diventi infinita troppo vicino
 
 	gravity_force = G * mass * body.mass / dist_sq + SOFTENING
-	var gravity_force_vector: Vector2 = dir.normalized() * gravity_force
+	var gravity_force_vector: Vector2 = (dir / sqrt(dist_sq)) * gravity_force
 
 	body.apply_central_force(gravity_force_vector)
 	apply_central_force(-gravity_force_vector)
