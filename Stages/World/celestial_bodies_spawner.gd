@@ -38,7 +38,7 @@ extends Node2D
 
 var spawned_objects: Array = []
 
-var spawn_interval: float = 0.25
+var spawn_interval: float = 0.01
 var spawn_timer: float = spawn_interval
 
 var _spawn_shape: CircleShape2D
