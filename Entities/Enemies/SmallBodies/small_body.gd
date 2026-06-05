@@ -67,6 +67,8 @@ func _physics_process(delta: float) -> void:
 	match orbit_state:
 		OrbitState.ATTRACTED:
 			_attract_to_player(delta)
+		OrbitState.ORBITING:
+			_orbit(delta)
 	super(delta)
 
 
@@ -83,7 +85,7 @@ func start_attraction(target: Node2D, slot: int = 0) -> void:
 		return
 
 	# VisibleOnScreenEnabler2D può aver disabilitato il nodo quando era fuori schermo:
-	# lo riattiviamo subito così _physics_process/_integrate_forces tornano a girare
+	# lo riattiviamo subito così _physics_process torna a girare
 	process_mode = PROCESS_MODE_INHERIT
 	orbit_state = OrbitState.ATTRACTED
 	orbit_target = target
@@ -110,27 +112,26 @@ func _attract_to_player(delta: float) -> void:
 		_enter_orbit()
 
 
-func _integrate_forces(state: PhysicsDirectBodyState2D) -> void:
-	if orbit_state != OrbitState.ORBITING or not is_instance_valid(orbit_target):
+func _orbit(delta: float) -> void:
+	if not is_instance_valid(orbit_target):
+		leave_orbit()
 		return
 	orbit_radius = _get_orbit_radius()
-	orbit_angle += orbit_speed * state.step
+	orbit_angle += orbit_speed * delta
 	if rotation_component:
-		rotation += rotation_component.base_speed * state.step * 3.0
-	var new_pos: Vector2 = orbit_target.global_position \
+		rotation += rotation_component.base_speed * delta * 3.0
+	# freeze + FREEZE_MODE_KINEMATIC: spostiamo il corpo settando global_position
+	global_position = orbit_target.global_position \
 		+ Vector2(cos(orbit_angle), sin(orbit_angle)) * orbit_radius
-	state.transform = Transform2D(rotation, new_pos)
-	state.linear_velocity = Vector2.ZERO
-	state.angular_velocity = 0.0
 
 
 func _enter_orbit() -> void:
 	orbit_state = OrbitState.ORBITING
 	var offset: Vector2 = global_position - orbit_target.global_position
 	orbit_angle = atan2(offset.y, offset.x)
-	custom_integrator = true
+	freeze = true
 	# Disabilita VisibleOnScreenEnabler2D: durante l'orbita il nodo deve sempre processare,
-	# anche se va sul bordo dello schermo (altrimenti _integrate_forces si ferma)
+	# anche se va sul bordo dello schermo (altrimenti _physics_process si ferma)
 	for e: Node in find_children("*", "VisibleOnScreenEnabler2D", true, false):
 		e.process_mode = PROCESS_MODE_DISABLED
 	if rotation_component:
@@ -142,7 +143,7 @@ func _enter_orbit() -> void:
 
 func leave_orbit() -> void:
 	orbit_state = OrbitState.FREE
-	custom_integrator = false
+	freeze = false
 	# Ripristina VisibleOnScreenEnabler2D: il corpo può essere disabilitato di nuovo se esce schermo
 	for e: Node in find_children("*", "VisibleOnScreenEnabler2D", true, false):
 		e.process_mode = PROCESS_MODE_INHERIT
