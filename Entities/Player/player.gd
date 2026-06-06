@@ -127,9 +127,13 @@ func _physics_process(delta: float) -> void:
 
 var current_tween: Tween
 
-func _handle_movement() -> void:
+func _get_movement_direction() -> Vector2:
 	var mouse_dir: Vector2 = _handle_mouse_input()
-	var dir: Vector2 = mouse_dir if mouse_dir.length() > 0.2 else get_input()
+	return mouse_dir if mouse_dir.length() > 0.2 else get_input()
+
+
+func _handle_movement() -> void:
+	var dir: Vector2 = _get_movement_direction()
 
 	if dir.length() > 0.2:
 		apply_central_force(dir.normalized() * acceleration * mass)
@@ -298,17 +302,23 @@ func _integrate_forces(state: PhysicsDirectBodyState2D) -> void:
 	_handle_rotation(state)
 
 
-func _handle_rotation(state: PhysicsDirectBodyState2D) -> void:
-	var mouse_pos: Vector2 = get_global_mouse_position()
-	var dir: Vector2 = mouse_pos - global_position
-
-	if dir.length_squared() < 1.0:
-		state.angular_velocity = 0.0
-		return
-
+func _rotate_toward(state: PhysicsDirectBodyState2D, dir: Vector2) -> void:
 	var target_angle: float = dir.angle()
 	var angle_diff: float = wrapf(target_angle - rotation, -PI, PI)
 	state.angular_velocity = angle_diff * rotation_responsiveness
+
+
+func _handle_rotation(state: PhysicsDirectBodyState2D) -> void:
+	var keyboard_dir: Vector2 = get_input()
+	if keyboard_dir.length() > 0.2:
+		_rotate_toward(state, keyboard_dir)
+		return
+
+	var dir: Vector2 = get_global_mouse_position() - global_position
+	if dir.length_squared() < 1.0:
+		state.angular_velocity = 0.0
+		return
+	_rotate_toward(state, dir)
 
 var oscillation_speed: float = 1250.0   # Intensità della forza
 var oscillation_frequency: float = 2.0  # Quante oscillazioni al secondo

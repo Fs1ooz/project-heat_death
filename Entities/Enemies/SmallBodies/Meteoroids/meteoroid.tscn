@@ -105,8 +105,7 @@ sprite_frames = ExtResource("3_qufua")
 animation = &"rotation"
 
 [node name="VisibleScreenEnablerComponent" parent="Collision/Sprite" unique_id=1920965672 instance=ExtResource("2_pnclo")]
-position = Vector2(25, -9)
-rect = Rect2(-993.5, -959, 1935, 1935)
+rect = Rect2(-935.5, -959, 1877, 1926)
 enable_node_path = NodePath("../../..")
 
 [node name="Trail" type="GPUParticles2D" parent="." unique_id=1372681417]

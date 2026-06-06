@@ -58,6 +58,7 @@ folder_colors={
 "res://Commons/": "teal",
 "res://Entities/": "purple",
 "res://Stages/": "pink",
+"res://Utils/": "pink",
 "res://addons/": "gray"
 }
 

@@ -2,9 +2,9 @@ class_name OrbitRings
 extends Node2D
 
 const ORBIT_RATIO: float = 0.45
-const RING_COLOR: Color = Color(1.0, 1.0, 1.0, 0.35)
-const RING_WIDTH_RATIO: float = 0.004  # frazione del raggio → la linea cresce col player
-const RING_WIDTH_MIN: float = 1.5      # minimo in px-mondo per non sparire da piccolo
+const RING_COLOR: Color = Color(1.0, 1.0, 1.0, 0.1)
+const RING_WIDTH_RATIO: float = 0.009  # frazione del raggio → la linea cresce col player
+const RING_WIDTH_MIN: float = 1.7      # minimo in px-mondo per non sparire da piccolo
 
 var _active: bool = false
 var _base_radius: float = 0.0

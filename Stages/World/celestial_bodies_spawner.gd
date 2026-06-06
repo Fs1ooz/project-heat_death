@@ -43,7 +43,6 @@ var spawn_timer: float = spawn_interval
 
 var _spawn_shape: CircleShape2D
 var _spawn_query: PhysicsShapeQueryParameters2D
-var _camera: Camera2D
 
 func _ready() -> void:
 	UpgradeManager.tier_changed.connect(next_game_stage)
@@ -51,7 +50,6 @@ func _ready() -> void:
 	_spawn_query = PhysicsShapeQueryParameters2D.new()
 	_spawn_query.shape = _spawn_shape
 	_spawn_query.collision_mask = 2
-	_camera = get_viewport().get_camera_2d()
 
 
 func _process(delta: float) -> void:
@@ -106,7 +104,7 @@ const STAGE_DATA: Dictionary = {
 		"label": "Polvere Spaziale"
 	},
 	GameStage.METEROIDS_2: {
-		"weights": [50.0, 5.0, 0.0],
+		"weights": [50.0, 10.0, 0.0],
 		"label": "Piccoli Detriti"
 	},
 	GameStage.METEROIDS_3: {
@@ -167,11 +165,12 @@ func spawn_object_poisson() -> void:
 
 func find_valid_rectangular_pos(radius: float) -> Vector2:
 	var space_state: PhysicsDirectSpaceState2D = get_world_2d().direct_space_state
+	var camera: Camera2D = get_viewport().get_camera_2d()
 
 	# Calcoliamo le dimensioni attuali della vista (adattive allo zoom)
 	var view_size: Vector2 = get_viewport_rect().size
-	if _camera:
-		view_size /= _camera.zoom
+	if camera:
+		view_size /= camera.zoom
 
 	# Definiamo i limiti della cornice attorno al player/camera
 	var center: Vector2 = player.global_position
@@ -253,8 +252,9 @@ func cleanup_objects() -> void:
 	spawned_objects = spawned_objects.filter(is_instance_valid)
 
 	var view_size: Vector2 = get_viewport_rect().size
-	if _camera:
-		view_size /= _camera.zoom
+	var camera: Camera2D = get_viewport().get_camera_2d()
+	if camera:
+		view_size /= camera.zoom
 
 	var limit_x: float = (view_size.x * 0.5) + spawn_margin_inner + spawn_margin_outer + despawn_buffer
 	var limit_y: float = (view_size.y * 0.5) + spawn_margin_inner + spawn_margin_outer + despawn_buffer

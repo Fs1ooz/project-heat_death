@@ -114,7 +114,7 @@ alpha_curve = SubResource("CurveTexture_i0eh6")
 
 [sub_resource type="Gradient" id="Gradient_debris"]
 offsets = PackedFloat32Array(0, 0.6, 1)
-colors = PackedColorArray(1, 0.4, 0.1, 1, 0.6, 0.2, 0.05, 0.6, 0, 0, 0, 0)
+colors = PackedColorArray(0.859375, 0.24595782, 0.06472424, 1, 0.6, 0.2, 0.05, 0.6, 0, 0, 0, 0)
 
 [sub_resource type="GradientTexture1D" id="GradientTexture1D_debris"]
 gradient = SubResource("Gradient_debris")
@@ -127,8 +127,8 @@ spread = 180.0
 initial_velocity_min = 80.0
 initial_velocity_max = 250.0
 gravity = Vector3(0, 0, 0)
-damping_min = 30.0
-damping_max = 60.0
+damping_min = 10.0
+damping_max = 45.000004
 scale_min = 2.8
 scale_max = 4.0
 color_ramp = SubResource("GradientTexture1D_debris")

@@ -8,7 +8,7 @@
 [ext_resource type="Script" uid="uid://cnf8kwhvre5kg" path="res://Entities/Player/camera_2d.gd" id="5_5c2io"]
 [ext_resource type="PackedScene" uid="uid://b0myyk17i84k7" path="res://Entities/Player/trail.tscn" id="5_7a1se"]
 [ext_resource type="AudioStream" uid="uid://b6sr0lglnwc8s" path="res://Assets/Sounds/freesound_community-cartoon-slurp-37066.wav" id="8_7a1se"]
-[ext_resource type="Script" path="res://Entities/Player/orbit_rings.gd" id="9_orbit"]
+[ext_resource type="Script" uid="uid://c0alv6gondpf" path="res://Entities/Player/orbit_rings.gd" id="9_orbit"]
 
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_5c2io"]
 friction = 0.0
@@ -44,6 +44,8 @@ shader_parameter/outline_width = 0.0
 shader_parameter/pattern = 0
 shader_parameter/inside = false
 shader_parameter/add_margins = false
+shader_parameter/flash_offset = 0.0
+shader_parameter/flash_alpha = 0.0
 shader_parameter/add_spiral = true
 shader_parameter/gradient_tex = SubResource("GradientTexture1D_01a4e")
 shader_parameter/frequency = 2.0000000149012003
@@ -104,7 +106,7 @@ _data = {
 }
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_7a1se"]
-radius = 900.0
+radius = 790.124
 
 [node name="Player" type="RigidBody2D" unique_id=952817380 node_paths=PackedStringArray("collision", "sprite", "trail", "shockwave") groups=["player"]]
 collision_mask = 2
@@ -128,7 +130,6 @@ position_smoothing_enabled = true
 position_smoothing_speed = 10.0
 rotation_smoothing_speed = 20.0
 script = ExtResource("5_5c2io")
-min_zoom_base = 0.001
 boss_zoom_value = 0.05
 noise = SubResource("FastNoiseLite_01a4e")
 
@@ -162,7 +163,7 @@ bus = &"Sound"
 [node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=42343380]
 libraries/ = SubResource("AnimationLibrary_7a1se")
 
-[node name="OrbitRings" type="Node2D" parent="."]
+[node name="OrbitRings" type="Node2D" parent="." unique_id=1694624016]
 script = ExtResource("9_orbit")
 
 [node name="Attraction" type="Area2D" parent="." unique_id=1445965777]
