@@ -130,7 +130,6 @@ position_smoothing_enabled = true
 position_smoothing_speed = 10.0
 rotation_smoothing_speed = 20.0
 script = ExtResource("5_5c2io")
-boss_zoom_value = 0.05
 noise = SubResource("FastNoiseLite_01a4e")
 
 [node name="Collision" type="CollisionShape2D" parent="." unique_id=1021464206]

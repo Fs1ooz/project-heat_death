@@ -90,6 +90,14 @@ func start_attraction(target: Node2D, slot: int = 0) -> void:
 	orbit_state = OrbitState.ATTRACTED
 	orbit_target = target
 	orbit_slot = slot
+	# Cattura cinematica: niente forze fisiche in conflitto (fionda gravitazionale) durante
+	# l'avvicinamento. Il corpo viene guidato a mano fino all'anello, come in _orbit().
+	# set_deferred: start_attraction può essere chiamata da _on_attraction_body_entered
+	# durante il flush delle query fisiche, dove freeze non è modificabile direttamente.
+	set_deferred("freeze", true)
+	# Disabilita VisibleOnScreenEnabler2D: durante la cattura il nodo deve sempre processare
+	for e: Node in find_children("*", "VisibleOnScreenEnabler2D", true, false):
+		e.process_mode = PROCESS_MODE_DISABLED
 
 
 func _get_orbit_radius() -> float:
@@ -103,12 +111,13 @@ func _attract_to_player(delta: float) -> void:
 
 	orbit_radius = _get_orbit_radius()
 
-	var dist: float = global_position.distance_to(orbit_target.global_position)
-	# Smorza la velocità man mano che ci avviciniamo al raggio target
-	var approach_t: float = clamp((dist - orbit_radius) / orbit_radius, 0.0, 1.0)
-	linear_velocity = linear_velocity.lerp(Vector2.ZERO, (1.0 - approach_t) * delta * 6.0)
+	# Avvicinamento cinematico (freeze già attivo): muoviamo global_position verso il punto
+	# sull'anello lungo la direzione corrente, con decelerazione morbida. Nessuna forza fisica.
+	var dir: Vector2 = (global_position - orbit_target.global_position).normalized()
+	var target_pos: Vector2 = orbit_target.global_position + dir * orbit_radius
+	global_position = global_position.lerp(target_pos, clamp(delta * 6.0, 0.0, 1.0))
 
-	if dist <= orbit_radius + 20.0:
+	if global_position.distance_to(target_pos) <= 20.0:
 		_enter_orbit()
 
 

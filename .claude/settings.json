@@ -2,5 +2,8 @@
   "statusLine": {
     "type": "command",
     "command": "pwsh -NoProfile -File D:/app-games/Gioco/project-heat_death/.claude/statusline-command.ps1"
+  },
+  "worktree": {
+    "bgIsolation": "none"
   }
 }

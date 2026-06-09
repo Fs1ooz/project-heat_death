@@ -14,7 +14,7 @@ extends Camera2D
 @export var zoom_value_multiplier: float = 0.6
 
 @export_group("Boss Cam")
-@export var boss_zoom_value: float = 0.12        # Zoom minimo durante boss (massimo zoom out)
+@export var boss_zoom_value: float = 0.01        # Zoom minimo durante boss (massimo zoom out)
 @export var cam_lerp_speed: float = 3.0
 
 var manual_zoom: bool = false

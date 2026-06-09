@@ -58,6 +58,10 @@ func _ready() -> void:
 func _physics_process(_delta: float) -> void:
 	#print(celestial_bodies.size())
 	_last_velocity = linear_velocity
+	# Un corpo in cattura/orbita non deve applicare gravità (strattonerebbe il player con
+	# un effetto fionda): l'orbita è gestita cinematicamente in SmallBody.
+	if self is SmallBody and (self as SmallBody).orbit_state != SmallBody.OrbitState.FREE:
+		return
 	for body: RigidBody2D in bodies_in_gravity:
 		if not is_instance_valid(body):
 			return

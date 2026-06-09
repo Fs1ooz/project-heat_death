@@ -11,6 +11,8 @@ var _base_radius: float = 0.0
 var _max_slots: int = 1
 var _tween: Tween
 
+@onready var _player: Player = get_parent() as Player
+
 
 func show_rings(base_radius: float, max_slots: int) -> void:
 	_base_radius = base_radius
@@ -51,7 +53,11 @@ func _process(_delta: float) -> void:
 func _draw() -> void:
 	if not _active:
 		return
+	# Slot già occupati da un corpo in orbita: il loro ring sparisce (riappare quando si liberano)
+	var occupied: Dictionary = _player.get_occupied_orbit_slots() if is_instance_valid(_player) else {}
 	for i: int in range(_max_slots):
+		if occupied.has(i):
+			continue
 		var radius: float = _base_radius * ORBIT_RATIO * (1.0 + i * 0.3)
 		# Spessore proporzionale al raggio: cresce col player ma resta sottile in proporzione
 		var draw_width: float = maxf(radius * RING_WIDTH_RATIO, RING_WIDTH_MIN)

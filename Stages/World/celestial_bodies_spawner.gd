@@ -136,7 +136,11 @@ func get_weights_for_current_stage() -> Array:
 
 func next_game_stage() -> void:
 	if not is_instance_valid(player): return
-	current_stage = (current_stage + 1) as GameStage
+	# STAGE_DATA definisce i pesi solo fino ad ASTEROIDS_3: l'enum GameStage ha più voci, ma oltre
+	# l'ultimo stadio configurato non esistono pesi → clamp per evitare "Out of bounds" in
+	# get_weights_for_current_stage. (STAGE_DATA usa chiavi contigue da 0, quindi size-1 = ultimo.)
+	var last_stage: int = STAGE_DATA.size() - 1
+	current_stage = mini(current_stage + 1, last_stage) as GameStage
 
 
 ## =========================

@@ -43,6 +43,10 @@ const STAGE_CONFIG: Dictionary = {
 
 
 func _on_frame_changed() -> void:
+	# Durante cattura/orbita il corpo è freeze (kinematic) e la posizione è pilotata a mano:
+	# riscrivere collision.polygon ad ogni frame interferisce col movimento → niente rotazione.
+	if orbit_state != OrbitState.FREE:
+		return
 	var f: int = sprite.frame
 	if polygon_data and f < polygon_data.polygons.size():
 		var raw: PackedVector2Array = polygon_data.polygons[f]

@@ -205,26 +205,32 @@ func _input(event: InputEvent) -> void:
 	elif event.is_action_released("orbit"):
 		_deactivate_orbit()
 
-@export var orbit_mass_ratio_min: float = 0.1  # massa minima orbitabile (evita roba troppo piccola)
+
+@export var orbit_mass_ratio_min: float = 0.5  # massa minima orbitabile (evita roba troppo piccola)
 @export var orbit_mass_ratio_max: float = 5.0  # massa massima orbitabile
+
 
 func _can_orbit(body: CelestialBody) -> bool:
 	var ratio: float = body.mass / mass
 	return ratio >= orbit_mass_ratio_min and ratio <= orbit_mass_ratio_max
+
 
 func _activate_orbit() -> void:
 	orbit_active = true
 	orbit_rings.show_rings(attraction_radius, max_orbiting_bodies)
 	var current_count: int = get_current_orbiting_count()
 
-	for body: CelestialBody in nearby_bodies:
+	for body in nearby_bodies:
 		if current_count >= max_orbiting_bodies:
 			break
+		if not is_instance_valid(body):
+			continue
 
 		if body is SmallBody and body.orbit_state == SmallBody.OrbitState.FREE:
 			if _can_orbit(body):
 				body.start_attraction(self, current_count)
 				current_count += 1
+
 
 func _on_attraction_body_entered(body: Node2D) -> void:
 	if body is CelestialBody:
@@ -236,10 +242,13 @@ func _on_attraction_body_entered(body: Node2D) -> void:
 			if count < max_orbiting_bodies:
 				body.start_attraction(self, count)
 
+
 func _deactivate_orbit() -> void:
 	orbit_active = false
 	orbit_rings.hide_rings()
-	for body: CelestialBody in nearby_bodies:
+	for body in nearby_bodies:
+		if not is_instance_valid(body):
+			continue
 		if body is SmallBody:
 			if body.orbit_state != SmallBody.OrbitState.FREE:
 				body.leave_orbit()
@@ -261,12 +270,12 @@ func _do_gravity(delta: float) -> void:
 			attraction_speed
 		)
 
-	for body: CelestialBody in nearby_bodies:
+	for body in nearby_bodies:
 		if not is_instance_valid(body):
 			continue
 		if body is Ceres:  # ← skippa Ceres e futuri boss
 			continue
-		if body is SmallBody and body.orbit_state == SmallBody.OrbitState.ORBITING:
+		if body is SmallBody and body.orbit_state != SmallBody.OrbitState.FREE:
 			continue
 		var distance: float = global_position.distance_to(body.global_position)
 
@@ -290,10 +299,20 @@ func _on_attraction_area_exited(area: Area2D) -> void:
 
 
 func _on_attraction_body_exited(body: Node2D) -> void:
-	if body is CelestialBody:
-		nearby_bodies.erase(body)
-	if body is SmallBody and body.orbit_state != SmallBody.OrbitState.FREE:
-		body.call_deferred("leave_orbit")
+	# Un corpo catturato/in orbita è guidato cinematicamente entro orbit_radius < attraction_radius:
+	# non esce MAI davvero dall'area. Gli asteroidi però riscrivono il loro CollisionPolygon a ogni
+	# frame d'animazione: la forma che cambia sul bordo dell'area genera falsi body_exited. Se li
+	# gestissimo, sgancieremmo il corpo (leave_orbit) subito dopo la cattura → non ruota mai, e lo
+	# toglieremmo da nearby_bodies (resterebbe congelato, escluso da _deactivate_orbit e dal conteggio).
+	# Quindi ignoriamo l'uscita per i corpi non-FREE ANCORA VIVI: il rilascio avviene in
+	# _deactivate_orbit o nei check di validità del target. Se invece il corpo è stato liberato
+	# (morto mentre orbitava), is_instance_valid è false: NON saltiamo, così lo togliamo dalla lista
+	# ed evitiamo che resti come istanza morta (crash nei loop su nearby_bodies).
+	if is_instance_valid(body) and body is SmallBody and body.orbit_state != SmallBody.OrbitState.FREE:
+		return
+	# nearby_bodies contiene solo CelestialBody: erase è un no-op se assente e funziona anche
+	# con un riferimento già liberato (confronto per riferimento).
+	nearby_bodies.erase(body)
 
 
 
@@ -361,12 +380,24 @@ func apply_entropy(delta: float) -> void:
 
 func get_current_orbiting_count() -> int:
 	var count: int = 0
-	for body: CelestialBody in nearby_bodies:
+	for body in nearby_bodies:
 		if not is_instance_valid(body):
 			continue
 		if body is SmallBody and body.orbit_target == self and body.orbit_state != SmallBody.OrbitState.FREE:
 			count += 1
 	return count
+
+
+## Restituisce gli slot d'orbita occupati da un corpo effettivamente in orbita (ORBITING).
+## Usato da OrbitRings per nascondere il ring di uno slot quando è già occupato.
+func get_occupied_orbit_slots() -> Dictionary:
+	var slots: Dictionary = {}
+	for body in nearby_bodies:
+		if not is_instance_valid(body):
+			continue
+		if body is SmallBody and body.orbit_target == self and body.orbit_state == SmallBody.OrbitState.ORBITING:
+			slots[body.orbit_slot] = true
+	return slots
 
 
 func _handle_collision_resistance(state: PhysicsDirectBodyState2D) -> void:
