@@ -1,5 +1,25 @@
 extends Node2D
 
+const CERES_SCENE: PackedScene = preload("res://Entities/Enemies/SmallBodies/Ceres/ceres.tscn")
+const CERES_SPAWN_DIST_MIN: float = 200_000.0
+const CERES_SPAWN_DIST_MAX: float = 300_000.0
+
+
+func _ready() -> void:
+	$CelestialBodiesSpawner.ceres_should_spawn.connect(_spawn_ceres)
+
+
+func _spawn_ceres() -> void:
+	var player: Player = get_tree().get_first_node_in_group("player") as Player
+	if not is_instance_valid(player):
+		return
+	var angle: float = randf() * TAU
+	var dist: float = randf_range(CERES_SPAWN_DIST_MIN, CERES_SPAWN_DIST_MAX)
+	var ceres: Node2D = CERES_SCENE.instantiate()
+	add_child(ceres)
+	ceres.global_position = player.global_position + Vector2(cos(angle), sin(angle)) * dist
+	printerr("Ceres spawnata | stage=ASTEROIDS_2 distanza=", dist)
+
 
 # Sistema Solare completo con dati NASA/JPL accurati
 const SOLAR_SYSTEM: Dictionary = {

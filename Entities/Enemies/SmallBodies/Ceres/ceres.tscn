@@ -8,7 +8,7 @@
 [ext_resource type="Script" uid="uid://crqwool6072av" path="res://Commons/Components/rotation_component.gd" id="6_ad5k8"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_xm1ix"]
-radius = 886.12695
+radius = 498.1335
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_ad5k8"]
 radius = 56.0
@@ -2608,3 +2608,5 @@ script = ExtResource("6_ad5k8")
 metadata/_custom_type_script = "uid://crqwool6072av"
 
 [connection signal="body_entered" from="." to="." method="_on_body_entered"]
+[connection signal="body_entered" from="GravityArea" to="." method="_on_gravity_body_entered"]
+[connection signal="body_exited" from="GravityArea" to="." method="_on_gravity_body_exited"]

@@ -41,10 +41,10 @@ func _ready() -> void:
 func _physics_process(delta: float) -> void:
 	super(delta)
 	if _gravity_surge_active:
-		var player: Player = get_tree().get_first_node_in_group("player") as Player
-		if is_instance_valid(player):
-			var dir: Vector2 = (global_position - player.global_position).normalized()
-			player.apply_central_force(dir * player.mass * gravity_surge_force)
+		for body: RigidBody2D in bodies_in_gravity:
+			if body is Player and is_instance_valid(body):
+				var dir: Vector2 = (global_position - body.global_position).normalized()
+				body.apply_central_force(dir * body.mass * gravity_surge_force)
 
 
 func _process(delta: float) -> void:
@@ -76,7 +76,20 @@ func _change_state(new_state: State) -> void:
 		State.WAIT:
 			_gravity_surge_active = false
 			for e: Node2D in _spawned_enemies:
-				if is_instance_valid(e):
+				if not is_instance_valid(e):
+					continue
+				if e is CelestialBody:
+					var cb: CelestialBody = e as CelestialBody
+					var tw: Tween = create_tween().set_parallel(true)
+					tw.tween_property(cb.mat, "shader_parameter/flash_value", 1.0, 0.35) \
+						.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+					tw.tween_property(cb.sprite, "scale", Vector2.ZERO, 0.35) \
+						.set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN)
+					tw.chain().tween_callback(func() -> void:
+						if is_instance_valid(e):
+							e.queue_free()
+					)
+				else:
 					e.queue_free()
 			_spawned_enemies.clear()
 			rotation_component.reset(0.5)
@@ -110,12 +123,12 @@ func _change_state(new_state: State) -> void:
 			printerr("Ceres → GRAVITY_SURGE | bodies_in_gravity=", bodies_in_gravity.size(), " surge_force=", gravity_surge_force)
 			state_timer = 5.0
 			_gravity_surge_active = true
-			# Impulso iniziale immediato: tutti i corpi vengono strattonati verso Ceres
-			var player: Player = get_tree().get_first_node_in_group("player") as Player
-			if is_instance_valid(player):
-				var dir: Vector2 = (global_position - player.global_position).normalized()
-				printerr("GRAVITY_SURGE impulso | player.mass=", player.mass, " forza=", player.mass * gravity_surge_force * 3.0)
-				player.apply_central_impulse(dir * player.mass * gravity_surge_force * 3.0)
+			# Impulso iniziale: strattona verso Ceres tutti i corpi già nella gravity area
+			for body: RigidBody2D in bodies_in_gravity:
+				if body is Player and is_instance_valid(body):
+					var dir: Vector2 = (global_position - body.global_position).normalized()
+					printerr("GRAVITY_SURGE impulso | player.mass=", body.mass, " forza=", body.mass * gravity_surge_force * 3.0)
+					body.apply_central_impulse(dir * body.mass * gravity_surge_force * 3.0)
 			rotation_component.windup(0.4)
 			GlobalSignals.windup_shake.emit(60.0, 1.0)
 			# Glow lento e profondo — non epilettico

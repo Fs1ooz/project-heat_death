@@ -1,5 +1,7 @@
 extends Node2D
 
+signal ceres_should_spawn
+
 ## =========================
 ## CONFIGURAZIONE OGGETTI
 ## =========================
@@ -37,6 +39,7 @@ extends Node2D
 @onready var player: Node2D = get_tree().get_first_node_in_group("player") as Player
 
 var spawned_objects: Array = []
+var _ceres: Ceres = null
 
 var spawn_interval: float = 0.01
 var spawn_timer: float = spawn_interval
@@ -46,6 +49,7 @@ var _spawn_query: PhysicsShapeQueryParameters2D
 
 func _ready() -> void:
 	UpgradeManager.tier_changed.connect(next_game_stage)
+	GlobalSignals.ceres_spawned.connect(func(c: Node) -> void: _ceres = c as Ceres)
 	_spawn_shape = CircleShape2D.new()
 	_spawn_query = PhysicsShapeQueryParameters2D.new()
 	_spawn_query.shape = _spawn_shape
@@ -100,27 +104,27 @@ enum GameStage {
 # 2. Il "Dizionario-Corpo" (Sostituisce la logica Java)
 const STAGE_DATA: Dictionary = {
 	GameStage.METEROIDS_1: {
-		"weights": [100.0, 0.0, 0.0],
+		"weights": [80.0, 15.0, 0.0],
 		"label": "Polvere Spaziale"
 	},
 	GameStage.METEROIDS_2: {
-		"weights": [50.0, 10.0, 0.0],
+		"weights": [50.0, 35.0, 0.0],
 		"label": "Piccoli Detriti"
 	},
 	GameStage.METEROIDS_3: {
-		"weights": [30.0, 20.0, 0.0],
+		"weights": [20.0, 50.0, 0.0],
 		"label": "Fascia di Meteoroidi"
 	},
 	GameStage.ASTEROIDS_1: {
-		"weights": [10.0, 10.0, 0.1],
+		"weights": [5.0, 30.0, 0.5],
 		"label": "Primi Asteroidi"
 	},
 	GameStage.ASTEROIDS_2: {
-		"weights": [5.0, 5.0, 0.5],
+		"weights": [2.0, 20.0, 2.0],
 		"label": "Pioggia Rocciosa"
 	},
 	GameStage.ASTEROIDS_3: {
-		"weights": [0.0, 3.0, 1.0],
+		"weights": [0.0, 10.0, 3.0],
 		"label": "Pericolo Impatto"
 	}
 }
@@ -141,6 +145,8 @@ func next_game_stage() -> void:
 	# get_weights_for_current_stage. (STAGE_DATA usa chiavi contigue da 0, quindi size-1 = ultimo.)
 	var last_stage: int = STAGE_DATA.size() - 1
 	current_stage = mini(current_stage + 1, last_stage) as GameStage
+	if current_stage == GameStage.ASTEROIDS_2:
+		ceres_should_spawn.emit()
 
 
 ## =========================
@@ -227,6 +233,11 @@ func is_position_empty(pos: Vector2, radius: float, space_state: PhysicsDirectSp
 			other_radius = obj.get_meta("poisson_radius")
 
 		if pos.distance_to(obj.global_position) < radius + other_radius:
+			return false
+
+	# 3) zona esclusiva di Ceres: niente spawn nel suo campo gravitazionale
+	if is_instance_valid(_ceres):
+		if pos.distance_to(_ceres.global_position) < _ceres.get_gravity_radius():
 			return false
 
 	return true

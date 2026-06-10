@@ -3,7 +3,6 @@
 [ext_resource type="Script" uid="uid://cx41k1qt88o8g" path="res://Stages/World/SolarSystem/solar_system.gd" id="1_56jnl"]
 [ext_resource type="PackedScene" uid="uid://bvfq3qbl7klob" path="res://Stages/World/world_environment.tscn" id="2_3u0hu"]
 [ext_resource type="PackedScene" uid="uid://1qip86sh808" path="res://Utils/im_gui.tscn" id="2_lnrn1"]
-[ext_resource type="PackedScene" uid="uid://d2i2r2ucklcu0" path="res://Entities/Enemies/SmallBodies/Ceres/ceres.tscn" id="2_o1t32"]
 [ext_resource type="AudioStream" uid="uid://btl310t212txn" path="res://Assets/Music/BETA - Base.mp3" id="4_00fk0"]
 [ext_resource type="PackedScene" uid="uid://byiki3druigls" path="res://Stages/UI/ui_layer.tscn" id="4_l0eld"]
 [ext_resource type="AudioStream" uid="uid://cawomildbxiao" path="res://Assets/Music/BETA - Phase1.mp3" id="5_3u0hu"]
@@ -65,9 +64,6 @@ Vector2i(-1, -1): {
 
 [node name="SolarSystem" type="Node2D" unique_id=1695941383]
 script = ExtResource("1_56jnl")
-
-[node name="Ceres" parent="." unique_id=933810055 instance=ExtResource("2_o1t32")]
-position = Vector2(0, -800000)
 
 [node name="WorldEnvironment" parent="." unique_id=1475192584 instance=ExtResource("2_3u0hu")]
 environment = SubResource("Environment_lnrn1")
