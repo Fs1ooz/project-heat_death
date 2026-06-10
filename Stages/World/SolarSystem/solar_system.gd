@@ -16,8 +16,12 @@ func _spawn_ceres() -> void:
 	var angle: float = randf() * TAU
 	var dist: float = randf_range(CERES_SPAWN_DIST_MIN, CERES_SPAWN_DIST_MAX)
 	var ceres: Node2D = CERES_SCENE.instantiate()
-	add_child(ceres)
-	ceres.global_position = player.global_position + Vector2(cos(angle), sin(angle)) * dist
+	# Imposta position prima di add_child: SolarSystem è all'origine, quindi position == global_position.
+	# add_child è deferred perché _spawn_ceres è chiamata dalla catena _on_body_entered → gain_energy →
+	# level_up → next_game_stage, ovvero durante il flush delle query fisiche; add_child() sincrono
+	# innesca _ready() di Ceres che configura shape fisiche → errore "Can't change state while flushing".
+	ceres.position = player.global_position + Vector2(cos(angle), sin(angle)) * dist
+	add_child.call_deferred(ceres)
 	printerr("Ceres spawnata | stage=ASTEROIDS_3 distanza=", dist)
 
 

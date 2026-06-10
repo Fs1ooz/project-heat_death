@@ -23,6 +23,20 @@ var state_timer: float = 0.0
 var next_attack: State
 var _spawned_enemies: Array[Node2D] = []
 var _gravity_surge_active: bool = false
+var _own_tweens: Array[Tween] = []
+
+
+func _ct() -> Tween:
+	var t: Tween = create_tween()
+	_own_tweens.append(t)
+	return t
+
+
+func _kill_own_tweens() -> void:
+	for t: Tween in _own_tweens:
+		if t.is_valid():
+			t.kill()
+	_own_tweens.clear()
 
 
 func _ready() -> void:
@@ -80,7 +94,7 @@ func _change_state(new_state: State) -> void:
 					continue
 				if e is CelestialBody:
 					var cb: CelestialBody = e as CelestialBody
-					var tw: Tween = create_tween().set_parallel(true)
+					var tw: Tween = _ct().set_parallel(true)
 					tw.tween_property(cb.mat, "shader_parameter/flash_value", 1.0, 0.35) \
 						.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
 					tw.tween_property(cb.sprite, "scale", Vector2.ZERO, 0.35) \
@@ -105,10 +119,7 @@ func _change_state(new_state: State) -> void:
 
 		State.GAS:
 			printerr("Ceres → GAS")
-			var active_tweens: Array = get_tree().get_processed_tweens()
-			for t: Tween in active_tweens:
-				if t.is_valid():
-					t.kill()
+			_kill_own_tweens()
 			state_timer = attack_duration
 			outgassing_component.activate_all()
 			rotation_component.freeze(0.2)
@@ -132,7 +143,7 @@ func _change_state(new_state: State) -> void:
 			rotation_component.windup(0.4)
 			GlobalSignals.windup_shake.emit(60.0, 1.0)
 			# Glow lento e profondo — non epilettico
-			var tween: Tween = create_tween()
+			var tween: Tween = _ct()
 			tween.set_loops()
 			tween.tween_property(mat, "shader_parameter/flash_value", 0.45, 0.8) \
 				.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
@@ -145,17 +156,14 @@ func _change_state(new_state: State) -> void:
 			EntropyManager.change_entropy(entropy_blast_amount)
 			GlobalSignals.windup_shake.emit(50.0, 0.8)
 			rotation_component.windup(0.5)
-			var flash_tween: Tween = create_tween()
+			var flash_tween: Tween = _ct()
 			flash_tween.tween_property(mat, "shader_parameter/flash_value", 0.9, 0.1)
 			flash_tween.tween_property(mat, "shader_parameter/flash_value", 0.0, 0.4)
 
 
 func _on_attack_finished() -> void:
 	_gravity_surge_active = false
-	var active_tweens: Array = get_tree().get_processed_tweens()
-	for t: Tween in active_tweens:
-		if t.is_valid():
-			t.kill()
+	_kill_own_tweens()
 	mat.set_shader_parameter("flash_value", 0.0)
 	_change_state(State.WAIT)
 
@@ -163,7 +171,7 @@ func _on_attack_finished() -> void:
 func _windup() -> void:
 	rotation_component.windup(windup_duration)
 	GlobalSignals.windup_shake.emit(25.0, windup_duration)
-	var pulse: Tween = create_tween()
+	var pulse: Tween = _ct()
 	pulse.set_loops()
 	pulse.tween_property(mat, "shader_parameter/flash_value", 0.35, 0.18) \
 		.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
@@ -171,7 +179,7 @@ func _windup() -> void:
 		.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
 	await get_tree().create_timer(windup_duration).timeout
 	pulse.kill()
-	var snap: Tween = create_tween()
+	var snap: Tween = _ct()
 	snap.tween_property(mat, "shader_parameter/flash_value", 0.0, 0.25)
 
 

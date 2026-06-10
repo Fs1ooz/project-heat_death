@@ -26,7 +26,10 @@ func gain_energy(value: float) -> void:
 	while energy >= max_energy:
 		energy -= max_energy
 		level += 1
-		level_up()
+		# call_deferred: gain_energy è chiamata da _on_body_entered (physics flush).
+		# level_up() chiama player.change_size() che modifica collision.shape.radius
+		# direttamente → "Can't change state while flushing queries" ad ogni level-up.
+		call_deferred("level_up")
 		max_energy *= growth_factor
 	energy_changed.emit(energy, max_energy, level)
 

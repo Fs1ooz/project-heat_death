@@ -144,8 +144,9 @@ func next_game_stage() -> void:
 	# l'ultimo stadio configurato non esistono pesi → clamp per evitare "Out of bounds" in
 	# get_weights_for_current_stage. (STAGE_DATA usa chiavi contigue da 0, quindi size-1 = ultimo.)
 	var last_stage: int = STAGE_DATA.size() - 1
+	var prev_stage: int = current_stage
 	current_stage = mini(current_stage + 1, last_stage) as GameStage
-	if current_stage == GameStage.ASTEROIDS_3:
+	if current_stage == GameStage.ASTEROIDS_3 and prev_stage != GameStage.ASTEROIDS_3:
 		ceres_should_spawn.emit()
 
 

@@ -66,7 +66,7 @@ func _physics_process(_delta: float) -> void:
 		return
 	for body: RigidBody2D in bodies_in_gravity:
 		if not is_instance_valid(body):
-			return
+			continue
 		_apply_gravity(body)
 			# Applica la forza da entropia continuamente
 	if entropy_force.length() > 0:
