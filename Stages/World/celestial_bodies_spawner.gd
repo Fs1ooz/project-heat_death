@@ -29,12 +29,12 @@ signal ceres_should_spawn
 @export var spawn_margin_inner: float = 1000.0  # Distanza minima dal bordo schermo
 @export var spawn_margin_outer: float = 50_000.0 # Spessore della "cornice" di spawn
 
-@export var despawn_buffer: float = 10000.0     # Quanto oltre la cornice distruggere l'oggetto
+@export var despawn_buffer: float = 5000.0     # Quanto oltre la cornice distruggere l'oggetto
 
 @export_group("Parametri Poisson")
 @export var max_attempts: int = 3             # Il valore 'k' del video
-@export var target_object_count: int = 250
-@export var max_objects: int = target_object_count + 50
+@export var target_object_count: int = 300
+@export var max_objects: int = target_object_count + 20
 
 @onready var player: Node2D = get_tree().get_first_node_in_group("player") as Player
 
@@ -116,7 +116,7 @@ const STAGE_DATA: Dictionary = {
 		"label": "Fascia di Meteoroidi"
 	},
 	GameStage.ASTEROIDS_1: {
-		"weights": [5.0, 30.0, 0.5],
+		"weights": [5.0, 40.0, 0.5],
 		"label": "Primi Asteroidi"
 	},
 	GameStage.ASTEROIDS_2: {
@@ -145,7 +145,7 @@ func next_game_stage() -> void:
 	# get_weights_for_current_stage. (STAGE_DATA usa chiavi contigue da 0, quindi size-1 = ultimo.)
 	var last_stage: int = STAGE_DATA.size() - 1
 	current_stage = mini(current_stage + 1, last_stage) as GameStage
-	if current_stage == GameStage.ASTEROIDS_2:
+	if current_stage == GameStage.ASTEROIDS_3:
 		ceres_should_spawn.emit()
 
 

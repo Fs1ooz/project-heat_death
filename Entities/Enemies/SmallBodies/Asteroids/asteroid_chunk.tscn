@@ -1,0 +1,43 @@
+[gd_scene format=3 uid="uid://dvx2hcjqk31m4"]
+
+[ext_resource type="Script" uid="uid://cdg6vq81qm2" path="res://Entities/Enemies/SmallBodies/Asteroids/asteroid_chunk.gd" id="1_chunk"]
+[ext_resource type="Shader" uid="uid://bj6kjixcams5n" path="res://Entities/celestialbodies.gdshader" id="2_shader"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_grav"]
+radius = 550.0
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_flash"]
+resource_local_to_scene = true
+shader = ExtResource("2_shader")
+shader_parameter/flash_color = Color(1, 1, 1, 1)
+shader_parameter/flash_value = 0.0
+
+[node name="AsteroidChunk" type="RigidBody2D" unique_id=113336402 node_paths=PackedStringArray("collision", "gravity_area_collision", "sprite") groups=["celestialbodies"]]
+z_index = 1
+continuous_cd = 2
+contact_monitor = true
+max_contacts_reported = 4
+script = ExtResource("1_chunk")
+collision = NodePath("Collision")
+gravity_area_collision = NodePath("Gravity/GravityAreaCollision")
+sprite = NodePath("Collision/Sprite")
+
+[node name="Gravity" type="Area2D" parent="." unique_id=664765155]
+
+[node name="GravityAreaCollision" type="CollisionShape2D" parent="Gravity" unique_id=2053525944]
+shape = SubResource("CircleShape2D_grav")
+debug_color = Color(0.08856, 0.08856, 0.08856, 0.0784314)
+
+[node name="Collision" type="CollisionPolygon2D" parent="." unique_id=1395434581]
+
+[node name="Sprite" type="Polygon2D" parent="Collision" unique_id=1821120406]
+material = SubResource("ShaderMaterial_flash")
+
+[node name="DespawnTimer" type="Timer" parent="." unique_id=930912462]
+wait_time = 2.0
+autostart = true
+
+[connection signal="body_entered" from="." to="." method="_on_body_entered"]
+[connection signal="body_entered" from="Gravity" to="." method="_on_gravity_body_entered"]
+[connection signal="body_exited" from="Gravity" to="." method="_on_gravity_body_exited"]
+[connection signal="timeout" from="DespawnTimer" to="." method="_on_despawn_timer_timeout"]

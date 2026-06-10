@@ -38,6 +38,8 @@ var energy_drop_scene: PackedScene = preload("uid://ctismywjnvljg")
 var _last_velocity: Vector2 = Vector2.ZERO
 var health_bar: ProgressBar
 var health_bar_container: Control
+# Un corpo che si spezza in chunk non droppa energia: l'energia scende nei figli
+var drop_energy_on_death: bool = true
 
 @export_flags_2d_physics var layers_2d_physics: int = 0x2
 @export_flags_2d_physics var masks_2d_physics: int = 0x3
@@ -207,7 +209,8 @@ func flash(duration: float) -> void:
 
 func die() -> void:
 	await get_tree().create_timer(0.05).timeout
-	_spawn_energy_drop()
+	if drop_energy_on_death:
+		_spawn_energy_drop()
 	_spawn_explosion()
 	for body: RigidBody2D in bodies_in_gravity:
 		if body is Player:
@@ -218,15 +221,20 @@ func die() -> void:
 	queue_free()
 
 
+# Scala visiva "equivalente" per VFX/drop: i chunk (Polygon2D, scale = 1) la derivano dall'area
+func _get_visual_scale() -> float:
+	return sprite.scale.x
+
+
 func _spawn_explosion() -> void:
 	var death_vfx: DeathVFX = death_vfx_scene.instantiate()
 	death_vfx.global_position = global_position
 	get_parent().add_child(death_vfx)
-	death_vfx.scale_explosion(sprite.scale.x * 0.9)
+	death_vfx.scale_explosion(_get_visual_scale() * 0.9)
 
 
 func _spawn_energy_drop() -> void:
-	var spawn_radius: float = sprite.scale.x * 25.0
+	var spawn_radius: float = _get_visual_scale() * 25.0
 	var energy_spawned: int = 0
 	var energy_to_spawn: int = int(game_energy * randf_range(1.0, 1.8))
 

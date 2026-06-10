@@ -18,7 +18,7 @@ func _spawn_ceres() -> void:
 	var ceres: Node2D = CERES_SCENE.instantiate()
 	add_child(ceres)
 	ceres.global_position = player.global_position + Vector2(cos(angle), sin(angle)) * dist
-	printerr("Ceres spawnata | stage=ASTEROIDS_2 distanza=", dist)
+	printerr("Ceres spawnata | stage=ASTEROIDS_3 distanza=", dist)
 
 
 # Sistema Solare completo con dati NASA/JPL accurati
