@@ -9,14 +9,11 @@ const GURREN_GRADIENT: Gradient = preload("res://Assets/Gradients/gurren_lagann_
 
 var _flash_tex: GradientTexture1D
 
-@export var life_bar: ProgressBar = null
+@export var health_ui: HealthLayers = null  ## UI della vita a strati (possiede colori/aspetto; vedi health_layers.gd)
 @export var alignment_safe_zone: float = 0.8
 @export var collision: CollisionShape2D
 
 ## Configurazione movimento
-@export var max_hp: int = int(UpgradeManager.get_current_power(UpgradeManager.UpgradeType.MAX_HEALTH))  ## Velocità massima (pixel/sec)
-@export var hp: int = max_hp
-
 @export var speed: float = UpgradeManager.get_current_power(UpgradeManager.UpgradeType.SPEED)  ## Velocità massima (pixel/sec)
 @export var acceleration: float = UpgradeManager.get_current_power(UpgradeManager.UpgradeType.ACCELERATION)  ## Accelerazione lineare (pixel/sec²)
 
@@ -38,6 +35,27 @@ var rotation_responsiveness: float = 8.0
 var auto_revive: bool = true
 var _is_low_health: bool = false
 var _last_velocity: Vector2 = Vector2.ZERO
+
+#region Vita a strati
+## La vita è un sistema "a strati" (più barre impilate che si ricaricano):
+## - La SALUTE (core, ultima difesa) sottrae il danno reale: morte a 0, scala ×1.15 coi livelli.
+## - Gli STRATI-SCUDO esterni (upgrade "Mantle") valgono UN SOLO colpo ciascuno: un hit qualsiasi
+##   rompe lo strato (non importa l'entità). Si ri-armano nel tempo, dall'interno verso l'esterno.
+@export var health_max: float = 100.0  ## capacità della salute-core (scala coi livelli)
+var health: float = health_max
+@export var shield_layer_max: float = 200.0  ## valore "pieno" di uno strato; regola il tempo di ri-arma
+## Valori correnti degli strati: [0] = interno (subito sopra la salute), [-1] = esterno (in cima, primo colpito).
+var shield_layers: Array[float] = []
+
+## Ricarica unificata (l'upgrade REGENERATION agisce su recharge_delay).
+@export var recharge_delay: float = 3.0  ## s senza danni prima che la ricarica parta
+@export var recharge_rate: float = 60.0  ## punti/s
+var _time_since_damage: float = 0.0
+
+const LAYER_BREAK_IFRAME: float = 0.5  ## invulnerabilità subito dopo la rottura di uno strato
+var _break_iframe: float = 0.0
+
+#endregion
 
 var gravity_force: Vector2 = Vector2.ZERO
 
@@ -82,28 +100,45 @@ func _ready() -> void:
 	_flash_tex.width = 256
 	sprite.material.set_shader_parameter("flash_gradient_tex", _flash_tex)
 
-	if life_bar:
-		life_bar.value = max_hp
+	_rebuild_ui()
 
 	await get_tree().create_timer(2).timeout
 
 
-var regen_time: float = 0.0
-var regen_timer: float = 2.0
-
 func _process(delta: float) -> void:
-	if hp == max_hp:
-		return
-	else:
-		regen_time += delta
-		if regen_time > regen_timer:
-			_start_regen()
-			regen_time = 0.0
-	var low: bool = hp < max_hp * 0.25
+	if _break_iframe > 0.0:
+		_break_iframe -= delta
+
+	# Ricarica: parte dopo recharge_delay secondi senza subire danni, DALL'INTERNO VERSO L'ESTERNO
+	# (prima la salute, poi gli scudi uno alla volta dall'interno [0] verso l'esterno [-1]).
+	_time_since_damage += delta
+	if _time_since_damage > recharge_delay:
+		_recharge(delta * recharge_rate)
+
+	var low: bool = health < health_max * 0.25
 	if low != _is_low_health:
 		_is_low_health = low
 		GlobalSignals.low_health.emit(low)
 		$AnimationPlayer.play("low_health" if low else "RESET")
+
+
+## Distribuisce 'amount' punti di ricarica dall'interno verso l'esterno: prima riempie la salute,
+## poi gli strati-scudo uno alla volta (shield_layers[0] → [-1]).
+func _recharge(amount: float) -> void:
+	if amount <= 0.0:
+		return
+	var changed: bool = false
+	if health < health_max:
+		health = min(health_max, health + amount)
+		changed = true
+	else:
+		for i: int in shield_layers.size():
+			if shield_layers[i] < shield_layer_max:
+				shield_layers[i] = min(shield_layer_max, shield_layers[i] + amount)
+				changed = true
+				break  # uno strato alla volta
+	if changed:
+		_refresh_ui()
 
 
 #region Movement
@@ -122,7 +157,7 @@ func _physics_process(delta: float) -> void:
 	if EntropyManager.entropy_value < 0:
 		apply_entropy(delta)
 
-	_handle_movement()
+	_handle_movement(delta)
 
 
 var current_tween: Tween
@@ -132,16 +167,31 @@ func _get_movement_direction() -> Vector2:
 	return mouse_dir if mouse_dir.length() > 0.2 else get_input()
 
 
-func _handle_movement() -> void:
+## Decadimento (px/s²) della sovravelocità causata da forze esterne (surge di Ceres, entropia).
+## Tenuto > acceleration propria (il motore del player non sfora il cap) ma < forze esterne
+## (così surge/entropia si SENTONO spingendo oltre speed, poi rientrano gradualmente).
+@export var overspeed_damp: float = 2500.0
+
+
+func _handle_movement(delta: float) -> void:
 	var dir: Vector2 = _get_movement_direction()
+	var current_speed: float = linear_velocity.length()
 
 	if dir.length() > 0.2:
-		apply_central_force(dir.normalized() * acceleration * mass)
+		# La propulsione propria non deve aumentare la velocità oltre il cap.
+		# Consentita sotto soglia, o quando frena/sterza (non accelera ulteriormente).
+		var projected: Vector2 = linear_velocity + dir.normalized() * acceleration * delta
+		if current_speed <= speed or projected.length() <= current_speed:
+			apply_central_force(dir.normalized() * acceleration * mass)
 		_animate_player(true)
 	else:
 		_animate_player(false)
 
-	linear_velocity = linear_velocity.limit_length(speed)
+	# Niente più clamp duro: le forze esterne possono spingere oltre speed, e la
+	# sovravelocità rientra con un decadimento morbido (così la surge si sente).
+	if current_speed > speed:
+		var target: float = max(speed, current_speed - overspeed_damp * delta)
+		linear_velocity = linear_velocity.normalized() * target
 
 	var speed_percent: float = linear_velocity.length() / speed
 
@@ -445,7 +495,7 @@ func _handle_collision_resistance(state: PhysicsDirectBodyState2D) -> void:
 
 func _engulf_body(body: CelestialBody) -> void:
 	UpgradeManager.gain_energy(body.game_energy)
-	_start_regen()
+	_heal_health(health_max * 0.15)
 	engulf_audio_stream_player.play()
 
 	# Distruggi il nemico in modo sicuro usando call_deferred per non far arrabbiare la fisica
@@ -595,13 +645,36 @@ func _do_hitstop(duration: float) -> void:
 
 
 func take_damage(amount: int) -> void:
-	hp -= amount
-	regen_time = 0.0
-	update_life_bar()
-	if hp <= 0:
+	# Ogni danno azzera il timer: la ricarica riparte solo dopo recharge_delay.
+	_time_since_damage = 0.0
+
+	# Subito dopo la rottura di uno strato si è invulnerabili per un istante: evita di
+	# perdere due strati (o strato + salute) nello stesso frame con più corpi che colpiscono insieme.
+	if _break_iframe > 0.0:
+		return
+
+	# Cerca lo strato-scudo esterno non vuoto (dal più esterno [-1] verso l'interno [0]).
+	# Ogni strato del mantello vale UN SOLO colpo: si rompe sempre, a prescindere dall'entità del danno.
+	for i: int in range(shield_layers.size() - 1, -1, -1):
+		if shield_layers[i] > 0.0:
+			shield_layers[i] = 0.0
+			_break_iframe = LAYER_BREAK_IFRAME
+			_refresh_ui()
+			_on_layer_broken()
+			if health_ui:
+				health_ui.flash_break(i)  # lampo poi dissolvenza della cornice rotta
+			return
+
+	# Nessuno scudo attivo: il danno va alla SALUTE (sottrattiva).
+	health -= amount
+	_refresh_ui()
+	if health_ui:
+		health_ui.flash_health()
+	if health <= 0.0:
 		if auto_revive:
 			auto_revive = false
-			hp = 1
+			health = 1.0
+			_refresh_ui()
 		else:
 			game_over()
 
@@ -617,16 +690,43 @@ func game_over() -> void:
 	queue_free()
 
 
-func update_life_bar() -> void:
-	if life_bar:
-		# 1. Aggiorna sempre il massimo prima
-		if life_bar.max_value != max_hp:
-			life_bar.max_value = max_hp
+#region Ponte verso la UI vita a strati
+## Tutto l'ASPETTO (colori, cornici, lampeggii) vive in Stages/UI/UpgradeUI/health_layers.gd, sul
+## nodo HealthLayers. Qui il player gli comunica solo lo stato. La salute è il dato, la UI lo mostra.
 
-		# 2. Poi aggiorna il valore attuale
-		life_bar.value = hp
+## Ricrea le barre/cornici per riflettere il numero attuale di strati, e aggiorna i valori.
+func _rebuild_ui() -> void:
+	if not health_ui:
+		return
+	health_ui.build(shield_layers.size())
+	_refresh_ui()
 
 
-func _start_regen() -> void:
-	hp = min(hp + int(max_hp * 0.15), max_hp)
-	update_life_bar()
+## Aggiorna solo i valori mostrati (salute + stato delle cornici).
+func _refresh_ui() -> void:
+	if health_ui:
+		health_ui.refresh(health, health_max, shield_layers, shield_layer_max)
+
+
+## Feedback alla rottura di uno strato: shake camera + flash bianco sullo sprite + suono colpo.
+func _on_layer_broken() -> void:
+	player_camera.apply_shake(4.0, 0.6)
+	play_hit_sound()
+	var tween: Tween = create_tween()
+	tween.tween_property(sprite, "modulate", Color(3.0, 3.0, 3.0, 1.0), 0.05)
+	tween.tween_property(sprite, "modulate", Color.WHITE, 0.25)
+
+
+## Upgrade "Mantle": aggiunge uno strato-scudo (una cornice in più, un colpo salvato in più).
+func add_mantle_layer() -> void:
+	shield_layers.append(shield_layer_max)
+	_rebuild_ui()
+	if health_ui:
+		health_ui.flash_arm(shield_layers.size() - 1)
+
+
+## Cura la salute-core (usata dall'inglobamento di un corpo).
+func _heal_health(amount: float) -> void:
+	health = min(health_max, health + amount)
+	_refresh_ui()
+#endregion

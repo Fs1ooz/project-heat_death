@@ -4,8 +4,8 @@
 [ext_resource type="Theme" uid="uid://brvjefc4224hi" path="res://Stages/UI/UpgradeUI/upgrade_ui.tres" id="1_nfcbj"]
 [ext_resource type="Shader" uid="uid://byxv6543sfk4e" path="res://Stages/UI/UpgradeUI/exp_bar.gdshader" id="2_84lpq"]
 [ext_resource type="Script" uid="uid://bx5cmt2yual28" path="res://Stages/UI/UpgradeUI/exp_bar.gd" id="4_84lpq"]
-[ext_resource type="PackedScene" uid="uid://cxcuuplyfhoxc" path="res://Entities/Player/player_life_bar.tscn" id="4_iy6f7"]
 [ext_resource type="Gradient" uid="uid://cg0npdhg1d1wm" path="res://Assets/Gradients/gurren_lagann_gradient.tres" id="4_nfcbj"]
+[ext_resource type="Script" uid="uid://dqnaiw0oox71l" path="res://Stages/UI/UpgradeUI/health_layers.gd" id="5_hlyr"]
 
 [sub_resource type="GradientTexture1D" id="GradientTexture1D_spt3f"]
 gradient = ExtResource("4_nfcbj")
@@ -79,7 +79,7 @@ anchor_top = 1.0
 anchor_right = 0.5
 anchor_bottom = 1.0
 offset_left = -20.0
-offset_top = -40.0
+offset_top = -52.0
 offset_right = 20.0
 grow_horizontal = 2
 grow_vertical = 0
@@ -105,12 +105,20 @@ size_flags_vertical = 4
 script = ExtResource("4_84lpq")
 fill_speed = 1.0
 
-[node name="PlayerLifeBar" parent="." unique_id=521439393 instance=ExtResource("4_iy6f7")]
+[node name="HealthLayers" type="Control" parent="." unique_id=521439393]
 layout_mode = 1
-offset_left = -104.0
-offset_top = -28.0
-offset_right = 104.0
-offset_bottom = -17.0
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_top = -40.0
+offset_bottom = -20.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("5_hlyr")
+shield_color = Color(1, 0.3862571, 0.04249853, 0.9490196)
 
 [node name="LvlLabel" type="Label" parent="." unique_id=1335421103]
 texture_filter = 1

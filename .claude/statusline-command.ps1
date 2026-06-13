@@ -1,17 +1,19 @@
 $input_data = $input | Out-String | ConvertFrom-Json
 
-$RESET  = "`e[0m"
-$BOLD   = "`e[1m"
-$RED    = "`e[38;5;196m"
-$ORANGE = "`e[38;5;214m"
-$YELLOW = "`e[38;5;226m"
-$GREEN  = "`e[38;5;82m"
-$CYAN   = "`e[38;5;51m"
-$BLUE   = "`e[38;5;39m"
-$PURPLE = "`e[38;5;135m"
-$PINK   = "`e[38;5;213m"
-$WHITE  = "`e[38;5;255m"
-$GRAY   = "`e[38;5;240m"
+# [char]27 (ESC) invece di `e: `e funziona solo in PowerShell 7+, questo va anche su Windows PowerShell 5.1
+$E = [char]27
+$RESET  = "$E[0m"
+$BOLD   = "$E[1m"
+$RED    = "$E[38;5;196m"
+$ORANGE = "$E[38;5;214m"
+$YELLOW = "$E[38;5;226m"
+$GREEN  = "$E[38;5;82m"
+$CYAN   = "$E[38;5;51m"
+$BLUE   = "$E[38;5;39m"
+$PURPLE = "$E[38;5;135m"
+$PINK   = "$E[38;5;213m"
+$WHITE  = "$E[38;5;255m"
+$GRAY   = "$E[38;5;240m"
 
 $SEP   = " $GRAY|$RESET "
 $parts = [System.Collections.Generic.List[string]]::new()
@@ -106,8 +108,11 @@ $total_in  = $input_data.context_window.total_input_tokens
 $total_out = $input_data.context_window.total_output_tokens
 if ($null -ne $total_in -or $null -ne $total_out) {
     $fmt = { param($n) if ($n -ge 1000) { "{0:0.0}k" -f ($n / 1000) } else { "$n" } }
-    $in_fmt  = & $fmt (if ($null -ne $total_in)  { $total_in }  else { 0 })
-    $out_fmt = & $fmt (if ($null -ne $total_out) { $total_out } else { 0 })
+    # Assegnazione separata: (if ...) come argomento non è valido in Windows PowerShell 5.1
+    $in_val  = if ($null -ne $total_in)  { $total_in }  else { 0 }
+    $out_val = if ($null -ne $total_out) { $total_out } else { 0 }
+    $in_fmt  = & $fmt $in_val
+    $out_fmt = & $fmt $out_val
     $parts.Add("${GRAY}tok in:${WHITE}$in_fmt${GRAY} out:${WHITE}$out_fmt$RESET")
 }
 

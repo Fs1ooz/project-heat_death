@@ -38,7 +38,7 @@ func level_up() -> void:
 	if not player:
 		player = get_tree().get_first_node_in_group("player")
 	player.change_size(1.25)
-	player.max_hp = int(player.max_hp * 1.15)
+	player.health_max *= 1.15  # solo la salute-core cresce coi livelli; gli strati arrivano da "Mantle"
 	player.speed *= 1.25
 	player.acceleration *= 1.25
 	if level in tiers:
@@ -63,24 +63,17 @@ func reset_upgrades() -> void:
 
 
 enum UpgradeType {
-	MAX_HEALTH,
 	REGENERATION,
 	SPEED,
 	ACCELERATION,
 	MASS,
 	MAX_ORBITS,
+	MANTLE,
 	#DENSITY,
 }
 
 
 var upgrades_data: Dictionary = {
-	UpgradeType.MAX_HEALTH: {
-		"name": "Max Health",
-		"description": "Increases health.",
-		"level": 1,
-		"base_power": 100,
-		"current_power": 100,
-	},
 	UpgradeType.REGENERATION: {
 		"name": "Regeneration",
 		"description": "Start regenerating health.",
@@ -115,6 +108,13 @@ var upgrades_data: Dictionary = {
 		"level": 1,
 		"base_power": 1,
 		"current_power": 1,
+	},
+	UpgradeType.MANTLE: {
+		"name": "Mantle",
+		"description": "Adds a protective layer: absorbs one extra full hit.",
+		"level": 1,
+		"base_power": 0,
+		"current_power": 0,
 	},
 #
 
@@ -161,8 +161,6 @@ func apply_upgrade(upgrade_type: UpgradeType) -> bool:
 	upgrade_data["level"] += 1
 	var power: float
 	match upgrade_type:
-		UpgradeType.MAX_HEALTH:
-			power = upgrade_data["base_power"] + (upgrade_data["level"] * 50)
 		UpgradeType.REGENERATION:
 			power = max(0.2, upgrade_data["base_power"] - (upgrade_data["level"] * 0.15))
 		UpgradeType.SPEED:
@@ -173,6 +171,8 @@ func apply_upgrade(upgrade_type: UpgradeType) -> bool:
 			power = 1.35
 		UpgradeType.MAX_ORBITS:
 			power = upgrade_data["current_power"] + 1
+		UpgradeType.MANTLE:
+			power = upgrade_data["current_power"] + 1  # numero di strati presi (solo per display)
 
 		#UpgradeType.DENSITY:
 			#power = upgrade_data["current_power"] + upgrade_data["level"] * 1.1
@@ -182,11 +182,8 @@ func apply_upgrade(upgrade_type: UpgradeType) -> bool:
 
 	match upgrade_type:
 
-		UpgradeType.MAX_HEALTH:
-			player.max_hp += int(power)
-			player.update_life_bar()
 		UpgradeType.REGENERATION:
-			player.regen_timer = power
+			player.recharge_delay = power  # più basso = la ricarica parte prima
 		UpgradeType.SPEED:
 			player.speed += power
 		UpgradeType.ACCELERATION:
@@ -195,6 +192,8 @@ func apply_upgrade(upgrade_type: UpgradeType) -> bool:
 			player.change_size(power)
 		UpgradeType.MAX_ORBITS:
 			player.max_orbiting_bodies = int(power)
+		UpgradeType.MANTLE:
+			player.add_mantle_layer()  # aggiunge uno strato-scudo
 		#UpgradeType.DENSITY:
 			#player.change_size(-1.05)
 

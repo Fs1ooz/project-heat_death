@@ -110,8 +110,7 @@ spawn_config = [{
 "scene": ExtResource("8_42vvj")
 }]
 
-[node name="Player" parent="." node_paths=PackedStringArray("life_bar") instance=ExtResource("1_0co0n")]
-life_bar = NodePath("../CanvasLayer/PlayerLifeBar")
+[node name="Player" parent="." instance=ExtResource("1_0co0n")]
 
 [node name="Camera2D" type="Camera2D" parent="Player"]
 limit_enabled = false

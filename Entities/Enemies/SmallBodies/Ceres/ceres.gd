@@ -57,8 +57,12 @@ func _physics_process(delta: float) -> void:
 	if _gravity_surge_active:
 		for body: RigidBody2D in bodies_in_gravity:
 			if body is Player and is_instance_valid(body):
-				var dir: Vector2 = (global_position - body.global_position).normalized()
-				body.apply_central_force(dir * body.mass * gravity_surge_force)
+				# Falloff con la distanza: forte vicino, debole lontano → sembra gravità vera
+				# ed è contrastabile dal player accelerando in direzione opposta.
+				var to_ceres: Vector2 = global_position - body.global_position
+				var dist: float = max(to_ceres.length(), 50.0)
+				var falloff: float = clampf(get_gravity_radius() / dist, 0.3, 3.0)
+				body.apply_central_force(to_ceres.normalized() * body.mass * gravity_surge_force * falloff)
 
 
 func _process(delta: float) -> void:
@@ -131,15 +135,14 @@ func _change_state(new_state: State) -> void:
 			_spawn_field()
 
 		State.GRAVITY_SURGE:
-			printerr("Ceres → GRAVITY_SURGE | bodies_in_gravity=", bodies_in_gravity.size(), " surge_force=", gravity_surge_force)
 			state_timer = 5.0
 			_gravity_surge_active = true
-			# Impulso iniziale: strattona verso Ceres tutti i corpi già nella gravity area
+			# Impulso iniziale: strattona verso Ceres i corpi già nella gravity area (contenuto,
+			# il grosso del trascinamento è la forza continua in _physics_process).
 			for body: RigidBody2D in bodies_in_gravity:
 				if body is Player and is_instance_valid(body):
 					var dir: Vector2 = (global_position - body.global_position).normalized()
-					printerr("GRAVITY_SURGE impulso | player.mass=", body.mass, " forza=", body.mass * gravity_surge_force * 3.0)
-					body.apply_central_impulse(dir * body.mass * gravity_surge_force * 3.0)
+					body.apply_central_impulse(dir * body.mass * gravity_surge_force)
 			rotation_component.windup(0.4)
 			GlobalSignals.windup_shake.emit(60.0, 1.0)
 			# Glow lento e profondo — non epilettico

@@ -106,8 +106,8 @@ position = Vector2(3010, 1519)
 [node name="Meteoroid4" parent="." unique_id=2059052312 instance=ExtResource("12_l0eld")]
 position = Vector2(-964, 2039)
 
-[node name="Player" parent="." unique_id=952817380 node_paths=PackedStringArray("life_bar") instance=ExtResource("7_o1t32")]
-life_bar = NodePath("../UILayer/ProgressBars/PlayerLifeBar")
+[node name="Player" parent="." unique_id=952817380 node_paths=PackedStringArray("health_ui") instance=ExtResource("7_o1t32")]
+health_ui = NodePath("../UILayer/ProgressBars/HealthLayers")
 
 [node name="ImGui" parent="." unique_id=560633621 instance=ExtResource("2_lnrn1")]
 

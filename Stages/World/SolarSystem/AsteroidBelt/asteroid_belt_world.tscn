@@ -125,8 +125,7 @@ layer = 2
 z_index = 2
 limit_enabled = false
 
-[node name="Player" parent="." node_paths=PackedStringArray("life_bar") instance=ExtResource("2_aw4pb")]
-life_bar = NodePath("../UILayer/PlayerLifeBar")
+[node name="Player" parent="." instance=ExtResource("2_aw4pb")]
 
 [node name="ShockwaveRenderer" parent="Player/Collision/Sprite" index="1"]
 metadata/_edit_use_anchors_ = true
