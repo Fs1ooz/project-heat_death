@@ -2,6 +2,7 @@ extends Control
 
 
 const SOLAR_SYSTEM: String = "res://Stages/World/SolarSystem/solar_system.tscn"
+const TUTORIAL: String = "res://Stages/UI/Tutorial/tutorial.tscn"
 
 
 func _ready() -> void:
@@ -25,6 +26,11 @@ func _on_button_pressed() -> void:
 	get_tree().change_scene_to_file(SOLAR_SYSTEM)
 	EntropyManager.reset_entropy()
 	$Ceres.set_process(true)
+
+
+func _on_tutorial_pressed() -> void:
+	EntropyManager.reset_entropy()
+	get_tree().change_scene_to_file(TUTORIAL)
 
 
 func _on_tributo_gormita_pressed() -> void:

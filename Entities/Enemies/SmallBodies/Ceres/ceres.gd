@@ -7,13 +7,18 @@ enum State { WAIT, WINDUP, GAS, SPAWN_FIELD, GRAVITY_SURGE, ENTROPY_BLAST }
 
 const ATTACKS: Array = [State.GAS, State.SPAWN_FIELD, State.GRAVITY_SURGE, State.ENTROPY_BLAST]
 
-@export var wait_duration: float = 2.5
+@export var wait_duration: float = 2.0
 @export var windup_duration: float = 1.0
 @export var max_gas: int = 8
-@export var attack_duration: float = 8.0
+@export var attack_duration: float = 6.0
 @export var field_count: int = 9
 @export var movement_damp: float = 6.0
 @export var gravity_surge_force: float = 10000.0
+## Il surge scala con le capacità correnti del player (che crescono ×1.25 a ogni livello):
+## altrimenti, dopo qualche level-up, lo strattone fisso viene sovrastato dal motore del player
+## e i surge successivi al primo non si sentono più. gravity_surge_force resta come pavimento.
+@export var gravity_surge_accel_ratio: float = 0.6   ## pull continuo come frazione dell'acceleration del player
+@export var gravity_surge_impulse_ratio: float = 0.8 ## strattone iniziale come frazione della speed del player
 @export var entropy_blast_amount: float = -25.0
 
 const ASTEROID_SCENE: PackedScene = preload("res://Entities/Enemies/SmallBodies/Asteroids/asteroid.tscn")
@@ -57,12 +62,16 @@ func _physics_process(delta: float) -> void:
 	if _gravity_surge_active:
 		for body: RigidBody2D in bodies_in_gravity:
 			if body is Player and is_instance_valid(body):
+				var player: Player = body as Player
 				# Falloff con la distanza: forte vicino, debole lontano → sembra gravità vera
 				# ed è contrastabile dal player accelerando in direzione opposta.
-				var to_ceres: Vector2 = global_position - body.global_position
+				var to_ceres: Vector2 = global_position - player.global_position
 				var dist: float = max(to_ceres.length(), 50.0)
 				var falloff: float = clampf(get_gravity_radius() / dist, 0.3, 3.0)
-				body.apply_central_force(to_ceres.normalized() * body.mass * gravity_surge_force * falloff)
+				# Scala con l'acceleration del player (pavimento: gravity_surge_force) così il
+				# pull resta comparabile alla spinta propria e si sente a ogni livello.
+				var pull_accel: float = maxf(gravity_surge_force, player.acceleration * gravity_surge_accel_ratio)
+				player.apply_central_force(to_ceres.normalized() * player.mass * pull_accel * falloff)
 
 
 func _process(delta: float) -> void:
@@ -141,8 +150,12 @@ func _change_state(new_state: State) -> void:
 			# il grosso del trascinamento è la forza continua in _physics_process).
 			for body: RigidBody2D in bodies_in_gravity:
 				if body is Player and is_instance_valid(body):
-					var dir: Vector2 = (global_position - body.global_position).normalized()
-					body.apply_central_impulse(dir * body.mass * gravity_surge_force)
+					var player: Player = body as Player
+					var dir: Vector2 = (global_position - player.global_position).normalized()
+					# Strattone proporzionale alla speed corrente (pavimento: gravity_surge_force):
+					# +10000 px/s fisso è enorme a inizio partita ma irrilevante quando speed è a decine di migliaia.
+					var kick: float = maxf(gravity_surge_force, player.speed * gravity_surge_impulse_ratio)
+					player.apply_central_impulse(dir * player.mass * kick)
 			rotation_component.windup(0.4)
 			GlobalSignals.windup_shake.emit(60.0, 1.0)
 			# Glow lento e profondo — non epilettico

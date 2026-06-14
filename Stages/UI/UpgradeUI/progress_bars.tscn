@@ -94,31 +94,16 @@ anchor_left = 0.5
 anchor_top = 1.0
 anchor_right = 0.5
 anchor_bottom = 1.0
-offset_left = -104.000015
-offset_top = -12.0
-offset_right = -83.20001
-offset_bottom = -11.0
+offset_left = -89.0
+offset_top = -14.0
+offset_right = -71.100006
+offset_bottom = -12.900002
 grow_horizontal = 2
 grow_vertical = 0
 scale = Vector2(10, 10)
 size_flags_vertical = 4
 script = ExtResource("4_84lpq")
 fill_speed = 1.0
-
-[node name="HealthLayers" type="Control" parent="." unique_id=521439393]
-layout_mode = 1
-anchors_preset = 7
-anchor_left = 0.5
-anchor_top = 1.0
-anchor_right = 0.5
-anchor_bottom = 1.0
-offset_top = -40.0
-offset_bottom = -20.0
-grow_horizontal = 2
-grow_vertical = 2
-mouse_filter = 2
-script = ExtResource("5_hlyr")
-shield_color = Color(1, 0.3862571, 0.04249853, 0.9490196)
 
 [node name="LvlLabel" type="Label" parent="." unique_id=1335421103]
 texture_filter = 1
@@ -129,10 +114,25 @@ anchor_top = 1.0
 anchor_right = 0.5
 anchor_bottom = 1.0
 offset_left = -16.0
-offset_top = -14.0
+offset_top = -16.0
 offset_right = 16.0
+offset_bottom = -2.0
 grow_horizontal = 2
 grow_vertical = 0
 theme_override_font_sizes/font_size = 16
 text = "lvl 1"
 horizontal_alignment = 1
+
+[node name="HealthLayers" type="Control" parent="." unique_id=521439393]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_top = -38.0
+offset_bottom = -20.0
+grow_horizontal = 2
+grow_vertical = 0
+mouse_filter = 2
+script = ExtResource("5_hlyr")

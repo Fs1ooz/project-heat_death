@@ -10,10 +10,10 @@ extends Control
 #region Aspetto — modifica qui (o dall'Inspector)
 @export var health_fill: Color = Color(0.6154072, 0, 0.0703321, 1)      ## rosso: riempimento barra salute
 @export var health_bg: Color = Color(1, 0.8289137, 0.8289137, 0.245)    ## sfondo barra salute
-@export var shield_color: Color = Color(0.976, 0.44, 0.095, 1.0)           ## arancio: cornici del mantello
-@export var bar_size: Vector2 = Vector2(208, 12)  ## larghezza × altezza della barra salute centrale
-@export var frame_step: float = 2.0   ## quanto ogni cornice è più grande della precedente (px per lato)
-@export var border_width: int = 1     ## spessore del bordo delle cornici
+@export var shield_color: Color = Color(0.976, 0.259, 0.06, 1.0)           ## arancio: cornici del mantello
+@export var bar_size: Vector2 = Vector2(180, 12)  ## larghezza × altezza della barra salute centrale
+@export var frame_step: float = 1.7   ## quanto ogni cornice è più grande della precedente (px per lato)
+@export var border_width: int = 2     ## spessore del bordo delle cornici
 @export var corner_radius: int = 4    ## arrotondamento degli angoli delle cornici
 #endregion
 
@@ -29,7 +29,7 @@ func build(shield_count: int) -> void:
 		child.queue_free()
 	_shield_frames.clear()
 	for i: int in shield_count:
-		var frame: Panel = _make_frame()
+		var frame: Panel = _make_frame(i)
 		_set_centered(frame, bar_size + Vector2.ONE * (frame_step * 2.0 * float(i + 1)))
 		_shield_frames.append(frame)
 	# Aggiunge prima le cornici più esterne (dietro), poi la salute (davanti).
@@ -94,17 +94,17 @@ func _make_health_bar() -> ProgressBar:
 
 
 ## Cornice (uno strato di mantello): solo bordo, interno quasi trasparente → si annida attorno.
-func _make_frame() -> Panel:
+func _make_frame(depth: int = 0) -> Panel:
 	var p: Panel = Panel.new()
 	p.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var color: Color = shield_color.lightened(depth * 0.3)
 	var sb: StyleBoxFlat = StyleBoxFlat.new()
-	sb.bg_color = Color(shield_color.r, shield_color.g, shield_color.b, 0.08)
-	sb.border_color = shield_color
+	sb.bg_color = Color(color.r, color.g, color.b, 0.08)
+	sb.border_color = color
 	sb.set_border_width_all(border_width)
 	sb.set_corner_radius_all(corner_radius)
 	p.add_theme_stylebox_override("panel", sb)
 	return p
-
 
 ## Centra un Control sul centro del container, con dimensione 'sz'.
 func _set_centered(node: Control, sz: Vector2) -> void:

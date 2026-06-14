@@ -30,8 +30,8 @@ buses/default_bus_layout="res://Commons/default_bus_layout.tres"
 GlobalSignals="*res://Commons/global_signals.tscn"
 UpgradeManager="*res://Commons/upgrade_manager.tscn"
 EntropyManager="*res://Commons/entropy_manager.tscn"
-ImGuiRoot="*uid://dugmpnsxaagba"
 StatTracker="*uid://8kawij15m7h6"
+ImGuiRoot="*uid://dugmpnsxaagba"
 
 [debug]
 

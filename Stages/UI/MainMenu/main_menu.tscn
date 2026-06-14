@@ -25,21 +25,6 @@ grow_vertical = 2
 theme = ExtResource("1_1g70f")
 script = ExtResource("2_715ji")
 
-[node name="Label" type="Label" parent="." unique_id=74208232]
-layout_mode = 1
-anchors_preset = 5
-anchor_left = 0.5
-anchor_right = 0.5
-offset_left = -254.0
-offset_right = 254.0
-offset_bottom = 545.0
-grow_horizontal = 2
-text = "Comandi: 
-WASD/FRECCIETTE/TASTO SX (premuto) - movimento
-Q/TASTO DX - potere orbita 
-SPAZIO - spara l'entropia negativa
-"
-
 [node name="TributoGormita" type="Button" parent="." unique_id=742340853]
 layout_mode = 1
 anchors_preset = 15
@@ -78,6 +63,11 @@ layout_mode = 2
 theme_override_font_sizes/font_size = 64
 text = "Start"
 
+[node name="TutorialButton" type="Button" parent="VBoxContainer" unique_id=2002074413]
+layout_mode = 2
+theme_override_font_sizes/font_size = 64
+text = "Tutorial"
+
 [node name="BaseBackgroundLayer" parent="." unique_id=501950975 instance=ExtResource("4_2b7i7")]
 
 [node name="Ceres" parent="." unique_id=933810055 instance=ExtResource("4_25f73")]
@@ -109,5 +99,6 @@ alignment = 1
 
 [connection signal="pressed" from="TributoGormita" to="." method="_on_tributo_gormita_pressed"]
 [connection signal="pressed" from="VBoxContainer/Button" to="." method="_on_button_pressed"]
+[connection signal="pressed" from="VBoxContainer/TutorialButton" to="." method="_on_tutorial_pressed"]
 [connection signal="pressed" from="no3D" to="." method="_on_no_3d_pressed"]
 [connection signal="toggled" from="no3D" to="." method="_on_no_3d_toggled"]

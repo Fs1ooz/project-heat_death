@@ -1,0 +1,135 @@
+[gd_scene format=3 uid="uid://bp2d488jxb6r5"]
+
+[ext_resource type="Script" uid="uid://cx84vrdui5wih" path="res://Stages/UI/Tutorial/tutorial.gd" id="1_tut"]
+[ext_resource type="PackedScene" uid="uid://bvfq3qbl7klob" path="res://Stages/World/world_environment.tscn" id="2_env"]
+[ext_resource type="PackedScene" uid="uid://byiki3druigls" path="res://Stages/UI/ui_layer.tscn" id="3_ui"]
+[ext_resource type="PackedScene" uid="uid://470x1obeipdg" path="res://Entities/Player/player.tscn" id="4_player"]
+[ext_resource type="PackedScene" uid="uid://befachtfe40l2" path="res://Stages/World/SolarSystem/AsteroidBelt/base_background_layer.tscn" id="5_basebg"]
+[ext_resource type="PackedScene" uid="uid://bkljj71ppklsf" path="res://Stages/World/SolarSystem/AsteroidBelt/background_layer.tscn" id="6_bg"]
+[ext_resource type="PackedScene" uid="uid://dtfn8lijt6vxu" path="res://Stages/World/dust_layer.tscn" id="7_dust"]
+[ext_resource type="PackedScene" uid="uid://nvw877asubb0" path="res://Stages/UI/PauseMenu/pause_menu.tscn" id="8_pause"]
+[ext_resource type="Theme" uid="uid://brvjefc4224hi" path="res://Stages/UI/UpgradeUI/upgrade_ui.tres" id="9_theme"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_prompt"]
+content_margin_left = 24.0
+content_margin_top = 14.0
+content_margin_right = 24.0
+content_margin_bottom = 14.0
+bg_color = Color(0.0886, 0.0886, 0.0886, 0.85)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.6, 0.6, 0.6, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[node name="Tutorial" type="Node2D" unique_id=1286997205]
+script = ExtResource("1_tut")
+
+[node name="WorldEnvironment" parent="." unique_id=270691312 instance=ExtResource("2_env")]
+
+[node name="PauseMenu" parent="." unique_id=1076934093 node_paths=PackedStringArray("world_env") instance=ExtResource("8_pause")]
+layer = 3
+visible = false
+world_env = NodePath("../WorldEnvironment")
+
+[node name="UILayer" parent="." unique_id=1657642938 instance=ExtResource("3_ui")]
+layer = 2
+
+[node name="BaseBackgroundLayer" parent="." unique_id=1246736685 instance=ExtResource("5_basebg")]
+
+[node name="BackgroundLayer" parent="." unique_id=131352443 instance=ExtResource("6_bg")]
+
+[node name="DustLayer" parent="." unique_id=509507041 instance=ExtResource("7_dust")]
+
+[node name="Player" parent="." unique_id=235745906 node_paths=PackedStringArray("health_ui") instance=ExtResource("4_player")]
+health_ui = NodePath("../UILayer/ProgressBars/HealthLayers")
+
+[node name="TutorialOverlay" type="CanvasLayer" parent="." unique_id=1665859734]
+layer = 5
+
+[node name="Root" type="Control" parent="TutorialOverlay" unique_id=722461510]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme = ExtResource("9_theme")
+
+[node name="PromptPanel" type="PanelContainer" parent="TutorialOverlay/Root" unique_id=889243609]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -400.0
+offset_top = 60.0
+offset_right = 400.0
+offset_bottom = 140.0
+grow_horizontal = 2
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_prompt")
+
+[node name="PromptLabel" type="Label" parent="TutorialOverlay/Root/PromptPanel" unique_id=1837641765]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 28
+text = "..."
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 2
+
+[node name="SkipButton" type="Button" parent="TutorialOverlay/Root" unique_id=1346387882]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -250.0
+offset_top = -92.0
+offset_right = -24.0
+offset_bottom = -40.0
+grow_horizontal = 0
+grow_vertical = 0
+theme_override_font_sizes/font_size = 24
+text = "Salta tutorial"
+
+[node name="EndButtons" type="HBoxContainer" parent="TutorialOverlay/Root" unique_id=1672389680]
+unique_name_in_owner = true
+visible = false
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -320.0
+offset_top = -200.0
+offset_right = 320.0
+offset_bottom = -100.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_constants/separation = 40
+alignment = 1
+
+[node name="PlayButton" type="Button" parent="TutorialOverlay/Root/EndButtons" unique_id=1564505371]
+custom_minimum_size = Vector2(220, 80)
+layout_mode = 2
+theme_override_font_sizes/font_size = 36
+text = "Gioca"
+
+[node name="MenuButton" type="Button" parent="TutorialOverlay/Root/EndButtons" unique_id=467061210]
+custom_minimum_size = Vector2(220, 80)
+layout_mode = 2
+theme_override_font_sizes/font_size = 36
+text = "Menu"
+
+[connection signal="pressed" from="TutorialOverlay/Root/SkipButton" to="." method="_on_skip_pressed"]
+[connection signal="pressed" from="TutorialOverlay/Root/EndButtons/PlayButton" to="." method="_on_play_pressed"]
+[connection signal="pressed" from="TutorialOverlay/Root/EndButtons/MenuButton" to="." method="_on_menu_pressed"]
