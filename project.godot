@@ -17,7 +17,7 @@ compatibility/default_parent_skeleton_in_mesh_instance_3d=true
 config/name="Heat Death"
 config/tags=PackedStringArray("gameforge")
 run/main_scene="uid://bkmf5gdvkg83v"
-config/features=PackedStringArray("4.6", "Forward Plus")
+config/features=PackedStringArray("4.7", "Forward Plus")
 run/max_fps=240
 config/icon="uid://cutmcskxym36k"
 
@@ -139,6 +139,7 @@ orbit={
 
 [physics]
 
+common/physics_jitter_fix=0.699
 2d/default_gravity=0.0
 2d/default_gravity_vector=Vector2(0, 0)
 2d/default_linear_damp=0.0

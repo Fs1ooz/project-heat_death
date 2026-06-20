@@ -4,11 +4,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-**Heat Death** is a Godot 4.6 top-down space physics game. The player controls a growing celestial body that absorbs energy, grows in mass/size, and must survive against increasingly dangerous space objects. The game uses real-ish N-body gravity (G * m1 * m2 / r²) and a unique "entropy" mechanic.
+**Heat Death** is a Godot 4.7 top-down space physics game. The player controls a growing celestial body that absorbs energy, grows in mass/size, and must survive against increasingly dangerous space objects. The game uses real-ish N-body gravity (G * m1 * m2 / r²) and a unique "entropy" mechanic.
 
 ## Running the Game
 
-Open the project in Godot 4.6+ and press F5, or run via the Godot CLI:
+Open the project in Godot 4.7+ and press F5, or run via the Godot CLI:
 ```
 godot --path "D:/app-games/Gioco/project-heat_death"
 ```

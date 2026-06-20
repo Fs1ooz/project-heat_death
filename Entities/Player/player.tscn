@@ -40,7 +40,7 @@ gradient = SubResource("Gradient_7a1se")
 shader = ExtResource("3_01a4e")
 shader_parameter/global_tint = Color(1, 1, 1, 1)
 shader_parameter/outline_gradient = SubResource("GradientTexture1D_lub02")
-shader_parameter/outline_width = 0.0
+shader_parameter/outline_width = 2.000000095
 shader_parameter/pattern = 0
 shader_parameter/inside = false
 shader_parameter/add_margins = false
@@ -138,6 +138,7 @@ shape = SubResource("CapsuleShape2D_3uyv8")
 
 [node name="Sprite" type="Sprite2D" parent="Collision" unique_id=1510216970]
 z_index = 1
+texture_filter = 1
 material = SubResource("ShaderMaterial_lub02")
 rotation = -1.5707964
 texture = ExtResource("4_7a1se")

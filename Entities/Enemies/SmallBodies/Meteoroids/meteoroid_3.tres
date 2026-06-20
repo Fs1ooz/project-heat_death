@@ -425,7 +425,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_bbbt2")
 }],
-"loop": true,
+"loop": 1,
 "name": &"rotation",
 "speed": 30.0
 }]

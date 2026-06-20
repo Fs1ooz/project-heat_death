@@ -32,6 +32,7 @@ var bodies_in_gravity: Array[RigidBody2D] = []
 var current_noise: float = 0.0
 var entropy_force: Vector2 = Vector2.ZERO
 var health: float
+var max_health: float = 0.0
 var death_vfx_scene: PackedScene = preload("uid://dvg5n5eu3oyde")
 var energy_drop_scene: PackedScene = preload("uid://ctismywjnvljg")
 
@@ -170,6 +171,7 @@ func _calculate_polygon_area(points: PackedVector2Array) -> float:
 func _setup_health() -> void:
 	var raw_health: float = mass * internal_energy
 	health = max(round_base, snappedi(raw_health, round_base))
+	max_health = health
 	#print(get_class(), " VITA: ", health)
 
 
@@ -185,9 +187,8 @@ func _on_body_entered(body: Node) -> void:
 		#print("rel_vel: ", rel_vel)
 		#print("ratio: ", mass_ratio)
 		#print("damage_to_player: ", damage_to_player)
-		take_damage(body.get_damage())
-	else:
-		take_damage(body.get_damage())
+	var attacker_ratio: float = clampf(body.mass / mass, 0.0, 1.0)
+	take_damage(body.get_damage() * sqrt(attacker_ratio))
 
 
 # Gestione danno

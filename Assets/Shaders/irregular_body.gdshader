@@ -13,6 +13,9 @@ render_mode unshaded;
 uniform vec4  flash_color : source_color = vec4(1.0, 1.0, 1.0, 1.0);
 uniform float flash_value : hint_range(0.0, 1.0, 0.01) = 0.0;
 
+// ---- Crepe di danno ------------------------------------------
+uniform float crack_progress : hint_range(0.0, 1.0) = 0.0;
+
 
 // ---- Pixel art -----------------------------------------------
 // Deve corrispondere alla dimensione del SubViewport (es. 64, 128, 256)
@@ -97,6 +100,28 @@ uniform float     atmosphere_width  : hint_range(0.0, 0.5, 0.01) = 0.08;
 uniform float     atmosphere_intensity : hint_range(0.0, 2.0, 0.01) = 0.6;
 
 
+vec2 _crack_hash(vec2 p) {
+    p = vec2(dot(p, vec2(127.1, 311.7)), dot(p, vec2(269.5, 183.3)));
+    return fract(sin(p) * 43758.5453);
+}
+
+float _voronoi_cracks(vec2 uv) {
+    vec2 i = floor(uv);
+    vec2 f = fract(uv);
+    float d1 = 8.0; float d2 = 8.0;
+    for (int y = -1; y <= 1; y++) {
+        for (int x = -1; x <= 1; x++) {
+            vec2 nb = vec2(float(x), float(y));
+            vec2 pt = _crack_hash(i + nb) + nb;
+            float d = length(f - pt);
+            if (d < d1) { d2 = d1; d1 = d; }
+            else if (d < d2) { d2 = d; }
+        }
+    }
+    return d2 - d1;
+}
+
+
 void fragment() {
     // UV pixelate (pixel art crisp)
 	vec2 grid_uv = pixelate
@@ -132,6 +157,15 @@ void fragment() {
             float rim = 1.0 - min(min(a_r, a_l), min(a_u, a_d));
             rim = smoothstep(0.0, 1.0, rim) * atmosphere_intensity;
             COLOR.rgb = mix(COLOR.rgb, atmosphere_color.rgb, clamp(rim, 0.0, 1.0));
+        }
+
+        // Crepe progressive
+        if (crack_progress > 0.001) {
+            vec2 crack_uv = (UV - 0.5) * 5.0;
+            float crack = _voronoi_cracks(crack_uv);
+            float effective = pow(crack_progress, 1.5);
+            float crack_alpha = clamp(smoothstep(0.09, 0.0, crack) * effective * 2.0, 0.0, 1.0);
+            COLOR.rgb = mix(COLOR.rgb, vec3(0.12, 0.04, 0.0), crack_alpha);
         }
 
         // Flash hit effect

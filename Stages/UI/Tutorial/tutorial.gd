@@ -104,14 +104,12 @@ func _start_orbit() -> void:
 
 
 func _spawn_orbit_bodies() -> void:
-	var radius: float = player.attraction_radius * 2.0
-	for i: int in range(1):
-		var ang: float = TAU * float(i) / 3.0
-		var body: SmallBody = METEOROID.instantiate()
-		body.position = player.global_position + Vector2(cos(ang), sin(ang)) * radius
-		add_child.call_deferred(body)
-		_orbit_bodies.append(body)
-		_make_orbitable.call_deferred(body)
+	# Un solo corpo, a destra del player e appena fuori dal raggio d'attrazione.
+	var body: SmallBody = METEOROID.instantiate()
+	body.position = player.global_position + Vector2.RIGHT * player.attraction_radius * 2.0
+	add_child.call_deferred(body)
+	_orbit_bodies.append(body)
+	_make_orbitable.call_deferred(body)
 
 
 ## Porta la massa del corpo a 1:1 col player così rientra nella finestra
@@ -146,9 +144,12 @@ func _start_energy() -> void:
 
 
 func _spawn_energy_drops() -> void:
-	for i: int in range(5):
+	# 6×60 = 360 energia totale. Il livello 3 (prima soglia → menu upgrade) costa
+	# 220 cumulativi: bastano 4 drop su 6, quindi mancarne uno non blocca lo step.
+	# 360 resta sotto i 364 del livello 4, così si apre esattamente un menu.
+	for i: int in range(6):
 		var drop: Area2D = ENERGY_DROP.instantiate()
-		drop.energy = 50
+		drop.energy = 60
 		var ang: float = randf() * TAU
 		var dist: float = randf_range(350.0, 1000.0)
 		drop.position = player.global_position + Vector2(cos(ang), sin(ang)) * dist
@@ -198,6 +199,15 @@ func _start_done() -> void:
 # ---------------------------------------------------------------------------
 # Uscita / pulizia
 # ---------------------------------------------------------------------------
+## Ripristina gli autoload qualunque sia la via d'uscita dal tutorial (pulsanti
+## Gioca/Menu/Salta, ma ANCHE PauseMenu→Menu o morte del player): la pulizia è
+## agganciata al ciclo di vita del nodo, non ai singoli pulsanti, così il drift
+## dell'entropia, il tracking delle statistiche e la progressione non restano
+## "sporchi" per la run vera.
+func _exit_tree() -> void:
+	_cleanup_globals()
+
+
 func _cleanup_globals() -> void:
 	EntropyManager.reset_entropy()
 	EntropyManager.entropy_changed.emit(0.0)  # aggiorna l'HUD dell'entropia
@@ -207,17 +217,14 @@ func _cleanup_globals() -> void:
 
 
 func _on_play_pressed() -> void:
-	_cleanup_globals()
 	get_tree().change_scene_to_file(SOLAR_SYSTEM)
 
 
 func _on_menu_pressed() -> void:
-	_cleanup_globals()
 	get_tree().change_scene_to_file(MAIN_MENU)
 
 
 func _on_skip_pressed() -> void:
-	_cleanup_globals()
 	get_tree().change_scene_to_file(MAIN_MENU)
 
 
