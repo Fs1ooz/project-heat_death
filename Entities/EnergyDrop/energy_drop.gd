@@ -30,6 +30,8 @@ var colors: Array = [
 
 func _ready() -> void:
 	update_color()
+	# Spawnata di colpo a una posizione: azzera l'interpolazione per non farla "volare".
+	reset_physics_interpolation()
 
 func update_color() -> void:
 	if energy <= 0:

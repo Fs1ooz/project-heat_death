@@ -17,6 +17,7 @@ const DEFAULT_PHYSICS_TICKS: int = 60
 func _ready() -> void:
 	_setup_physics_tick_option()
 	$Ceres.set_process(false)
+	_animate_title()
 	var tween: Tween = create_tween()
 	tween.set_loops()
 
@@ -30,6 +31,19 @@ func _ready() -> void:
 	tween.parallel().tween_property($BackgroundLayer, "rotation", deg_to_rad(0), 50)
 	tween.parallel().tween_property($BackgroundLayer, "offset", Vector2(0, 0), 50)
 
+
+
+## Titolo animato: dissolvenza incrociata in loop tra i due frame del logo
+## (LogoA sempre visibile sotto, LogoB sopra che appare/sparisce in fade).
+func _animate_title() -> void:
+	var logo_b: TextureRect = $VBoxContainer/Title/LogoB
+	var title_tween: Tween = create_tween()
+	title_tween.set_loops()
+	title_tween.set_trans(Tween.TRANS_SINE)
+	title_tween.tween_property(logo_b, "modulate:a", 1.0, 1.5)
+	title_tween.tween_interval(0.6)
+	title_tween.tween_property(logo_b, "modulate:a", 0.0, 1.5)
+	title_tween.tween_interval(0.6)
 
 
 func _on_button_pressed() -> void:

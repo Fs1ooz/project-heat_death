@@ -33,8 +33,8 @@ signal ceres_should_spawn
 
 @export_group("Parametri Poisson")
 @export var max_attempts: int = 3             # Il valore 'k' del video
-@export var target_object_count: int = 300
-@export var max_objects: int = target_object_count + 20
+@export var target_object_count: int = 250
+@export var max_objects: int = target_object_count + 50
 
 @onready var player: Node2D = get_tree().get_first_node_in_group("player") as Player
 

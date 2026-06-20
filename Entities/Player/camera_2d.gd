@@ -53,6 +53,8 @@ func _ready() -> void:
 	top_level = true
 	target = player
 	global_position = player.global_position
+	# Snap iniziale: azzera l'interpolazione così la camera non "vola" dall'origine al primo frame.
+	reset_physics_interpolation()
 	make_current()
 	_on_tier_changed()
 	# Cerca Ceres già presente in scena dopo che tutti i _ready() sono completati
@@ -80,7 +82,10 @@ func _on_tier_changed() -> void:
 	tween.tween_property(self, "zoom", zoom * 0.5, 0.1).set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_OUT)
 
 
-func _process(delta: float) -> void:
+func _physics_process(delta: float) -> void:
+	# La camera si muove in _physics_process e viene interpolata DAL MOTORE: così resta agganciata
+	# in lockstep al player (anch'esso interpolato), senza vibrazione, anche con render a 165 fps e
+	# fisica a 60 Hz. (In 2D non esiste get_global_transform_interpolated, quindi è la via corretta.)
 	# --- Controlla la prossimità a Ceres ---
 	_update_target()
 

@@ -17,6 +17,8 @@ extends Node2D
 @onready var explosion_red_initial_trail_lifetime: float = explosion_red.trail_lifetime
 
 func _ready() -> void:
+	# Spawnato di colpo alla posizione del corpo morto: azzera l'interpolazione (no "volo").
+	reset_physics_interpolation()
 	anim_player.play("explosion")
 	# Flash overbright al momento dell'esplosione
 	modulate = Color(3.0, 3.0, 3.0, 1.0)

@@ -16,20 +16,6 @@ corner_radius_top_right = 5
 corner_radius_bottom_right = 5
 corner_radius_bottom_left = 5
 
-[sub_resource type="SpriteFrames" id="SpriteFrames_rpa02"]
-animations = [{
-"frames": [{
-"duration": 1.0,
-"texture": ExtResource("3_cwrtm")
-}, {
-"duration": 1.0,
-"texture": ExtResource("4_k4bg1")
-}],
-"loop": 1,
-"name": &"default",
-"speed": 5.0
-}]
-
 [node name="MainMenu" type="Control" unique_id=748498538]
 process_mode = 3
 layout_mode = 3
@@ -55,24 +41,50 @@ theme_override_font_sizes/font_size = 64
 theme_override_styles/normal = SubResource("StyleBoxFlat_2b7i7")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=2124335268]
+custom_maximum_size = Vector2(300, -1)
+propagate_maximum_size = false
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -59.0
-offset_top = -33.0
-offset_right = 59.0
-offset_bottom = 33.0
+offset_left = -150.0
+offset_top = -252.0
+offset_right = 150.0
+offset_bottom = 265.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/separation = 50
 
-[node name="Label" type="Label" parent="VBoxContainer" unique_id=712828817]
+[node name="Title" type="Control" parent="VBoxContainer" unique_id=712828817]
+texture_filter = 1
+custom_minimum_size = Vector2(600, 150)
 layout_mode = 2
-theme_override_font_sizes/font_size = 128
-text = "HEAT DEATH"
+size_flags_horizontal = 4
+
+[node name="LogoA" type="TextureRect" parent="VBoxContainer/Title" unique_id=991803569]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("3_cwrtm")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="LogoB" type="TextureRect" parent="VBoxContainer/Title" unique_id=2008547462]
+modulate = Color(1, 1, 1, 0)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("4_k4bg1")
+expand_mode = 1
+stretch_mode = 5
 
 [node name="Button" type="Button" parent="VBoxContainer" unique_id=57593782]
 layout_mode = 2
@@ -84,17 +96,12 @@ layout_mode = 2
 theme_override_font_sizes/font_size = 64
 text = "Tutorial"
 
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="VBoxContainer" unique_id=782530442]
-texture_filter = 1
-sprite_frames = SubResource("SpriteFrames_rpa02")
-frame_progress = 0.022203756
-
 [node name="BaseBackgroundLayer" parent="." unique_id=501950975 instance=ExtResource("4_2b7i7")]
 
 [node name="Ceres" parent="." unique_id=933810055 instance=ExtResource("4_25f73")]
 position = Vector2(943, 250)
-min_size = 3.5
-max_size = 3.5
+min_size = 3.0
+max_size = 3.0
 
 [node name="BackgroundLayer" parent="." unique_id=110186335 instance=ExtResource("3_25f73")]
 scale = Vector2(0.15, 0.15)

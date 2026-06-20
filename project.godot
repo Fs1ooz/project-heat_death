@@ -19,7 +19,7 @@ config/tags=PackedStringArray("gameforge")
 run/main_scene="uid://bkmf5gdvkg83v"
 config/features=PackedStringArray("4.7", "Forward Plus")
 run/max_fps=240
-config/icon="uid://cutmcskxym36k"
+config/icon="uid://dapvrnsm7xv4k"
 
 [audio]
 
@@ -45,7 +45,7 @@ window/size/viewport_height=540
 window/stretch/mode="canvas_items"
 window/stretch/aspect="expand"
 window/max_fps=240
-window/physics_interpolation=false
+window/physics_interpolation=true
 
 [editor_plugins]
 
@@ -139,11 +139,11 @@ orbit={
 
 [physics]
 
-common/physics_jitter_fix=0.699
 2d/default_gravity=0.0
 2d/default_gravity_vector=Vector2(0, 0)
 2d/default_linear_damp=0.0
 2d/default_angular_damp=0.0
+common/physics_interpolation=true
 
 [rendering]
 

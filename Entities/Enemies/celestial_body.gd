@@ -14,6 +14,11 @@ const MAX_FORCE: float = 1_000_000_000_000.0
 const SOFTENING: float = 10.0
 var bodies_in_gravity: Array[RigidBody2D] = []
 
+# La gravità N-body si ricalcola a frequenza fissa (GRAVITY_HZ), indipendente dal tick di fisica:
+# ad alti Hz (monitor ad alto refresh) il movimento resta fluido ma la gravità non costa di più.
+const GRAVITY_HZ: float = 60.0
+var _gravity_accum: float = 0.0
+
 # Proprietà comuni
 @export var internal_energy: int = 1
 @export var game_energy: int = 50
@@ -55,21 +60,37 @@ func _ready() -> void:
 	_setup_mass()
 	_setup_health()
 	#_setup_health_bar()
+	# Fase casuale: sfasa i burst di gravità tra i corpi così il costo è distribuito sui tick
+	# (niente picco con tutti i corpi che ricalcolano sullo stesso frame).
+	_gravity_accum = randf() * (1.0 / GRAVITY_HZ)
 	EntropyManager.entropy_changed.connect(_on_entropy_changed)
+	# Il corpo viene spawnato di colpo a una posizione: col physics interpolation attivo va
+	# azzerata l'interpolazione, altrimenti "vola" dalla posizione precedente. Copre anche i
+	# sottotipi (asteroidi, comete, frammenti, Ceres) che chiamano super() in _ready.
+	reset_physics_interpolation()
 
 
-func _physics_process(_delta: float) -> void:
+func _physics_process(delta: float) -> void:
 	#print(celestial_bodies.size())
 	_last_velocity = linear_velocity
 	# Un corpo in cattura/orbita non deve applicare gravità (strattonerebbe il player con
 	# un effetto fionda): l'orbita è gestita cinematicamente in SmallBody.
 	if self is SmallBody and (self as SmallBody).orbit_state != SmallBody.OrbitState.FREE:
 		return
-	for body: RigidBody2D in bodies_in_gravity:
-		if not is_instance_valid(body):
-			continue
-		_apply_gravity(body)
-			# Applica la forza da entropia continuamente
+	# Throttle: ricalcola e applica la gravità solo ~GRAVITY_HZ volte al secondo, qualunque sia il
+	# tick di fisica. Il boost = physics_ticks/GRAVITY_HZ compensa l'impulso (forza applicata per un
+	# solo tick) così l'effetto medio è identico a una forza continua. Tra un burst e l'altro il
+	# corpo scivola: la posizione resta fluida ad Hz pieni.
+	_gravity_accum += delta
+	var period: float = 1.0 / GRAVITY_HZ
+	if _gravity_accum >= period:
+		_gravity_accum -= period
+		var boost: float = Engine.physics_ticks_per_second / GRAVITY_HZ
+		for body: RigidBody2D in bodies_in_gravity:
+			if not is_instance_valid(body):
+				continue
+			_apply_gravity(body, boost)
+	# Applica la forza da entropia continuamente
 	if entropy_force.length() > 0:
 		apply_central_force(entropy_force)
 
@@ -300,14 +321,16 @@ func _on_gravity_body_exited(body: Node2D) -> void:
 var gravity_force: float = 0.0
 
 
-func _apply_gravity(body: RigidBody2D) -> void:
+func _apply_gravity(body: RigidBody2D, boost: float = 1.0) -> void:
 	var dir: Vector2 = global_position - body.global_position
 	var dist_sq: float = dir.length_squared()
 
 	dist_sq = max(dist_sq, 100.0) # Impedisce che la forza diventi infinita troppo vicino
 
 	gravity_force = G * mass * body.mass / dist_sq + SOFTENING
-	var gravity_force_vector: Vector2 = (dir / sqrt(dist_sq)) * gravity_force
+	# boost compensa il throttle: la forza viene applicata per un solo tick ogni 1/GRAVITY_HZ s,
+	# quindi va scalata di physics_ticks/GRAVITY_HZ per mantenere lo stesso impulso medio.
+	var gravity_force_vector: Vector2 = (dir / sqrt(dist_sq)) * gravity_force * boost
 
 	body.apply_central_force(gravity_force_vector)
 	apply_central_force(-gravity_force_vector)

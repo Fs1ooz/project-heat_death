@@ -1,8 +1,10 @@
-[gd_scene format=3 uid="uid://b0myyk17i84k7"]
+[gd_scene load_steps=3 format=3 uid="uid://b0myyk17i84k7"]
 
 [ext_resource type="Material" uid="uid://bvhfi1gat4c5" path="res://Entities/Player/sciaveramentegay.tres" id="1_6afsu"]
+[ext_resource type="Script" path="res://Commons/Components/interpolated_trail.gd" id="2_itrl"]
 
 [node name="Trail" type="GPUParticles2D" unique_id=961780176]
+script = ExtResource("2_itrl")
 z_index = -1
 amount = 800
 fixed_fps = 0

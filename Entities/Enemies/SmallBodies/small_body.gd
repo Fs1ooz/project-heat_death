@@ -148,6 +148,8 @@ func _enter_orbit() -> void:
 	# Agganciamo subito sulla circonferenza esatta per evitare lo scatto visivo
 	global_position = orbit_target.global_position \
 		+ Vector2(cos(orbit_angle), sin(orbit_angle)) * orbit_radius
+	# Snap improvviso sull'anello: azzera l'interpolazione così non "vola" verso il punto.
+	reset_physics_interpolation()
 
 
 func leave_orbit() -> void:

@@ -320,6 +320,10 @@ func _do_gravity(delta: float) -> void:
 			attraction_speed
 		)
 
+	# Valori costanti nel frame: calcolati una sola volta fuori dal loop.
+	var attraction_radius_cached: float = attraction_radius  # evita il path lookup del getter per ogni corpo
+	var sqrt_mass: float = sqrt(mass)
+
 	for body in nearby_bodies:
 		if not is_instance_valid(body):
 			continue
@@ -331,8 +335,8 @@ func _do_gravity(delta: float) -> void:
 
 		var direction: Vector2 = (global_position - body.global_position).normalized()
 
-		var weight: float = clamp(distance / attraction_radius, 0.0, 1.0)
-		var attraction_force: float = lerp(500.0, 100.0, weight) * sqrt(mass)
+		var weight: float = clamp(distance / attraction_radius_cached, 0.0, 1.0)
+		var attraction_force: float = lerp(500.0, 100.0, weight) * sqrt_mass
 
 		body.apply_central_force(direction * attraction_force)
 

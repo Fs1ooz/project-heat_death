@@ -12,6 +12,11 @@ var last_spawn_index: int = 0
 
 var _has_died: bool = false
 
+# Ricostruire collision.polygon è costoso (il motore ri-decompone la forma in convessi): lo facciamo
+# solo ogni N cambi di frame invece che a ogni frame dell'animazione di rotazione (speed 30).
+const COLLISION_REBUILD_INTERVAL: int = 4
+var _frame_change_counter: int = 0
+
 
 func _ready() -> void:
 	super()
@@ -20,7 +25,7 @@ func _ready() -> void:
 	outgassing_component.setup(self, sprite)
 	outgassing_component.prespawn(spawn_points.size())
 
-	_on_frame_changed()
+	_rebuild_collision_polygon()  # collisione iniziale: deve sempre essere costruita subito
 	_setup_mass()
 	_setup_health()
 
@@ -30,13 +35,34 @@ func _on_frame_changed() -> void:
 	# riscrivere collision.polygon ad ogni frame interferisce col movimento → niente rotazione.
 	if orbit_state != OrbitState.FREE:
 		return
+	# Throttle: ricostruiamo la collisione solo ogni COLLISION_REBUILD_INTERVAL cambi di frame.
+	# La collisione "insegue" lo sprite con qualche frame di ritardo (impercettibile); die() forza
+	# comunque un aggiornamento esatto prima di spezzare l'asteroide.
+	_frame_change_counter += 1
+	if _frame_change_counter < COLLISION_REBUILD_INTERVAL:
+		return
+	_frame_change_counter = 0
+	_rebuild_collision_polygon()
+
+
+func _rebuild_collision_polygon() -> void:
+	# Scrive collision.polygon: NON chiamare durante il flush delle query fisiche (es. da die()).
+	var poly: PackedVector2Array = _current_frame_polygon()
+	if not poly.is_empty():
+		collision.polygon = poly
+
+
+## Poligono del frame corrente, già scalato. Funzione pura (nessuna scrittura): usabile anche
+## durante il flush delle query fisiche, a differenza di scrivere collision.polygon.
+func _current_frame_polygon() -> PackedVector2Array:
 	var f: int = sprite.frame
 	if polygon_data and f < polygon_data.polygons.size():
 		var raw: PackedVector2Array = polygon_data.polygons[f]
 		var scaled: PackedVector2Array = PackedVector2Array()
 		for v: Vector2 in raw:
 			scaled.append(v * _collision_scale)
-		collision.polygon = scaled
+		return scaled
+	return PackedVector2Array()
 
 
 func _setup_scale(scale_factor: float) -> void:
@@ -66,7 +92,15 @@ func die() -> void:
 	if _has_died:
 		return
 	_has_died = true
-	var poly: PackedVector2Array = collision.polygon  # frame corrente, già in scala
+	# Il throttling di _on_frame_changed può lasciare collision.polygon indietro di qualche frame.
+	# Per uno slice esatto calcoliamo il poligono del frame corrente IN LOCALE: NON scriviamo
+	# collision.polygon perché die() può girare durante il flush delle query fisiche (set vietato).
+	# In orbita la collisione era congelata: in quel caso usiamo collision.polygon così com'è.
+	var poly: PackedVector2Array = collision.polygon
+	if orbit_state == OrbitState.FREE:
+		var current: PackedVector2Array = _current_frame_polygon()
+		if not current.is_empty():
+			poly = current
 	if AsteroidSlicer.should_split(poly) and _spawn_chunks(poly):
 		drop_energy_on_death = false
 		collision.set_deferred("disabled", true)

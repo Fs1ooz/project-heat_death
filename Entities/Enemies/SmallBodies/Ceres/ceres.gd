@@ -13,7 +13,7 @@ const ATTACKS: Array = [State.GAS, State.SPAWN_FIELD, State.GRAVITY_SURGE, State
 @export var attack_duration: float = 6.0
 @export var field_count: int = 9
 @export var movement_damp: float = 6.0
-@export var gravity_surge_force: float = 1000.0
+@export var gravity_surge_force: float = 100.0
 ## Il surge scala con le capacità correnti del player (che crescono ×1.25 a ogni livello):
 ## altrimenti, dopo qualche level-up, lo strattone fisso viene sovrastato dal motore del player
 ## e i surge successivi al primo non si sentono più. gravity_surge_force resta come pavimento.
@@ -223,5 +223,7 @@ func _spawn_field() -> void:
 		parent.add_child(asteroid)
 		_spawned_enemies.append(asteroid)
 		asteroid.global_position = global_position + dir * dist
+		# Posizione impostata DOPO l'add_child (il reset in _ready è già passato): riazzera qui.
+		asteroid.reset_physics_interpolation()
 		var orbital_speed: float = randf_range(300.0, 700.0) * (1.0 if randf() > 0.5 else -1.0)
 		asteroid.linear_velocity = Vector2(-dir.y, dir.x) * orbital_speed
