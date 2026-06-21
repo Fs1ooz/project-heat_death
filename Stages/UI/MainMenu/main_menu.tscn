@@ -138,10 +138,11 @@ grow_vertical = 0
 
 [node name="PhysicsTickLabel" type="Label" parent="SettingsBox" unique_id=1733001002]
 layout_mode = 2
-theme_override_font_sizes/font_size = 20
-text = "Frequenza fisica (alza se il gioco scatta)"
+theme_override_font_sizes/font_size = 16
+text = "Frequenza fisica (ALZARE SOPRA I 60 ESCLUSIVAMENTE SE IL GIOCO SCATTA)"
 
 [node name="PhysicsTickOption" type="OptionButton" parent="SettingsBox" unique_id=1733001003]
+custom_maximum_size = Vector2(200, -1)
 layout_mode = 2
 theme_override_font_sizes/font_size = 22
 
