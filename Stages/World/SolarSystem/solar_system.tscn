@@ -11,6 +11,7 @@
 [ext_resource type="PackedScene" uid="uid://470x1obeipdg" path="res://Entities/Player/player.tscn" id="7_o1t32"]
 [ext_resource type="PackedScene" uid="uid://nvw877asubb0" path="res://Stages/UI/PauseMenu/pause_menu.tscn" id="8_qs46f"]
 [ext_resource type="AudioStream" uid="uid://obr5dvltpadv" path="res://Assets/Music/heatDeathStuff_00/ost/level_00/level_00_layer_00.wav" id="9_bfis2"]
+[ext_resource type="AudioStream" uid="uid://denptmagojrba" path="res://Assets/Sounds/sfx/player_death.wav" id="9_o1t32"]
 [ext_resource type="AudioStream" uid="uid://cmaktc5rnfuuu" path="res://Assets/Music/heatDeathStuff_00/ost/level_00/level_00_layer_01.wav" id="10_o1t32"]
 [ext_resource type="AudioStream" uid="uid://6sliqr6f5dc5" path="res://Assets/Music/heatDeathStuff_00/ost/level_00/level_00_layer_02.wav" id="11_lnrn1"]
 [ext_resource type="PackedScene" uid="uid://bpeudpxsbd3x2" path="res://Entities/Enemies/SmallBodies/Meteoroids/meteoroid.tscn" id="12_l0eld"]
@@ -41,27 +42,6 @@ volumetric_fog_gi_inject = 7.8
 volumetric_fog_length = 1024.0
 volumetric_fog_ambient_inject = 13.45
 
-[sub_resource type="AudioStreamInteractive" id="AudioStreamInteractive_q7etp"]
-clip_count = 3
-clip_0/name = &"Base"
-clip_0/stream = ExtResource("9_bfis2")
-clip_0/auto_advance = 0
-clip_1/name = &"Phase 1"
-clip_1/stream = ExtResource("10_o1t32")
-clip_1/auto_advance = 0
-clip_2/name = &"Phase 2"
-clip_2/stream = ExtResource("11_lnrn1")
-clip_2/auto_advance = 0
-_transitions = {
-Vector2i(-1, -1): {
-"fade_beats": 0.5,
-"fade_mode": 3,
-"from_time": 0,
-"hold_previous": false,
-"to_time": 0
-}
-}
-
 [node name="SolarSystem" type="Node2D" unique_id=1695941383]
 script = ExtResource("1_56jnl")
 
@@ -88,11 +68,12 @@ layer = 2
 z_index = 2
 limit_enabled = false
 
+[node name="GameOverStreamPlayer" type="AudioStreamPlayer" parent="." unique_id=1696901900]
+stream = ExtResource("9_o1t32")
+
 [node name="MusicAudioStreamPlayer" type="AudioStreamPlayer" parent="." unique_id=1539569926]
-stream = SubResource("AudioStreamInteractive_q7etp")
-volume_db = -5.0
-bus = &"Music"
 script = ExtResource("7_l0eld")
+layers = Array[AudioStream]([ExtResource("9_bfis2"), ExtResource("10_o1t32"), ExtResource("11_lnrn1")])
 
 [node name="Meteoroid" parent="." unique_id=1089196131 instance=ExtResource("12_l0eld")]
 position = Vector2(-1778, -1631)

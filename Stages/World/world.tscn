@@ -47,27 +47,6 @@ volumetric_fog_ambient_inject = 13.45
 adjustment_enabled = true
 adjustment_saturation = 1.5
 
-[sub_resource type="AudioStreamInteractive" id="AudioStreamInteractive_oj5fs"]
-clip_count = 3
-clip_0/name = &"Base"
-clip_0/stream = ExtResource("11_oj5fs")
-clip_0/auto_advance = 0
-clip_1/name = &"Phase 1"
-clip_1/stream = ExtResource("12_6du53")
-clip_1/auto_advance = 0
-clip_2/name = &"Phase 2"
-clip_2/stream = ExtResource("13_bv6ne")
-clip_2/auto_advance = 0
-_transitions = {
-Vector2i(-1, -1): {
-"fade_beats": 0.5,
-"fade_mode": 3,
-"from_time": 0,
-"hold_previous": false,
-"to_time": 0
-}
-}
-
 [node name="World" type="Node2D"]
 script = ExtResource("1_mt616")
 
@@ -127,11 +106,9 @@ focus_behavior_recursive = 1
 
 [node name="PlayerLifeBar" parent="CanvasLayer" instance=ExtResource("10_syafc")]
 
-[node name="MusicAudioStreamPlayer" type="AudioStreamPlayer" parent="." node_paths=PackedStringArray("player")]
-stream = SubResource("AudioStreamInteractive_oj5fs")
-volume_db = -5.0
-bus = &"Music"
+[node name="MusicAudioStreamPlayer" type="AudioStreamPlayer" parent="."]
 script = ExtResource("14_kuj1q")
+layers = Array[AudioStream]([ExtResource("11_oj5fs"), ExtResource("12_6du53"), ExtResource("13_bv6ne")])
 player = NodePath("../Player")
 
 [editable path="Player"]

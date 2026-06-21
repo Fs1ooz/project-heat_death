@@ -1,42 +1,71 @@
 extends AudioStreamPlayer
 
+## Musica a layer verticali (ADDITIVI): i layer partono insieme e restano in sincronia;
+## ogni layer SALE di volume quando la sua condizione si verifica e CALA quando non è più
+## vera. Non è uno switch — i layer suonano sovrapposti, uno sopra l'altro.
+## Ordine atteso in "layers": [0] base (sempre attivo), [1] movimento, [2] vicino a un corpo.
+
+@export var layers: Array[AudioStream] = []
+@export var layer_bus: StringName = &"Music"
+## Volume di un layer quando è attivo (dB).
+@export var active_volume_db: float = -5.0
+## Velocità di dissolvenza in dB al secondo (entrata/uscita di un layer).
+@export var fade_db_per_sec: float = 40.0
 @export var min_distance: float = 2000.0
+## Soglia di velocità (px/s) oltre cui entra il layer "movimento".
+@export var moving_speed_threshold: float = 500.0
+
+const SILENCE_DB: float = -60.0
+
 @onready var player: Player = get_tree().get_first_node_in_group("player")
 
-# Indici dei clip
-const CLIP_IDLE: int = 0
-const CLIP_MOVING: int = 1
-const CLIP_NEAR_BODY: int = 2
+var _layer_players: Array[AudioStreamPlayer] = []
 
-var current_clip: int = -1
-var music: AudioStreamPlaybackInteractive = null
 
 func _ready() -> void:
-	play()  # serve per inizializzare il playback
-	music = get_stream_playback() as AudioStreamPlaybackInteractive
-	if music == null:
-		push_error("AudioStreamPlaybackInteractive non trovato! Controlla che lo stream sia AudioStreamInteractive.")
+	for stream: AudioStream in layers:
+		var p: AudioStreamPlayer = AudioStreamPlayer.new()
+		p.stream = stream
+		p.bus = layer_bus
+		p.volume_db = SILENCE_DB
+		# I clip non hanno il loop attivo nell'import: si ri-avviano da soli a fine
+		# traccia. Stessa lunghezza + avvio simultaneo = restano sempre in sincronia.
+		p.finished.connect(p.play)
+		add_child(p)
+		_layer_players.append(p)
+	# Il layer base parte già a volume pieno; gli altri entrano in dissolvenza.
+	if not _layer_players.is_empty():
+		_layer_players[0].volume_db = active_volume_db
+	# Avvio nello stesso frame: i layer restano allineati.
+	for p: AudioStreamPlayer in _layer_players:
+		p.play()
 
 
 func get_min_distance() -> float:
+	if player == null:
+		return min_distance
 	return min_distance * player.mass
 
-func _process(_delta: float) -> void:
-	if not player or music == null:
+
+func _process(delta: float) -> void:
+	if player == null or _layer_players.is_empty():
 		return
+	var step: float = fade_db_per_sec * delta
+	for i: int in _layer_players.size():
+		var target: float = active_volume_db if _layer_active(i) else SILENCE_DB
+		_layer_players[i].volume_db = move_toward(_layer_players[i].volume_db, target, step)
 
-	var index: int = get_active_clip()
-	if index != current_clip:
-		current_clip = index
-		music.switch_to_clip(current_clip)
 
-func get_active_clip() -> int:
-	if near_celestial_body():
-		return CLIP_NEAR_BODY
-	elif player.linear_velocity.length() > 500.0:
-		return CLIP_MOVING
-	else:
-		return CLIP_IDLE
+## Condizione di attivazione per ciascun layer.
+func _layer_active(index: int) -> bool:
+	match index:
+		1:
+			return player.linear_velocity.length() > moving_speed_threshold
+		2:
+			return near_celestial_body()
+		_:
+			return true  # layer base: sempre attivo
+
 
 func near_celestial_body() -> bool:
 	for body: CelestialBody in CelestialBody.celestial_bodies:
@@ -45,7 +74,6 @@ func near_celestial_body() -> bool:
 		if distance <= get_min_distance():
 			var dir_to_body: Vector2 = to_body.normalized()
 			var facing: Vector2 = Vector2(cos(player.rotation), sin(player.rotation))
-			var dot: float = dir_to_body.dot(facing)
-			if dot > 0.7:
-					return true
+			if dir_to_body.dot(facing) > 0.7:
+				return true
 	return false
