@@ -8,6 +8,8 @@ extends Control
 @onready var time_label: Label = %TimeLabel
 @onready var kills_label: Label = %KillsLabel
 @onready var energy_label: Label = %EnergyLabel
+@onready var record_label: Label = %RecordLabel
+@onready var new_record_label: Label = %NewRecordLabel
 
 func _ready() -> void:
 	get_tree().paused = false
@@ -43,14 +45,11 @@ func _on_game_over() -> void:
 		death_camera.zoom = player_camera.zoom * 0.75
 
 	level_label.text = "Livello: %d" % StatTracker.level_reached
-	time_label.text = "Tempo: %s" % _format_time(StatTracker.time_survived)
+	time_label.text = "Tempo: %s" % StatTracker.format_time(StatTracker.time_survived)
 	kills_label.text = "Nemici: %d" % StatTracker.enemies_killed
 	energy_label.text = "Energia: %.0f" % StatTracker.energy_collected
 
+	record_label.text = "Record: %s (lvl %d)" % [StatTracker.format_time(StatTracker.best_time), StatTracker.best_level]
+	new_record_label.visible = StatTracker.last_run_new_record
+
 	show()
-
-
-func _format_time(seconds: float) -> String:
-	var mins: int = int(seconds) / 60
-	var secs: int = int(seconds) % 60
-	return "%d:%02d" % [mins, secs]

@@ -9,8 +9,6 @@ signal low_health(value: bool)
 @warning_ignore("unused_signal")
 signal windup_shake(intensity: float, time: float)
 @warning_ignore("unused_signal")
-signal use_3d(value: bool)
-@warning_ignore("unused_signal")
 signal ceres_spawned(ceres: Node2D)
 
 

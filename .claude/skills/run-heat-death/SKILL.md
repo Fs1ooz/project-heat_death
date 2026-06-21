@@ -13,6 +13,7 @@ three jobs:
 - `validate` — headless run, scans output for GDScript/scene errors (no display needed)
 - `screenshot` — launches the game windowed and captures the **main menu** to a PNG
 - `play` — launches, clicks **Start**, and captures **live gameplay** to a PNG
+- `pause` — launches, clicks **Start**, presses **P**, and captures the **pause menu** to a PNG
 
 All paths below are relative to the project root
 (`D:\app-games\Gioco\project-heat_death`). The driver finds the project and the
@@ -49,6 +50,13 @@ ImGui debug panel):
 powershell -ExecutionPolicy Bypass -File '.\.claude\skills\run-heat-death\driver.ps1' play -Out "$env:TEMP\hd_gameplay.png" -Seconds 5
 ```
 
+Enter gameplay and open the pause menu (live stats, volume sliders, performance +
+accessibility toggles):
+
+```powershell
+powershell -ExecutionPolicy Bypass -File '.\.claude\skills\run-heat-death\driver.ps1' pause -Out "$env:TEMP\hd_pause.png"
+```
+
 Each command launches Godot, does its job, then **kills the process** — they do
 not leave a window open. After capturing, open the PNG and actually look at it;
 a blank or menu-only image when you expected gameplay means the click missed
@@ -80,6 +88,11 @@ still the right tool for actually *playing* (input, sound, feel).
   activation click).
 - **The Start-button click is positional** (~50% width, ~48% height of the
   window). If the menu layout changes, update `$cx`/`$cy` in `Invoke-Play`.
+- **Keyboard injection must send scan codes, not virtual keys.** Godot maps input
+  actions by `physical_keycode` (scan-code based), so `keybd_event(vk, 0, 0)`
+  silently does nothing — the game never sees the key. The driver's `Key()`
+  helper uses `MapVirtualKey` + `KEYEVENTF_SCANCODE`; that's why `pause` can open
+  the menu with P. Mouse clicks (`mouse_event`) don't have this problem.
 - **`validate` scans output, not the exit code.** Godot returns exit 0 even when
   a script throws at runtime, so the driver greps stdout/stderr for `SCRIPT
   ERROR`, `Parse Error`, `Node not found`, etc. `-Seconds N` controls how long it

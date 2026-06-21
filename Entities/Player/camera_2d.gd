@@ -187,6 +187,8 @@ func _process_boss_cam(delta: float) -> void:
 
 
 func apply_shake(intensity: float, time: float) -> void:
+	if SettingsManager.reduce_effects:
+		return
 	shake_intensity = intensity + 1.75
 	active_shake_time = max(active_shake_time, time)
 

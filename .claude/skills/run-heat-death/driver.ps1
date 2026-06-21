@@ -18,7 +18,7 @@
 [CmdletBinding()]
 param(
   [Parameter(Position = 0)]
-  [ValidateSet('validate', 'screenshot', 'play', 'launch', 'help')]
+  [ValidateSet('validate', 'screenshot', 'play', 'pause', 'launch', 'help')]
   [string]$Command = 'help',
 
   [int]$Seconds = 0,
@@ -104,11 +104,20 @@ public class Win32Rect {
   [DllImport("kernel32.dll")] public static extern uint GetCurrentThreadId();
   [DllImport("user32.dll")] public static extern bool SetCursorPos(int x, int y);
   [DllImport("user32.dll")] public static extern void mouse_event(uint f, uint dx, uint dy, uint d, IntPtr e);
+  [DllImport("user32.dll")] public static extern void keybd_event(byte vk, byte scan, uint flags, IntPtr extra);
+  [DllImport("user32.dll")] public static extern uint MapVirtualKey(uint code, uint mapType);
   public static void ClickAt(int x, int y) {
     SetCursorPos(x, y);
     System.Threading.Thread.Sleep(120);
     mouse_event(0x02, 0, 0, 0, IntPtr.Zero); // LEFTDOWN
     mouse_event(0x04, 0, 0, 0, IntPtr.Zero); // LEFTUP
+  }
+  public static void Key(byte vk) {
+    // Godot mappa le azioni per physical_keycode (scan code): serve KEYEVENTF_SCANCODE.
+    byte scan = (byte)MapVirtualKey(vk, 0);
+    keybd_event(0, scan, 0x08, IntPtr.Zero);        // down (SCANCODE)
+    System.Threading.Thread.Sleep(40);
+    keybd_event(0, scan, 0x08 | 0x02, IntPtr.Zero); // up (SCANCODE | KEYUP)
   }
   public static void Force(IntPtr hWnd) {
     uint fg = GetWindowThreadProcessId(GetForegroundWindow(), IntPtr.Zero);
@@ -195,6 +204,32 @@ function Invoke-Play {
   finally { if (-not $p.HasExited) { $p.Kill(); $p.WaitForExit(3000) } }
 }
 
+# launch, click Start, then press P to open the pause menu and screenshot it
+function Invoke-Pause {
+  if (-not $Out) { $Out = Join-Path $ProjectDir 'heat_death_pause.png' }
+  Write-Host "[pause] launching windowed..."
+  $p = Start-GameWindowed
+  try {
+    Start-Sleep -Seconds 4
+    [Win32Rect]::Force($p.MainWindowHandle)
+    Start-Sleep -Milliseconds 500
+    $r = New-Object RECT
+    [Win32Rect]::GetWindowRect($p.MainWindowHandle, [ref]$r) | Out-Null
+    $w = $r.Right - $r.Left; $h = $r.Bottom - $r.Top
+    $cx = $r.Left + [int]($w * 0.50); $cy = $r.Top + [int]($h * 0.48)
+    [Win32Rect]::ClickAt($cx, $cy)
+    Start-Sleep -Milliseconds 300
+    [Win32Rect]::ClickAt($cx, $cy)
+    Start-Sleep -Seconds 3                  # gioca qualche secondo (accumula stat)
+    [Win32Rect]::Force($p.MainWindowHandle)
+    Start-Sleep -Milliseconds 400
+    [Win32Rect]::Key(0x50)                  # P -> apre la pausa
+    Start-Sleep -Seconds 1
+    Save-WindowShot $p $Out | Out-Null
+  }
+  finally { if (-not $p.HasExited) { $p.Kill(); $p.WaitForExit(3000) } }
+}
+
 function Invoke-Launch {
   Write-Host "[launch] $Godot --path $ProjectDir  (close the window to return)"
   & $Godot --path $ProjectDir
@@ -204,12 +239,14 @@ switch ($Command) {
   'validate'   { Invoke-Validate }
   'screenshot' { Invoke-Screenshot }
   'play'       { Invoke-Play }
+  'pause'      { Invoke-Pause }
   'launch'     { Invoke-Launch }
   default {
     Write-Host "Heat Death driver. Commands:"
     Write-Host "  validate [-Seconds 10]      headless error check, exit 1 on errors"
     Write-Host "  screenshot [-Out f.png] [-Seconds 6]   windowed launch + PNG of the menu"
     Write-Host "  play [-Out f.png] [-Seconds 5]         launch, click Start, PNG of gameplay"
+    Write-Host "  pause [-Out f.png]                     launch, Start, press P, PNG of pause menu"
     Write-Host "  launch                      plain windowed launch (human path)"
   }
 }

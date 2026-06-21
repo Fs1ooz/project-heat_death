@@ -63,7 +63,7 @@ Vector2i(-1, -1): {
 "fade_beats": 0.5,
 "fade_mode": 3,
 "from_time": 0,
-"hold_previous": true,
+"hold_previous": false,
 "to_time": 0
 }
 }

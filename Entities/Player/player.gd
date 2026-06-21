@@ -643,6 +643,8 @@ func _handle_mouse_input() -> Vector2:
 
 
 func _do_hitstop(duration: float) -> void:
+	if SettingsManager.reduce_effects:
+		return
 	Engine.time_scale = 0.08
 	await get_tree().create_timer(duration, true).timeout
 	Engine.time_scale = 1.0

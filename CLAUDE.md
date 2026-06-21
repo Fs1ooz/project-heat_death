@@ -23,10 +23,11 @@ Defined in `project.godot`, always accessible by name:
 
 | Singleton | File | Purpose |
 |---|---|---|
-| `GlobalSignals` | `Commons/global_signals.tscn` | Game-wide event bus: `game_over`, `death(body)`, `low_health(bool)`, `windup_shake(intensity, time)`, `use_3d(bool)`, `ceres_spawned(node)` |
+| `GlobalSignals` | `Commons/global_signals.tscn` | Game-wide event bus: `game_over`, `death(body)`, `low_health(bool)`, `windup_shake(intensity, time)`, `ceres_spawned(node)` |
 | `UpgradeManager` | `Commons/upgrade_manager.tscn` | Player progression: emits `tier_changed`, `energy_changed(current, max, level)`, `energy_gained(amount)` |
 | `EntropyManager` | `Commons/entropy_manager.tscn` | Entropy float that rises over time; emits `entropy_changed(value)` |
-| `StatTracker` | `Commons/stat_tracker.gd` | Run-stats recorder: `time_survived`, `enemies_killed`, `energy_collected`, `level_reached`. Subscribes to GlobalSignals/UpgradeManager; freezes tracking on `game_over` (read by `game_over_screen.gd`). Call `reset()` to start a new run. |
+| `StatTracker` | `Commons/stat_tracker.gd` | Run-stats recorder: `time_survived`, `enemies_killed`, `energy_collected`, `level_reached`. Subscribes to GlobalSignals/UpgradeManager; freezes tracking on `game_over` (read by `game_over_screen.gd`). Persists best run to `user://records.cfg` (`best_time/best_level/...`, `last_run_new_record`); `format_time()` helper. Call `reset()` to start a new run. |
+| `SettingsManager` | `Commons/settings_manager.gd` | Single source of truth for persistent settings (`user://settings.cfg`): audio volumes, `physics_ticks`, `post_processing`, `hidpi`, `reduce_effects`. Applies global settings on `_ready`; main menu & pause menu read/write via its setters. |
 
 (`ImGuiRoot` is also registered as an autoload but belongs to the imgui-godot addon.)
 

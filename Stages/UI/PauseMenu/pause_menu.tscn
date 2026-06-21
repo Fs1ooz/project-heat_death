@@ -47,8 +47,41 @@ alignment = 1
 
 [node name="Pause" type="Label" parent="PanelContainer/VBoxContainer" unique_id=544008663]
 layout_mode = 2
-theme_override_font_sizes/font_size = 56
+theme_override_font_sizes/font_size = 36
 text = "PAUSE"
+horizontal_alignment = 1
+
+[node name="Stats" type="VBoxContainer" parent="PanelContainer/VBoxContainer" unique_id=544008700]
+layout_mode = 2
+theme_override_constants/separation = 0
+alignment = 1
+
+[node name="StatTime" type="Label" parent="PanelContainer/VBoxContainer/Stats" unique_id=544008701]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+text = "Tempo: 0:00"
+horizontal_alignment = 1
+
+[node name="StatLevel" type="Label" parent="PanelContainer/VBoxContainer/Stats" unique_id=544008702]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+text = "Livello: 1"
+horizontal_alignment = 1
+
+[node name="StatKills" type="Label" parent="PanelContainer/VBoxContainer/Stats" unique_id=544008703]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+text = "Nemici: 0"
+horizontal_alignment = 1
+
+[node name="StatEnergy" type="Label" parent="PanelContainer/VBoxContainer/Stats" unique_id=544008704]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+text = "Energia: 0"
 horizontal_alignment = 1
 
 [node name="MarginContainer" type="MarginContainer" parent="PanelContainer/VBoxContainer" unique_id=677353700]
@@ -66,7 +99,7 @@ theme_override_constants/separation = 0
 
 [node name="Volume" type="Label" parent="PanelContainer/VBoxContainer/MarginContainer/PanelContainer/VBoxContainer4" unique_id=1776909442]
 layout_mode = 2
-theme_override_font_sizes/font_size = 42
+theme_override_font_sizes/font_size = 30
 text = "Volume"
 horizontal_alignment = 1
 
@@ -81,6 +114,7 @@ text = "Master"
 horizontal_alignment = 1
 
 [node name="Master" type="HSlider" parent="PanelContainer/VBoxContainer/MarginContainer/PanelContainer/VBoxContainer4/VBoxContainer3" unique_id=1713046060]
+unique_name_in_owner = true
 layout_mode = 2
 max_value = 1.0
 step = 0.01
@@ -99,6 +133,7 @@ text = "Music"
 horizontal_alignment = 1
 
 [node name="Music" type="HSlider" parent="PanelContainer/VBoxContainer/MarginContainer/PanelContainer/VBoxContainer4/VBoxContainer2" unique_id=846062478]
+unique_name_in_owner = true
 layout_mode = 2
 max_value = 1.0
 step = 0.01
@@ -117,6 +152,7 @@ text = "Sound"
 horizontal_alignment = 1
 
 [node name="Sound" type="HSlider" parent="PanelContainer/VBoxContainer/MarginContainer/PanelContainer/VBoxContainer4/VBoxContainer" unique_id=2139045280]
+unique_name_in_owner = true
 layout_mode = 2
 max_value = 1.0
 step = 0.01
@@ -139,22 +175,30 @@ theme_override_constants/separation = 0
 
 [node name="Label2" type="Label" parent="PanelContainer/VBoxContainer/MarginContainer2/PanelContainer/VBoxContainer4" unique_id=865952785]
 layout_mode = 2
-theme_override_font_sizes/font_size = 42
+theme_override_font_sizes/font_size = 30
 text = "Performance"
 horizontal_alignment = 1
 
 [node name="PostProcessing" type="CheckButton" parent="PanelContainer/VBoxContainer/MarginContainer2/PanelContainer/VBoxContainer4" unique_id=240350713]
+unique_name_in_owner = true
 layout_mode = 2
 theme_override_font_sizes/font_size = 28
 button_pressed = true
 text = " Post-Processing "
 
 [node name="hiDPI" type="CheckButton" parent="PanelContainer/VBoxContainer/MarginContainer2/PanelContainer/VBoxContainer4" unique_id=1564077971]
+unique_name_in_owner = true
 layout_mode = 2
 theme_override_font_sizes/font_size = 28
 button_pressed = true
 action_mode = 0
 text = " hiDPI"
+
+[node name="ReduceEffects" type="CheckButton" parent="PanelContainer/VBoxContainer/MarginContainer2/PanelContainer/VBoxContainer4" unique_id=1564078000]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 28
+text = " Riduci effetti"
 
 [node name="Resume" type="Button" parent="PanelContainer/VBoxContainer" unique_id=1515791323]
 layout_mode = 2
@@ -173,6 +217,7 @@ text = "Restart"
 [connection signal="value_changed" from="PanelContainer/VBoxContainer/MarginContainer/PanelContainer/VBoxContainer4/VBoxContainer/Sound" to="." method="_on_sound_value_changed"]
 [connection signal="pressed" from="PanelContainer/VBoxContainer/MarginContainer2/PanelContainer/VBoxContainer4/PostProcessing" to="." method="_on_post_processing_pressed"]
 [connection signal="pressed" from="PanelContainer/VBoxContainer/MarginContainer2/PanelContainer/VBoxContainer4/hiDPI" to="." method="_on_hi_dpi_pressed"]
+[connection signal="toggled" from="PanelContainer/VBoxContainer/MarginContainer2/PanelContainer/VBoxContainer4/ReduceEffects" to="." method="_on_reduce_effects_toggled"]
 [connection signal="pressed" from="PanelContainer/VBoxContainer/Resume" to="." method="_on_close_pressed"]
 [connection signal="pressed" from="PanelContainer/VBoxContainer/Main Menu" to="." method="_on_main_menu_pressed"]
 [connection signal="pressed" from="PanelContainer/VBoxContainer/Restart" to="." method="_on_restart_pressed"]

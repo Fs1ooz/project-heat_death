@@ -4,6 +4,7 @@
 [ext_resource type="Script" uid="uid://dvs3te48nw36p" path="res://Stages/UI/MainMenu/main_menu.gd" id="2_715ji"]
 [ext_resource type="PackedScene" uid="uid://bkljj71ppklsf" path="res://Stages/World/SolarSystem/AsteroidBelt/background_layer.tscn" id="3_25f73"]
 [ext_resource type="Texture2D" uid="uid://4dcyfsqyikwq" path="res://Assets/Images/logo.png" id="3_cwrtm"]
+[ext_resource type="AudioStream" uid="uid://crbymuafkg1l6" path="res://Assets/Music/heatDeathStuff_00/ost/menu/menu_00.wav" id="3_k4bg1"]
 [ext_resource type="PackedScene" uid="uid://befachtfe40l2" path="res://Stages/World/SolarSystem/AsteroidBelt/base_background_layer.tscn" id="4_2b7i7"]
 [ext_resource type="PackedScene" uid="uid://d2i2r2ucklcu0" path="res://Entities/Enemies/SmallBodies/Ceres/ceres.tscn" id="4_25f73"]
 [ext_resource type="Texture2D" uid="uid://bgydfyp03f52y" path="res://Assets/Images/logo-2.png" id="4_k4bg1"]
@@ -27,6 +28,10 @@ grow_vertical = 2
 theme = ExtResource("1_1g70f")
 script = ExtResource("2_715ji")
 
+[node name="MenuMusic" type="AudioStreamPlayer" parent="." unique_id=478310117]
+stream = ExtResource("3_k4bg1")
+autoplay = true
+
 [node name="TributoGormita" type="Button" parent="." unique_id=742340853]
 layout_mode = 1
 anchors_preset = 15
@@ -44,22 +49,19 @@ theme_override_styles/normal = SubResource("StyleBoxFlat_2b7i7")
 custom_maximum_size = Vector2(300, -1)
 propagate_maximum_size = false
 layout_mode = 1
-anchors_preset = 8
+anchors_preset = 13
 anchor_left = 0.5
-anchor_top = 0.5
 anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -150.0
-offset_top = -252.0
-offset_right = 150.0
-offset_bottom = 265.0
+anchor_bottom = 1.0
+offset_left = -300.0
+offset_right = 300.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/separation = 50
 
 [node name="Title" type="Control" parent="VBoxContainer" unique_id=712828817]
 texture_filter = 1
-custom_minimum_size = Vector2(600, 150)
+custom_minimum_size = Vector2(600, 180)
 layout_mode = 2
 size_flags_horizontal = 4
 
@@ -108,22 +110,20 @@ scale = Vector2(0.15, 0.15)
 transform = Transform2D(0.15, 0, 0, 0.15, 0, 0)
 follow_viewport_enabled = false
 
-[node name="no3D" type="CheckBox" parent="." unique_id=91869165]
-visible = false
+[node name="RecordLabel" type="Label" parent="." unique_id=1733002000]
+unique_name_in_owner = true
 layout_mode = 1
-anchors_preset = 7
+anchors_preset = 5
 anchor_left = 0.5
-anchor_top = 1.0
 anchor_right = 0.5
-anchor_bottom = 1.0
-offset_left = -103.0
-offset_top = -141.0
-offset_right = 100.0
-offset_bottom = -91.0
+offset_left = -250.0
+offset_top = 20.0
+offset_right = 250.0
+offset_bottom = 60.0
 grow_horizontal = 2
-grow_vertical = 0
-text = "Disattiva 3D"
-alignment = 1
+theme_override_font_sizes/font_size = 28
+text = "Record: 0:00"
+horizontal_alignment = 1
 
 [node name="SettingsBox" type="VBoxContainer" parent="." unique_id=1733001001]
 layout_mode = 1
@@ -149,6 +149,4 @@ theme_override_font_sizes/font_size = 22
 [connection signal="pressed" from="TributoGormita" to="." method="_on_tributo_gormita_pressed"]
 [connection signal="pressed" from="VBoxContainer/Button" to="." method="_on_button_pressed"]
 [connection signal="pressed" from="VBoxContainer/TutorialButton" to="." method="_on_tutorial_pressed"]
-[connection signal="pressed" from="no3D" to="." method="_on_no_3d_pressed"]
-[connection signal="toggled" from="no3D" to="." method="_on_no_3d_toggled"]
 [connection signal="item_selected" from="SettingsBox/PhysicsTickOption" to="." method="_on_physics_tick_option_item_selected"]
