@@ -8,6 +8,8 @@
 [ext_resource type="PackedScene" uid="uid://befachtfe40l2" path="res://Stages/World/SolarSystem/AsteroidBelt/base_background_layer.tscn" id="4_2b7i7"]
 [ext_resource type="PackedScene" uid="uid://d2i2r2ucklcu0" path="res://Entities/Enemies/SmallBodies/Ceres/ceres.tscn" id="4_25f73"]
 [ext_resource type="Texture2D" uid="uid://bgydfyp03f52y" path="res://Assets/Images/logo-2.png" id="4_k4bg1"]
+[ext_resource type="AudioStream" uid="uid://dmnvcgtpr8m6h" path="res://Assets/Sounds/sfx/focus_ui.wav" id="9_3t5sy"]
+[ext_resource type="AudioStream" uid="uid://dwaunbdacsfn2" path="res://Assets/Sounds/sfx/menu_button.wav" id="10_1ye0n"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_2b7i7"]
 bg_color = Color(0.003921569, 0.003921569, 0.003921569, 1)
@@ -146,7 +148,17 @@ custom_maximum_size = Vector2(200, -1)
 layout_mode = 2
 theme_override_font_sizes/font_size = 22
 
+[node name="Focus" type="AudioStreamPlayer" parent="." unique_id=1730052024]
+stream = ExtResource("9_3t5sy")
+
+[node name="Press" type="AudioStreamPlayer" parent="." unique_id=503301644]
+stream = ExtResource("10_1ye0n")
+
 [connection signal="pressed" from="TributoGormita" to="." method="_on_tributo_gormita_pressed"]
+[connection signal="focus_entered" from="VBoxContainer/Button" to="." method="_on_button_focus_entered"]
+[connection signal="mouse_entered" from="VBoxContainer/Button" to="." method="_on_button_mouse_entered"]
 [connection signal="pressed" from="VBoxContainer/Button" to="." method="_on_button_pressed"]
+[connection signal="focus_entered" from="VBoxContainer/TutorialButton" to="." method="_on_tutorial_button_focus_entered"]
+[connection signal="mouse_entered" from="VBoxContainer/TutorialButton" to="." method="_on_tutorial_button_mouse_entered"]
 [connection signal="pressed" from="VBoxContainer/TutorialButton" to="." method="_on_tutorial_pressed"]
 [connection signal="item_selected" from="SettingsBox/PhysicsTickOption" to="." method="_on_physics_tick_option_item_selected"]

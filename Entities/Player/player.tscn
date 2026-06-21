@@ -4,9 +4,9 @@
 [ext_resource type="Shader" uid="uid://bt4erkhma4laf" path="res://Entities/Player/playersprite.gdshader" id="3_01a4e"]
 [ext_resource type="Texture2D" uid="uid://ciqotnndblj2m" path="res://Assets/Images/isnobulino.png" id="4_7a1se"]
 [ext_resource type="PackedScene" uid="uid://0vbdasmelfef" path="res://Entities/Player/shockwave.tscn" id="5_01a4e"]
-[ext_resource type="AudioStream" uid="uid://1wfdu2dsudw4" path="res://Assets/Sounds/hit.sfxr" id="5_4wf4l"]
 [ext_resource type="Script" uid="uid://cnf8kwhvre5kg" path="res://Entities/Player/camera_2d.gd" id="5_5c2io"]
 [ext_resource type="PackedScene" uid="uid://b0myyk17i84k7" path="res://Entities/Player/trail.tscn" id="5_7a1se"]
+[ext_resource type="AudioStream" uid="uid://clg51gycx4q4l" path="res://Assets/Sounds/sfx/hit.wav" id="7_lub02"]
 [ext_resource type="AudioStream" uid="uid://b6sr0lglnwc8s" path="res://Assets/Sounds/freesound_community-cartoon-slurp-37066.wav" id="8_7a1se"]
 [ext_resource type="Script" uid="uid://c0alv6gondpf" path="res://Entities/Player/orbit_rings.gd" id="9_orbit"]
 
@@ -59,7 +59,7 @@ shader_parameter/spiral_aspect_ratio = 0.80000003474012
 [sub_resource type="AudioStreamRandomizer" id="AudioStreamRandomizer_5c2io"]
 random_pitch = 1.1
 streams_count = 1
-stream_0/stream = ExtResource("5_4wf4l")
+stream_0/stream = ExtResource("7_lub02")
 
 [sub_resource type="AudioStreamRandomizer" id="AudioStreamRandomizer_lub02"]
 random_pitch = 1.0717734
@@ -119,10 +119,19 @@ max_contacts_reported = 100
 linear_damp_mode = 1
 angular_damp_mode = 1
 script = ExtResource("1_5c2io")
+alignment_safe_zone = null
 collision = NodePath("Collision")
 sprite = NodePath("Collision/Sprite")
 trail = NodePath("Collision/Sprite/Trail")
 shockwave = NodePath("Collision/Sprite/ShockwaveRenderer")
+max_orbiting_bodies = null
+health_max = null
+shield_layer_max = null
+recharge_delay = null
+recharge_rate = null
+overspeed_damp = null
+orbit_mass_ratio_min = null
+orbit_mass_ratio_max = null
 
 [node name="PlayerCamera" type="Camera2D" parent="." unique_id=511109393]
 limit_enabled = false
@@ -130,6 +139,15 @@ position_smoothing_enabled = true
 position_smoothing_speed = 10.0
 rotation_smoothing_speed = 20.0
 script = ExtResource("5_5c2io")
+zoom_speed = null
+min_zoom_base = null
+max_zoom_base = null
+base_zoom = null
+zoom_lerp_speed = null
+manual_zoom_timeout = null
+zoom_value_multiplier = null
+boss_zoom_value = null
+cam_lerp_speed = null
 noise = SubResource("FastNoiseLite_01a4e")
 
 [node name="Collision" type="CollisionShape2D" parent="." unique_id=1021464206]
@@ -149,6 +167,7 @@ texture = ExtResource("4_7a1se")
 
 [node name="HitAudioStreamPlayer" type="AudioStreamPlayer" parent="." unique_id=1490258230]
 stream = SubResource("AudioStreamRandomizer_5c2io")
+volume_db = -2.0
 pitch_scale = 0.9
 max_polyphony = 5
 bus = &"Sound"

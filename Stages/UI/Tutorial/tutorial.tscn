@@ -9,6 +9,7 @@
 [ext_resource type="PackedScene" uid="uid://dtfn8lijt6vxu" path="res://Stages/World/dust_layer.tscn" id="7_dust"]
 [ext_resource type="PackedScene" uid="uid://nvw877asubb0" path="res://Stages/UI/PauseMenu/pause_menu.tscn" id="8_pause"]
 [ext_resource type="Theme" uid="uid://brvjefc4224hi" path="res://Stages/UI/UpgradeUI/upgrade_ui.tres" id="9_theme"]
+[ext_resource type="AudioStream" uid="uid://btl310t212txn" path="res://Assets/Music/BETA - Base.mp3" id="10_2074u"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_prompt"]
 content_margin_left = 24.0
@@ -129,6 +130,11 @@ custom_minimum_size = Vector2(220, 80)
 layout_mode = 2
 theme_override_font_sizes/font_size = 36
 text = "Menu"
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="." unique_id=540028113]
+stream = ExtResource("10_2074u")
+volume_db = -10.0
+autoplay = true
 
 [connection signal="pressed" from="TutorialOverlay/Root/SkipButton" to="." method="_on_skip_pressed"]
 [connection signal="pressed" from="TutorialOverlay/Root/EndButtons/PlayButton" to="." method="_on_play_pressed"]

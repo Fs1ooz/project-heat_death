@@ -47,14 +47,20 @@ func _animate_title() -> void:
 
 
 func _on_button_pressed() -> void:
+	$Press.play()
+	await $Press.finished
 	get_tree().change_scene_to_file(SOLAR_SYSTEM)
 	EntropyManager.reset_entropy()
 	$Ceres.set_process(true)
 
 
+
 func _on_tutorial_pressed() -> void:
+	$Press.play()
+	await $Press.finished
 	EntropyManager.reset_entropy()
 	get_tree().change_scene_to_file(TUTORIAL)
+
 
 
 func _on_tributo_gormita_pressed() -> void:
@@ -88,3 +94,13 @@ func _setup_physics_tick_option() -> void:
 
 func _on_physics_tick_option_item_selected(index: int) -> void:
 	SettingsManager.set_physics_ticks(PHYSICS_TICK_OPTIONS[index])
+
+
+
+
+func _on_button_mouse_entered() -> void:
+	$Focus.play()
+
+
+func _on_tutorial_button_mouse_entered() -> void:
+	$Focus.play()

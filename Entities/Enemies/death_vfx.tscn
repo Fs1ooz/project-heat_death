@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://c1vi74p2y6dsl" path="res://Entities/Enemies/death_vfx.gd" id="1_5pao6"]
 [ext_resource type="Texture2D" uid="uid://c4f02gqwrph7e" path="res://Assets/VFX/brackeys_vfx_bundle/particles/alpha/circle_01_a.png" id="1_pff4a"]
-[ext_resource type="AudioStream" uid="uid://vdyoq84dp3wd" path="res://Assets/Sounds/explosion.sfxr" id="2_5pao6"]
+[ext_resource type="AudioStream" uid="uid://dgg6hnr4so6vj" path="res://Assets/Sounds/sfx/enemy_death.wav" id="2_5pao6"]
 
 [sub_resource type="Animation" id="Animation_5pao6"]
 resource_name = "explosion"
@@ -178,6 +178,8 @@ process_material = SubResource("ParticleProcessMaterial_debris")
 
 [node name="AudioStreamPlayer" type="AudioStreamPlayer2D" parent="." unique_id=195122547]
 stream = SubResource("AudioStreamRandomizer_hnfga")
+max_distance = 20000.0
+bus = &"Sound"
 autoplay = true
 
 [connection signal="animation_finished" from="AnimationPlayer" to="." method="_on_animation_player_animation_finished"]

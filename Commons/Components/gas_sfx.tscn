@@ -1,0 +1,8 @@
+[gd_scene format=3 uid="uid://c5wpp0usxleh1"]
+
+[ext_resource type="AudioStream" uid="uid://cqyveb7dgxpa0" path="res://Assets/Sounds/sfx/outgassing.wav" id="1_lv7kd"]
+
+[node name="GasSfx" type="AudioStreamPlayer2D" unique_id=1833060204]
+stream = ExtResource("1_lv7kd")
+max_distance = 50000.0
+bus = &"Sound"

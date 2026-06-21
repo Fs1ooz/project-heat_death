@@ -42,6 +42,15 @@ volumetric_fog_gi_inject = 7.8
 volumetric_fog_length = 1024.0
 volumetric_fog_ambient_inject = 13.45
 
+[sub_resource type="AudioStreamSynchronized" id="AudioStreamSynchronized_q7etp"]
+stream_count = 3
+stream_0/stream = ExtResource("9_bfis2")
+stream_0/volume = 0.0
+stream_1/stream = ExtResource("10_o1t32")
+stream_1/volume = 3.0
+stream_2/stream = ExtResource("11_lnrn1")
+stream_2/volume = 0.0
+
 [node name="SolarSystem" type="Node2D" unique_id=1695941383]
 script = ExtResource("1_56jnl")
 
@@ -72,8 +81,10 @@ limit_enabled = false
 stream = ExtResource("9_o1t32")
 
 [node name="MusicAudioStreamPlayer" type="AudioStreamPlayer" parent="." unique_id=1539569926]
+stream = SubResource("AudioStreamSynchronized_q7etp")
+volume_db = -5.0
+bus = &"Music"
 script = ExtResource("7_l0eld")
-layers = Array[AudioStream]([ExtResource("9_bfis2"), ExtResource("10_o1t32"), ExtResource("11_lnrn1")])
 
 [node name="Meteoroid" parent="." unique_id=1089196131 instance=ExtResource("12_l0eld")]
 position = Vector2(-1778, -1631)

@@ -44,6 +44,15 @@ volumetric_fog_ambient_inject = 13.45
 adjustment_enabled = true
 adjustment_saturation = 1.1
 
+[sub_resource type="AudioStreamSynchronized" id="AudioStreamSynchronized_m4v0y"]
+stream_count = 3
+stream_0/stream = ExtResource("6_gsnah")
+stream_0/volume = 0.0
+stream_1/stream = ExtResource("7_xxft0")
+stream_1/volume = 0.0
+stream_2/stream = ExtResource("8_jpv6b")
+stream_2/volume = 0.0
+
 [sub_resource type="Gradient" id="Gradient_jug47"]
 offsets = PackedFloat32Array(0.47435898)
 colors = PackedColorArray(1, 1, 1, 1)
@@ -110,8 +119,10 @@ limit_enabled = false
 metadata/_edit_use_anchors_ = true
 
 [node name="MusicAudioStreamPlayer" type="AudioStreamPlayer" parent="."]
+stream = SubResource("AudioStreamSynchronized_m4v0y")
+volume_db = -5.0
+bus = &"Music"
 script = ExtResource("9_4onk6")
-layers = Array[AudioStream]([ExtResource("6_gsnah"), ExtResource("7_xxft0"), ExtResource("8_jpv6b")])
 
 [node name="Sun" type="PointLight2D" parent="."]
 position = Vector2(-53, -15)

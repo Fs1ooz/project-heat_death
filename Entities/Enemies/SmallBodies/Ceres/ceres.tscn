@@ -16,7 +16,7 @@ height = 120.0
 
 [sub_resource type="Gradient" id="Gradient_403pl"]
 offsets = PackedFloat32Array(0, 0.55246913, 1)
-colors = PackedColorArray(0.04, 0.0368, 0.0368, 1, 0.4509804, 0.4392157, 0.40784314, 1, 0.89411765, 0.93333334, 0.9411765, 1)
+colors = PackedColorArray(0.019607844, 0.019607844, 0.019607844, 1, 0.4509804, 0.4392157, 0.40784314, 1, 0.89411765, 0.93333334, 0.9411765, 1)
 
 [sub_resource type="GradientTexture1D" id="GradientTexture1D_ad5k8"]
 gradient = SubResource("Gradient_403pl")

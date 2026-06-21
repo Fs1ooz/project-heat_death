@@ -5,6 +5,7 @@ extends Node
 @export var activate_impulse: bool = false
 @export var offset_multiplier: float = 0.85
 @export var gas_scenes: Array[PackedScene] = [preload("uid://uf4irjwjm6pd"), preload("uid://cmh6regh1ook3")]
+@export var gas_sfx_scene: PackedScene = preload("res://Commons/Components/gas_sfx.tscn")
 
 
 var _gasses: Array[Gas] = []
@@ -46,12 +47,17 @@ func prespawn(spawn_points_count: int) -> void:
 		gas.set_process(false)
 		gas.emitting = false
 		gas.visible = false
+		var sfx: AudioStreamPlayer2D = gas_sfx_scene.instantiate()
+		gas.add_child(sfx)
+		gas.set_meta("sfx", sfx)
 		_gasses.append(gas)
 
 
 func activate() -> void:
 	for gas: Gas in _gasses:
 		if not gas.emitting:
+			var sfx: AudioStreamPlayer2D = gas.get_meta("sfx")
+			sfx.play()
 			gas.set_process(true)
 			gas.emitting = true
 			gas.visible = true
@@ -63,17 +69,20 @@ func activate() -> void:
 func activate_all() -> void:
 	for gas: Gas in _gasses:
 		if not gas.emitting:
+			var sfx: AudioStreamPlayer2D = gas.get_meta("sfx")
+			sfx.play()
 			gas.set_process(true)
 			gas.visible = true
 			gas.emitting = true
 			var direction: Vector2 = gas.get_meta("direction", Vector2.RIGHT)
 			_body.apply_impulse(-direction.rotated(_body.rotation) * outgassing_impulse * EntropyManager.entropy_value)
 
-
 func stop() -> void:
 	for gas: Gas in _gasses:
 		gas.emitting = false
 		gas.visible = false
+		var sfx: AudioStreamPlayer2D = gas.get_meta("sfx")
+		sfx.stop()
 
 
 func erase_spawn_points() -> void:

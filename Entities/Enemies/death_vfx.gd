@@ -2,6 +2,7 @@ class_name DeathVFX
 extends Node2D
 
 @onready var anim_player: AnimationPlayer = $AnimationPlayer
+@onready var audio: AudioStreamPlayer2D = $AudioStreamPlayer
 @onready var explosion_red: GPUParticles2D = $ExplosionRed
 @onready var shockwave: GPUParticles2D = $Shockwave
 @onready var debris: GPUParticles2D = $Debris
@@ -54,4 +55,8 @@ func scale_explosion(scale_factor: float) -> void:
 # Questo segnale deve essere collegato dal pannello "Nodi" dell'AnimationPlayer
 func _on_animation_player_animation_finished(anim_name: StringName) -> void:
 	if anim_name == "explosion":
-		queue_free()
+		# Non tagliare il suono di morte se è più lungo dell'animazione: aspetta che finisca.
+		if audio.playing:
+			audio.finished.connect(queue_free)
+		else:
+			queue_free()

@@ -6,6 +6,7 @@ const CERES_SPAWN_DIST_MAX: float = 300_000.0
 
 
 func _ready() -> void:
+	GlobalSignals.game_over.connect(_on_game_over)
 	$CelestialBodiesSpawner.ceres_should_spawn.connect(_spawn_ceres)
 
 
@@ -23,6 +24,13 @@ func _spawn_ceres() -> void:
 	ceres.position = player.global_position + Vector2(cos(angle), sin(angle)) * dist
 	add_child.call_deferred(ceres)
 	printerr("Ceres spawnata | stage=ASTEROIDS_3 distanza=", dist)
+
+
+
+func _on_game_over() -> void:
+	$GameOverStreamPlayer.play()
+	$MusicAudioStreamPlayer.stop()
+
 
 
 # Sistema Solare completo con dati NASA/JPL accurati
