@@ -2,8 +2,8 @@
 .godot/
 /android/
 
-# Claude Code harness artifacts
-.claude/worktrees/
+# Claude Code harness / local tooling
+.claude/
 
 # Windows ReplaceFile temp leftovers (interrupted native builds)
 *~RF*.TMP

@@ -1,9 +1,0 @@
-{
-  "statusLine": {
-    "type": "command",
-    "command": "powershell -NoProfile -File D:/app-games/Gioco/project-heat_death/.claude/statusline-command.ps1"
-  },
-  "worktree": {
-    "bgIsolation": "none"
-  }
-}
