@@ -4,6 +4,7 @@
 
 # Claude Code harness / local tooling
 .claude/
+CLAUDE.md
 
 # Windows ReplaceFile temp leftovers (interrupted native builds)
 *~RF*.TMP
