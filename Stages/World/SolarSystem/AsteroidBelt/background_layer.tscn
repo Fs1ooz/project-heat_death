@@ -115,7 +115,7 @@ shader_parameter/pulse_speed = 0.5
 shader_parameter/pulse_intensity = 0.95000001415614
 shader_parameter/enable_shimmer = true
 shader_parameter/shimmer_speed = 2.0
-shader_parameter/alpha_intensity = 1.0
+shader_parameter/alpha_intensity = 0.60000000894072
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_4jhtp"]
 shader = ExtResource("1_4jhtp")

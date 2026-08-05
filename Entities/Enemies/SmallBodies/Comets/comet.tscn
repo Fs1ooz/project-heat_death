@@ -52,6 +52,7 @@ unique_name_in_owner = true
 amount = 500
 
 [node name="VisibleScreenEnablerComponent" parent="Collision/Sprite" unique_id=928764482 instance=ExtResource("5_i1p0e")]
+unique_name_in_owner = true
 rect = Rect2(-944, -939, 1899, 1869)
 enable_node_path = NodePath("../../..")
 

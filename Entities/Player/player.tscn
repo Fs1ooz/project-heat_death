@@ -9,6 +9,7 @@
 [ext_resource type="AudioStream" uid="uid://clg51gycx4q4l" path="res://Assets/Sounds/sfx/hit.wav" id="7_lub02"]
 [ext_resource type="AudioStream" uid="uid://b6sr0lglnwc8s" path="res://Assets/Sounds/freesound_community-cartoon-slurp-37066.wav" id="8_7a1se"]
 [ext_resource type="Script" uid="uid://c0alv6gondpf" path="res://Entities/Player/orbit_rings.gd" id="9_orbit"]
+[ext_resource type="Script" uid="uid://c2xww4lrsv8kr" path="res://Entities/Player/entropy_release.gd" id="10_entropy"]
 
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_5c2io"]
 friction = 0.0
@@ -119,19 +120,10 @@ max_contacts_reported = 100
 linear_damp_mode = 1
 angular_damp_mode = 1
 script = ExtResource("1_5c2io")
-alignment_safe_zone = null
 collision = NodePath("Collision")
 sprite = NodePath("Collision/Sprite")
 trail = NodePath("Collision/Sprite/Trail")
 shockwave = NodePath("Collision/Sprite/ShockwaveRenderer")
-max_orbiting_bodies = null
-health_max = null
-shield_layer_max = null
-recharge_delay = null
-recharge_rate = null
-overspeed_damp = null
-orbit_mass_ratio_min = null
-orbit_mass_ratio_max = null
 
 [node name="PlayerCamera" type="Camera2D" parent="." unique_id=511109393]
 limit_enabled = false
@@ -163,7 +155,7 @@ texture = ExtResource("4_7a1se")
 
 [node name="Trail" parent="Collision/Sprite" unique_id=961780176 instance=ExtResource("5_7a1se")]
 
-[node name="ShockwaveRenderer" parent="Collision/Sprite" unique_id=230247213 instance=ExtResource("5_01a4e")]
+[node name="ShockwaveRenderer" parent="Collision/Sprite" unique_id=1179483927 instance=ExtResource("5_01a4e")]
 
 [node name="HitAudioStreamPlayer" type="AudioStreamPlayer" parent="." unique_id=1490258230]
 stream = SubResource("AudioStreamRandomizer_5c2io")
@@ -184,6 +176,9 @@ libraries/ = SubResource("AnimationLibrary_7a1se")
 
 [node name="OrbitRings" type="Node2D" parent="." unique_id=1694624016]
 script = ExtResource("9_orbit")
+
+[node name="EntropyRelease" type="Node" parent="." unique_id=1837452901]
+script = ExtResource("10_entropy")
 
 [node name="Attraction" type="Area2D" parent="." unique_id=1445965777]
 collision_mask = 3

@@ -10,7 +10,11 @@ signal low_health(value: bool)
 signal windup_shake(intensity: float, time: float)
 @warning_ignore("unused_signal")
 signal ceres_spawned(ceres: Node2D)
-
+@warning_ignore("unused_signal")
+signal show_tip(tip: String)
+## Scarica d'entropia partita. power: 0..1, quanta entropia è stata scaricata rispetto al massimo.
+@warning_ignore("unused_signal")
+signal entropy_released(power: float)
 
 func _input(event: InputEvent) -> void:
 	if event.is_action_pressed("fullscreen"):

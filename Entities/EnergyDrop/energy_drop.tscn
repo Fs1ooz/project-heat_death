@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://xy3bkvisvinm" path="res://Entities/EnergyDrop/energy_drop.gd" id="1_nnvmk"]
 [ext_resource type="AudioStream" uid="uid://dp1e7mdwgi743" path="res://Assets/Sounds/coin.sfxr" id="2_psw32"]
+[ext_resource type="Texture2D" uid="uid://drhjwpswmcqwy" path="res://Assets/Images/Energy/new_gradient_texture_2d.tres" id="3_mersp"]
 
 [sub_resource type="AudioStreamRandomizer" id="AudioStreamRandomizer_psw32"]
 random_pitch = 2.0
@@ -10,19 +11,6 @@ stream_0/stream = ExtResource("2_psw32")
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_rdhfw"]
 radius = 60.0
-
-[sub_resource type="Gradient" id="Gradient_psw32"]
-interpolation_mode = 2
-offsets = PackedFloat32Array(0, 0.29263157, 0.6568421)
-colors = PackedColorArray(1, 1, 0.9882353, 1, 0.74509805, 0.74509805, 0.74509805, 0.39215687, 1, 1, 1, 0)
-
-[sub_resource type="GradientTexture2D" id="GradientTexture2D_mersp"]
-gradient = SubResource("Gradient_psw32")
-width = 128
-height = 128
-use_hdr = true
-fill = 1
-fill_from = Vector2(0.5, 0.5)
 
 [node name="EnergyDrop" type="Area2D" unique_id=300791633 groups=["energy"]]
 script = ExtResource("1_nnvmk")
@@ -37,7 +25,6 @@ bus = &"Sound"
 shape = SubResource("CircleShape2D_rdhfw")
 
 [node name="Sprite2D" type="Sprite2D" parent="CollisionShape2D" unique_id=865159995]
-texture = SubResource("GradientTexture2D_mersp")
-region_rect = Rect2(1.655, 0, 0, 0)
+texture = ExtResource("3_mersp")
 
 [connection signal="body_entered" from="." to="." method="_on_body_entered"]

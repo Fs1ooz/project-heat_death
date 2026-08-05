@@ -126,6 +126,7 @@ sprite_frames = ExtResource("9_o0aku")
 animation = &"rotation"
 
 [node name="VisibleScreenEnablerComponent" parent="Collision/Sprite" unique_id=1944736001 instance=ExtResource("6_gtkhq")]
+unique_name_in_owner = true
 rect = Rect2(-1364, -1399, 2729.5002, 2812.5002)
 enable_node_path = NodePath("../../..")
 

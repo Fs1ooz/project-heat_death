@@ -7,7 +7,7 @@ const TUTORIAL: String = "res://Stages/UI/Tutorial/tutorial.tscn"
 ## Frequenza di aggiornamento della fisica selezionabile. Più alta = movimento più fluido su
 ## monitor ad alto refresh (es. 165Hz), ma più costosa in CPU (la gravità N-body gira a ogni tick).
 ## La persistenza è gestita da SettingsManager.
-const PHYSICS_TICK_OPTIONS: Array[int] = [60, 120, 165, 180, 240]
+const PHYSICS_TICK_OPTIONS: Array[int] = [30, 60, 120, 165, 180, 240]
 
 @onready var physics_tick_option: OptionButton = $SettingsBox/PhysicsTickOption
 @onready var record_label: Label = %RecordLabel

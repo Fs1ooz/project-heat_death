@@ -2595,6 +2595,7 @@ animation = &"rotation"
 frame_progress = 0.93815774
 
 [node name="VisibleScreenEnablerComponent" parent="Collision/AnimatedSprite2D" unique_id=234564130 instance=ExtResource("3_403pl")]
+unique_name_in_owner = true
 rect = Rect2(-500, -500, 1000, 1000)
 enable_node_path = NodePath("../../..")
 

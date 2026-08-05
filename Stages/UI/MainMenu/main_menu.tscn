@@ -47,6 +47,11 @@ grow_vertical = 2
 theme_override_font_sizes/font_size = 64
 theme_override_styles/normal = SubResource("StyleBoxFlat_2b7i7")
 
+[node name="Ceres" parent="." unique_id=933810055 instance=ExtResource("4_25f73")]
+position = Vector2(943, 250)
+min_size = 3.0
+max_size = 3.0
+
 [node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=2124335268]
 custom_maximum_size = Vector2(300, -1)
 propagate_maximum_size = false
@@ -62,8 +67,9 @@ grow_vertical = 2
 theme_override_constants/separation = 50
 
 [node name="Title" type="Control" parent="VBoxContainer" unique_id=712828817]
+z_index = 1
 texture_filter = 1
-custom_minimum_size = Vector2(600, 180)
+custom_minimum_size = Vector2(900, 200)
 layout_mode = 2
 size_flags_horizontal = 4
 
@@ -102,11 +108,6 @@ text = "Tutorial"
 
 [node name="BaseBackgroundLayer" parent="." unique_id=501950975 instance=ExtResource("4_2b7i7")]
 
-[node name="Ceres" parent="." unique_id=933810055 instance=ExtResource("4_25f73")]
-position = Vector2(943, 250)
-min_size = 3.0
-max_size = 3.0
-
 [node name="BackgroundLayer" parent="." unique_id=110186335 instance=ExtResource("3_25f73")]
 scale = Vector2(0.15, 0.15)
 transform = Transform2D(0.15, 0, 0, 0.15, 0, 0)
@@ -141,7 +142,7 @@ grow_vertical = 0
 [node name="PhysicsTickLabel" type="Label" parent="SettingsBox" unique_id=1733001002]
 layout_mode = 2
 theme_override_font_sizes/font_size = 16
-text = "Frequenza fisica (ALZARE SOPRA I 60 ESCLUSIVAMENTE SE IL GIOCO SCATTA)"
+text = "Frequenza fisica (CAMBIARE SOLO SE IL GIOCO SCATTA)"
 
 [node name="PhysicsTickOption" type="OptionButton" parent="SettingsBox" unique_id=1733001003]
 custom_maximum_size = Vector2(200, -1)

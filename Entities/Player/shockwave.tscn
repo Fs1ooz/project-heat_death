@@ -26,14 +26,12 @@ shader_parameter/shockwave_positions = PackedVector2Array(0, 0, 0, 0, 0, 0, 0, 0
 shader_parameter/shockwave_progresses = PackedFloat32Array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
 shader_parameter/shockwave_count = 0
 
-[node name="ShockwaveRenderer" type="ColorRect" unique_id=1179483927]
+[sub_resource type="QuadMesh" id="QuadMesh_sw001"]
+size = Vector2(5000, 5000)
+
+[node name="ShockwaveRenderer" type="MeshInstance2D" unique_id=1179483927]
 show_behind_parent = true
 top_level = true
 material = SubResource("ShaderMaterial_7a1se")
-custom_minimum_size = Vector2(960, 960)
-offset_left = -2500.0
-offset_top = -2500.0
-offset_right = 2500.0
-offset_bottom = 2500.0
-pivot_offset = Vector2(2500, 2500)
+mesh = SubResource("QuadMesh_sw001")
 script = ExtResource("2_gdfje")

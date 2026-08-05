@@ -8,7 +8,9 @@
 [ext_resource type="PackedScene" uid="uid://byiufddhmby2s" path="res://Stages/UI/UpgradeUI/progress_bars.tscn" id="5_l25jl"]
 [ext_resource type="PackedScene" uid="uid://d2b630rm7makv" path="res://Utils/ceres_arrow.tscn" id="7_n77kx"]
 [ext_resource type="PackedScene" uid="uid://b3df1x8sh2mp" path="res://Stages/UI/damage_flash.tscn" id="8_flash"]
-[ext_resource type="PackedScene" uid="uid://d5hi3z0uj4or" path="res://Stages/UI/chromatic_aberration.tscn" id="9_chroma"]
+[ext_resource type="PackedScene" uid="uid://d5hi300uj4or" path="res://Stages/UI/chromatic_aberration.tscn" id="9_chroma"]
+[ext_resource type="Theme" uid="uid://brvjefc4224hi" path="res://Stages/UI/UpgradeUI/upgrade_ui.tres" id="10_gdm6q"]
+[ext_resource type="Script" uid="uid://bqeaws8gxnoal" path="res://Stages/UI/game_tips.gd" id="11_vbv27"]
 
 [node name="UILayer" type="CanvasLayer" unique_id=1973272501]
 
@@ -30,5 +32,24 @@ offset_bottom = -6.0
 [node name="CeresArrow" parent="." unique_id=993177644 instance=ExtResource("7_n77kx")]
 
 [node name="DamageFlash" parent="." unique_id=1111111112 instance=ExtResource("8_flash")]
+visible = false
 
-[node name="ChromaticAberration" parent="." unique_id=2222222223 instance=ExtResource("9_chroma")]
+[node name="ChromaticAberration" parent="." unique_id=-2072745073 instance=ExtResource("9_chroma")]
+
+[node name="GameTips" type="Label" parent="." unique_id=1086828871]
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -56.0
+offset_top = -65.0
+offset_right = 56.0
+offset_bottom = -37.0
+grow_horizontal = 2
+grow_vertical = 0
+theme = ExtResource("10_gdm6q")
+theme_override_font_sizes/font_size = 16
+text = "AUTO-ORBIT"
+horizontal_alignment = 1
+script = ExtResource("11_vbv27")

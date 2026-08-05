@@ -26,6 +26,7 @@ var _flash_tex: GradientTexture1D
 
 @onready var player_camera: PlayerCamera = $PlayerCamera
 @onready var orbit_rings: OrbitRings = $OrbitRings
+@onready var entropy_release: EntropyRelease = $EntropyRelease
 
 var attraction_radius: float:
 	get: return $Attraction/CollisionShape2D.shape.radius
@@ -120,6 +121,16 @@ func _process(delta: float) -> void:
 		_is_low_health = low
 		GlobalSignals.low_health.emit(low)
 		$AnimationPlayer.play("low_health" if low else "RESET")
+
+	# Cattura in carica: mentre tieni premuto (armato, non ancora agganciato) l'anello si carica;
+	# superati i 3s si aggancia in modo permanente (flash + sparizione dell'anello).
+	if orbit_active and not _orbit_latched:
+		_orbit_hold_time += delta
+		orbit_rings.set_charge(clampf(_orbit_hold_time / ORBIT_LATCH_TIME, 0.0, 1.0))
+		if _orbit_hold_time >= ORBIT_LATCH_TIME:
+			_orbit_latched = true
+			GlobalSignals.show_tip.emit("AUTO-ORBIT")
+			orbit_rings.latch_flash()
 
 
 ## Distribuisce 'amount' punti di ricarica dall'interno verso l'esterno: prima riempie la salute,
@@ -242,19 +253,30 @@ func _animate_player(is_accelerating: bool) -> void:
 
 var orbit_active: bool = false
 
+## Cattura "hold-to-latch": tieni premuto per ORBIT_LATCH_TIME secondi → la cattura si "aggancia"
+## e resta attiva anche mollando il tasto (corpi permanenti). Un nuovo tap la disattiva.
+## Se rilasci PRIMA dei 3s, molla tutto (come un hold normale).
+const ORBIT_LATCH_TIME: float = 3.0
+var _orbit_hold_time: float = 0.0
+var _orbit_latched: bool = false
+
 
 func _input(event: InputEvent) -> void:
-	if event.is_action_pressed("space") and EntropyManager.entropy_value < 0:
-		shockwave.trigger_shockwave(global_position, 3)
-		EntropyManager.change_entropy(abs(EntropyManager.entropy_value) * 2)
-		get_viewport().set_input_as_handled()
+	if event.is_action_pressed("entropy release"):
+		# Tutta la scarica (carica, fermo immagine, anello, fronte di danno) vive in EntropyRelease.
+		if entropy_release.try_release():
+			get_viewport().set_input_as_handled()
 	if not orbit_unlocked:
 		return
 	if event.is_action_pressed("orbit"):
-		_activate_orbit()
+		if _orbit_latched:
+			_deactivate_orbit()          # secondo tap → spegne tutto
+		elif not orbit_active:
+			_activate_orbit()            # primo press → arma e inizia la carica
+			_orbit_hold_time = 0.0
 	elif event.is_action_released("orbit"):
-		_deactivate_orbit()
-
+		if orbit_active and not _orbit_latched:
+			_deactivate_orbit()          # mollato prima dei 3s → libera tutto
 
 @export var orbit_mass_ratio_min: float = 0.5  # massa minima orbitabile (evita roba troppo piccola)
 @export var orbit_mass_ratio_max: float = 5.0  # massa massima orbitabile
@@ -295,7 +317,10 @@ func _on_attraction_body_entered(body: Node2D) -> void:
 
 func _deactivate_orbit() -> void:
 	orbit_active = false
+	_orbit_latched = false
+	_orbit_hold_time = 0.0
 	orbit_rings.hide_rings()
+	GlobalSignals.show_tip.emit("")
 	for body in nearby_bodies:
 		if not is_instance_valid(body):
 			continue
