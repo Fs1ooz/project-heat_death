@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://d5hi300uj4or"]
 
-[ext_resource type="Shader" uid="uid://chroma001shader" path="res://Assets/Shaders/chromatic_aberration.gdshader" id="1_chroma"]
-[ext_resource type="Script" uid="uid://e6ij4a1vk5ps" path="res://Stages/UI/chromatic_aberration.gd" id="2_chroma"]
+[ext_resource type="Shader" uid="uid://c37ww1u7ilbjg" path="res://Assets/Shaders/chromatic_aberration.gdshader" id="1_chroma"]
+[ext_resource type="Script" uid="uid://mmu5lh6qnomt" path="res://Utils/chromatic_aberration.gd" id="2_chroma"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_chroma"]
 shader = ExtResource("1_chroma")

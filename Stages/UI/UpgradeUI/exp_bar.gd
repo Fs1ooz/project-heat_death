@@ -307,10 +307,10 @@ func _handle_fade_effects(old_fill: float, new_fill: float) -> void:
 
 func _emit_segment_signals(old_segments: int, new_segments: int, is_decreasing: bool) -> void:
 	if is_decreasing:
-		for i in range(new_segments, old_segments):
+		for i: int in range(new_segments, old_segments):
 			segment_lost.emit(i)
 	else:
-		for i in range(old_segments, new_segments):
+		for i: int in range(old_segments, new_segments):
 			segment_gained.emit(i)
 
 func _emit_change_signals(old_value: float, new_value: float) -> void:
@@ -455,8 +455,8 @@ func _update_fade_ongoing_effect(old_fill: float, new_fill: float) -> void:
 func _create_flash_tween(intensity_param: String) -> void:
 	_kill_effect_tween()
 	effect_tween = create_tween()
-	effect_tween.tween_method(func(val) -> void: material.set_shader_parameter(intensity_param, val), 1.0, 1.0, effect_delay)
-	effect_tween.tween_method(func(val) -> void: material.set_shader_parameter(intensity_param, val), 1.0, 0.0, effect_duration)
+	effect_tween.tween_method(func(val: float) -> void: material.set_shader_parameter(intensity_param, val), 1.0, 1.0, effect_delay)
+	effect_tween.tween_method(func(val: float) -> void: material.set_shader_parameter(intensity_param, val), 1.0, 0.0, effect_duration)
 	effect_tween.tween_callback(_end_effect)
 
 func _create_drain_tween() -> void:
@@ -510,7 +510,7 @@ func set_fill_amount(fill: float) -> void:
 		current_value = current_fill * max_value
 	else:
 		if segment_count == 1 or flow_mode == "Continuous":
-			var old_fill = current_fill
+			var old_fill: float = current_fill
 			target_fill = clamp(fill, 0.0, 1.0)
 			current_value = target_fill * max_value
 			_start_smooth_transition(old_fill, target_fill)

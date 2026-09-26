@@ -60,7 +60,7 @@ func reset() -> void:
 
 ## Formatta i secondi come m:ss (riusato da game over e pause menu).
 func format_time(seconds: float) -> String:
-	var mins: int = int(seconds) / 60
+	var mins: int = int(seconds / 60)
 	var secs: int = int(seconds) % 60
 	return "%d:%02d" % [mins, secs]
 

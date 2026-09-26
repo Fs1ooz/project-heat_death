@@ -3,14 +3,14 @@
 [ext_resource type="PackedScene" uid="uid://dnto56yr1b1ff" path="res://Commons/entropy_counter.tscn" id="1_bhpt4"]
 [ext_resource type="PackedScene" uid="uid://dr5pxtobflhyw" path="res://Stages/UI/UpgradeUI/upgrade_ui.tscn" id="1_hli8u"]
 [ext_resource type="PackedScene" uid="uid://bcnmskds2ga3l" path="res://Stages/World/SolarSystem/arrow.tscn" id="1_l25jl"]
-[ext_resource type="PackedScene" uid="uid://l2m8c2o136a2" path="res://Stages/UI/life_vignette.tscn" id="1_wud8y"]
+[ext_resource type="PackedScene" uid="uid://l2m8c2o136a2" path="res://Utils/life_vignette.tscn" id="1_wud8y"]
 [ext_resource type="PackedScene" uid="uid://dyd3uoe8y1asi" path="res://Stages/World/game_over_screen.tscn" id="2_bhpt4"]
 [ext_resource type="PackedScene" uid="uid://byiufddhmby2s" path="res://Stages/UI/UpgradeUI/progress_bars.tscn" id="5_l25jl"]
 [ext_resource type="PackedScene" uid="uid://d2b630rm7makv" path="res://Utils/ceres_arrow.tscn" id="7_n77kx"]
-[ext_resource type="PackedScene" uid="uid://b3df1x8sh2mp" path="res://Stages/UI/damage_flash.tscn" id="8_flash"]
-[ext_resource type="PackedScene" uid="uid://d5hi300uj4or" path="res://Stages/UI/chromatic_aberration.tscn" id="9_chroma"]
+[ext_resource type="PackedScene" uid="uid://b3df1x8sh2mp" path="res://Utils/damage_flash.tscn" id="8_flash"]
+[ext_resource type="PackedScene" uid="uid://d5hi300uj4or" path="res://Utils/chromatic_aberration.tscn" id="9_chroma"]
 [ext_resource type="Theme" uid="uid://brvjefc4224hi" path="res://Stages/UI/UpgradeUI/upgrade_ui.tres" id="10_gdm6q"]
-[ext_resource type="Script" uid="uid://bqeaws8gxnoal" path="res://Stages/UI/game_tips.gd" id="11_vbv27"]
+[ext_resource type="Script" uid="uid://bqeaws8gxnoal" path="res://Utils/game_tips.gd" id="11_vbv27"]
 
 [node name="UILayer" type="CanvasLayer" unique_id=1973272501]
 

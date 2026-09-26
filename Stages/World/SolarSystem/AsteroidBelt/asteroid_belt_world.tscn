@@ -2,8 +2,6 @@
 
 [ext_resource type="Script" uid="uid://cyj080sf0wp5o" path="res://Stages/World/SolarSystem/AsteroidBelt/asteroid_belt_world.gd" id="1_leih4"]
 [ext_resource type="PackedScene" uid="uid://470x1obeipdg" path="res://Entities/Player/player.tscn" id="2_aw4pb"]
-[ext_resource type="PackedScene" uid="uid://dooqkflafelol" path="res://Entities/Enemies/SmallBodies/Asteroids/asteroid.tscn" id="2_dgf5r"]
-[ext_resource type="PackedScene" uid="uid://bpeudpxsbd3x2" path="res://Entities/Enemies/SmallBodies/Meteoroids/meteoroid.tscn" id="3_0oqe1"]
 [ext_resource type="PackedScene" uid="uid://bosimyr8qkuso" path="res://Stages/World/energy_spawner.tscn" id="4_017r3"]
 [ext_resource type="PackedScene" uid="uid://bvfq3qbl7klob" path="res://Stages/World/world_environment.tscn" id="4_jug47"]
 [ext_resource type="PackedScene" uid="uid://bkljj71ppklsf" path="res://Stages/World/SolarSystem/AsteroidBelt/background_layer.tscn" id="4_leih4"]
@@ -12,7 +10,7 @@
 [ext_resource type="AudioStream" uid="uid://cawomildbxiao" path="res://Assets/Music/BETA - Phase1.mp3" id="7_xxft0"]
 [ext_resource type="AudioStream" uid="uid://wvogywji06eb" path="res://Assets/Music/BETA - Phase2.mp3" id="8_jpv6b"]
 [ext_resource type="Script" uid="uid://cvs60xrp5qjxm" path="res://Stages/World/music_audio_stream_player.gd" id="9_4onk6"]
-[ext_resource type="PackedScene" uid="uid://byiki3druigls" path="res://Stages/UI/ui_layer.tscn" id="11_bcvjd"]
+[ext_resource type="PackedScene" uid="uid://byiki3druigls" path="res://Utils/ui_layer.tscn" id="11_bcvjd"]
 
 [sub_resource type="Environment" id="Environment_jug47"]
 background_mode = 3
@@ -62,69 +60,71 @@ gradient = SubResource("Gradient_jug47")
 fill_from = Vector2(1, 0.7991453)
 fill_to = Vector2(0, 0)
 
-[node name="AsteroidBelt" type="Node2D"]
+[node name="AsteroidBelt" type="Node2D" unique_id=377611990]
 script = ExtResource("1_leih4")
-asteroid_scene = ExtResource("2_dgf5r")
-meteoroid_scene = ExtResource("3_0oqe1")
 
-[node name="WorldEnvironment" parent="." instance=ExtResource("4_jug47")]
+[node name="WorldEnvironment" parent="." unique_id=1894788982 instance=ExtResource("4_jug47")]
 environment = SubResource("Environment_jug47")
 
-[node name="EnergySpawner" parent="." instance=ExtResource("4_017r3")]
+[node name="EnergySpawner" parent="." unique_id=1051853287 instance=ExtResource("4_017r3")]
 
-[node name="UILayer" parent="." instance=ExtResource("11_bcvjd")]
+[node name="UILayer" parent="." unique_id=217560506 instance=ExtResource("11_bcvjd")]
 layer = 2
 
-[node name="BaseBackgroundLayer" parent="." instance=ExtResource("4_sp6ku")]
+[node name="BaseBackgroundLayer" parent="." unique_id=992313782 instance=ExtResource("4_sp6ku")]
 
-[node name="BackgroundLayer" parent="." instance=ExtResource("4_leih4")]
+[node name="BackgroundLayer" parent="." unique_id=1829079991 instance=ExtResource("4_leih4")]
 
-[node name="Regions" type="Node2D" parent="."]
+[node name="Regions" type="Node2D" parent="." unique_id=443617682]
 
-[node name="InnerTransition" type="Node2D" parent="Regions"]
+[node name="InnerTransition" type="Node2D" parent="Regions" unique_id=1580358828]
 
-[node name="InnerBelt" type="Node2D" parent="Regions"]
+[node name="InnerBelt" type="Node2D" parent="Regions" unique_id=556754906]
 
-[node name="FloraFamily" type="Node2D" parent="Regions"]
+[node name="FloraFamily" type="Node2D" parent="Regions" unique_id=2090642490]
 
-[node name="KirkwoodGap_3to1" type="Node2D" parent="Regions"]
+[node name="KirkwoodGap_3to1" type="Node2D" parent="Regions" unique_id=1990700885]
 
-[node name="MiddleBelt" type="Node2D" parent="Regions"]
+[node name="MiddleBelt" type="Node2D" parent="Regions" unique_id=615314407]
 
-[node name="EunomiaFamily" type="Node2D" parent="Regions"]
+[node name="EunomiaFamily" type="Node2D" parent="Regions" unique_id=1380463736]
 
-[node name="KoronisFamily" type="Node2D" parent="Regions"]
+[node name="KoronisFamily" type="Node2D" parent="Regions" unique_id=1159281209]
 
-[node name="Gap_5to2" type="Node2D" parent="Regions"]
+[node name="Gap_5to2" type="Node2D" parent="Regions" unique_id=120946431]
 
-[node name="OuterBelt_Inner" type="Node2D" parent="Regions"]
+[node name="OuterBelt_Inner" type="Node2D" parent="Regions" unique_id=890007654]
 
-[node name="ThemisFamily" type="Node2D" parent="Regions"]
+[node name="ThemisFamily" type="Node2D" parent="Regions" unique_id=1112482780]
 
-[node name="HygieaFamily" type="Node2D" parent="Regions"]
+[node name="HygieaFamily" type="Node2D" parent="Regions" unique_id=173072044]
 
-[node name="Gap_2to1" type="Node2D" parent="Regions"]
+[node name="Gap_2to1" type="Node2D" parent="Regions" unique_id=1673036370]
 
-[node name="CybeleGroup" type="Node2D" parent="Regions"]
+[node name="CybeleGroup" type="Node2D" parent="Regions" unique_id=4679018]
 
-[node name="HildaGroup" type="Node2D" parent="Regions"]
+[node name="HildaGroup" type="Node2D" parent="Regions" unique_id=898427024]
 
-[node name="DeathCamera" type="Camera2D" parent="."]
+[node name="DeathCamera" type="Camera2D" parent="." unique_id=2083976011]
 z_index = 2
+process_callback = 0
 limit_enabled = false
 
-[node name="Player" parent="." instance=ExtResource("2_aw4pb")]
+[node name="Player" parent="." unique_id=232368303 instance=ExtResource("2_aw4pb")]
 
-[node name="ShockwaveRenderer" parent="Player/Collision/Sprite" index="1"]
+[node name="PlayerCamera" parent="Player" index="0" unique_id=511109393]
+process_callback = 0
+
+[node name="ShockwaveRenderer" parent="Player/Collision/Sprite" parent_id_path=PackedInt32Array(232368303, 1510216970) index="1" unique_id=1179483927]
 metadata/_edit_use_anchors_ = true
 
-[node name="MusicAudioStreamPlayer" type="AudioStreamPlayer" parent="."]
+[node name="MusicAudioStreamPlayer" type="AudioStreamPlayer" parent="." unique_id=131603912]
 stream = SubResource("AudioStreamSynchronized_m4v0y")
 volume_db = -5.0
 bus = &"Music"
 script = ExtResource("9_4onk6")
 
-[node name="Sun" type="PointLight2D" parent="."]
+[node name="Sun" type="PointLight2D" parent="." unique_id=1062173868]
 position = Vector2(-53, -15)
 energy = 16.0
 texture = SubResource("GradientTexture2D_jpv6b")

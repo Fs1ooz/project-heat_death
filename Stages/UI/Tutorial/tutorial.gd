@@ -13,6 +13,21 @@ const MAIN_MENU: String = "res://Stages/UI/MainMenu/main_menu.tscn"
 
 enum Step { MOVEMENT, ORBIT, ENERGY_UPGRADE, ENTROPY, DONE }
 
+## Quanto lontano può finire il corpo dello step orbita prima di considerarlo perso
+## (in multipli del raggio d'attrazione del player).
+const ORBIT_BODY_MAX_DISTANCE_MULT: float = 6.0
+
+## OS.get_keycode_string() risponde in inglese: questi sono i tasti che finirebbero
+## in mezzo a un prompt italiano. Quelli non elencati (lettere, numeri) vanno già bene.
+const KEY_NAMES_IT: Dictionary = {
+	"SPACE": "SPAZIO",
+	"ESCAPE": "ESC",
+	"ENTER": "INVIO",
+	"KP ENTER": "INVIO",
+	"SHIFT": "MAIUSC",
+	"TAB": "TAB",
+}
+
 @onready var prompt_label: Label = %PromptLabel
 @onready var end_buttons: Control = %EndButtons
 @onready var skip_button: Button = %SkipButton
@@ -29,6 +44,7 @@ var _moved_distance: float = 0.0
 
 # --- Orbite ---
 var _orbit_bodies: Array = []
+var _orbit_respawn_pending: bool = false  # true tra lo spawn e il setup differito del corpo
 
 # --- Energia & Upgrade ---
 var _menu_opened: bool = false
@@ -59,6 +75,8 @@ func _physics_process(_delta: float) -> void:
 		Step.ORBIT:
 			if player.get_current_orbiting_count() > 0:
 				_advance_from_orbit()
+			else:
+				_ensure_orbit_body()
 		Step.ENERGY_UPGRADE:
 			# Il menu compare da solo al raggiungimento della soglia (tier_changed).
 			# Lo rilevo quando appare, poi avanzo quando viene richiuso (scelta fatta).
@@ -97,7 +115,10 @@ func _advance_from_movement() -> void:
 # ---------------------------------------------------------------------------
 func _start_orbit() -> void:
 	step = Step.ORBIT
-	_set_prompt("Cattura un corpo in orbita!\nTieni premuto Q (o il tasto destro del mouse) per attrarlo.")
+	_set_prompt(
+		"Cattura un corpo in orbita!\nTieni premuto %s (o il tasto destro del mouse) per attrarlo."
+		% _key_hint(&"orbit")
+	)
 	player.max_orbiting_bodies = maxi(player.max_orbiting_bodies, 2)
 	_spawn_orbit_bodies()
 	_step_ready = true
@@ -105,6 +126,9 @@ func _start_orbit() -> void:
 
 func _spawn_orbit_bodies() -> void:
 	# Un solo corpo, a destra del player e appena fuori dal raggio d'attrazione.
+	# Resta "pending" finché il setup differito non l'ha reso orbitabile, così il
+	# watchdog non ne accoda altri nel frattempo.
+	_orbit_respawn_pending = true
 	var body: SmallBody = METEOROID.instantiate()
 	body.position = player.global_position + Vector2.RIGHT * player.attraction_radius * 2.0
 	add_child.call_deferred(body)
@@ -112,13 +136,44 @@ func _spawn_orbit_bodies() -> void:
 	_make_orbitable.call_deferred(body)
 
 
+## Anti-soft-lock: il corpo dello step orbita può sparire (il player ci sbatte contro e lo
+## distrugge) o allontanarsi troppo per essere raggiunto. In quel caso lo step non potrebbe
+## più completarsi, quindi ne rimetto uno. Il pending evita di spawnarne una fila mentre
+## l'add_child differito è ancora in coda.
+func _ensure_orbit_body() -> void:
+	if _orbit_respawn_pending:
+		return
+
+	var max_distance: float = player.attraction_radius * ORBIT_BODY_MAX_DISTANCE_MULT
+	for body: Variant in _orbit_bodies:
+		if not is_instance_valid(body) or (body as Node).is_queued_for_deletion():
+			continue
+		var small: SmallBody = body as SmallBody
+		# Solo un corpo FREE può essere "perso": se è già in attrazione sta rientrando da solo.
+		if small.orbit_state != SmallBody.OrbitState.FREE:
+			return
+		if small.global_position.distance_to(player.global_position) <= max_distance:
+			return
+		# Alla deriva e irraggiungibile: lo tolgo e lo rimpiazzo. Lo sfilo anche da
+		# nearby_bodies, altrimenti il player si porta dietro un riferimento morto.
+		player.nearby_bodies.erase(small)
+		small.queue_free()
+
+	_orbit_bodies.clear()
+	_spawn_orbit_bodies()
+
+
 ## Porta la massa del corpo a 1:1 col player così rientra nella finestra
 ## orbitabile (orbit_mass_ratio_min..max). NON tocco i ratio del player: la
 ## finestra di massa è una scelta di design voluta.
 func _make_orbitable(body: SmallBody) -> void:
+	_orbit_respawn_pending = false
 	if not is_instance_valid(body) or not is_instance_valid(player):
 		return
 	body.mass = player.mass
+	# Niente energia alla morte: col respawn anti-soft-lock il player potrebbe farmarla
+	# speronandolo, arrivare al livello 3 prima dello step energia e bloccare il tutorial.
+	body.drop_energy_on_death = false
 	# Registro il corpo tra quelli vicini al player così Q lo cattura subito,
 	# senza dipendere dal timing del rilevamento dell'area di attrazione.
 	if not player.nearby_bodies.has(body):
@@ -138,7 +193,10 @@ func _advance_from_orbit() -> void:
 func _start_energy() -> void:
 	step = Step.ENERGY_UPGRADE
 	_menu_opened = false
-	_set_prompt("Raccogli l'energia per crescere e salire di livello.")
+	_set_prompt(
+		"Raccogli l'energia qui intorno per crescere e salire di livello.\n"
+		+ "Nella partita vera l'energia esce dai corpi celesti che distruggi."
+	)
 	_spawn_energy_drops()
 	_step_ready = true
 
@@ -147,11 +205,16 @@ func _spawn_energy_drops() -> void:
 	# 6×60 = 360 energia totale. Il livello 3 (prima soglia → menu upgrade) costa
 	# 220 cumulativi: bastano 4 drop su 6, quindi mancarne uno non blocca lo step.
 	# 360 resta sotto i 364 del livello 4, così si apre esattamente un menu.
-	for i: int in range(6):
+	#
+	# Angoli distribuiti (un drop per settore, con jitter) e raggio corto: prima erano
+	# angolo e distanza del tutto casuali fino a 1000px, e capitava che nascessero tutti
+	# fuori schermo — dal prompt sembrava che l'energia non fosse proprio spawnata.
+	const DROP_COUNT: int = 6
+	for i: int in range(DROP_COUNT):
 		var drop: Area2D = ENERGY_DROP.instantiate()
 		drop.energy = 60
-		var ang: float = randf() * TAU
-		var dist: float = randf_range(350.0, 1000.0)
+		var ang: float = (TAU / DROP_COUNT) * i + randf_range(-0.35, 0.35)
+		var dist: float = randf_range(260.0, 520.0)
 		drop.position = player.global_position + Vector2(cos(ang), sin(ang)) * dist
 		add_child.call_deferred(drop)
 
@@ -173,7 +236,10 @@ func _advance_from_energy() -> void:
 # ---------------------------------------------------------------------------
 func _start_entropy() -> void:
 	step = Step.ENTROPY
-	_set_prompt("Senti l'instabilità?\nL'entropia negativa ti destabilizza: premi SPAZIO per scaricarla con uno shockwave.")
+	_set_prompt(
+		"Senti l'instabilità?\nL'entropia negativa ti destabilizza: premi %s per scaricarla con uno shockwave."
+		% _key_hint(&"entropy release")
+	)
 	EntropyManager.change_entropy(-6.0)  # forza entropia negativa -> il player inizia a tremare
 	_step_ready = true
 
@@ -230,3 +296,28 @@ func _on_skip_pressed() -> void:
 
 func _set_prompt(text: String) -> void:
 	prompt_label.text = text
+
+
+## Nome del primo tasto mappato su un'azione, per i prompt.
+## I tasti NON vanno scritti a mano nei testi: dopo un remap dell'input map il tutorial
+## ha già insegnato comandi inesistenti (diceva Q e SPAZIO quando ormai erano SPAZIO ed E).
+## Leggendoli da qui i prompt seguono l'input map da soli.
+func _key_hint(action: StringName) -> String:
+	for event: InputEvent in InputMap.action_get_events(action):
+		var key: InputEventKey = event as InputEventKey
+		if key == null:
+			continue
+		var code: Key = key.physical_keycode
+		if code != KEY_NONE:
+			# physical_keycode è la POSIZIONE del tasto: va tradotta nel layout dell'utente,
+			# altrimenti su AZERTY mostreremmo la lettera sbagliata. Il display server headless
+			# non sa farlo e stampa un ERROR: lì la posizione va bene così com'è.
+			if DisplayServer.get_name() != "headless":
+				code = DisplayServer.keyboard_get_keycode_from_physical(code)
+		else:
+			code = key.keycode
+		if code == KEY_NONE:
+			continue
+		var name: String = OS.get_keycode_string(code).to_upper()
+		return KEY_NAMES_IT.get(name, name)
+	return "?"

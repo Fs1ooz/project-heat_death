@@ -36,6 +36,19 @@ resource_local_to_scene = true
 shader = ExtResource("2_xu417")
 shader_parameter/flash_color = Color(1, 1, 1, 1)
 shader_parameter/flash_value = 0.0
+shader_parameter/outline_color = Color(0.7, 0.88, 1, 1)
+shader_parameter/outline_width = 2.0
+shader_parameter/outline_max_texels = 5.0
+shader_parameter/pulse_speed = 2.2
+shader_parameter/pulse_min = 0.7
+shader_parameter/pulse_max = 1.0
+shader_parameter/pulse_phase = 0.0
+shader_parameter/threat = 0.0
+shader_parameter/threat_enabled = true
+shader_parameter/threat_safe_color = Color(0.45, 1, 0.6, 1)
+shader_parameter/threat_mid_color = Color(0.85, 1, 0.35, 1)
+shader_parameter/threat_warn_color = Color(1, 0.62, 0.15, 1)
+shader_parameter/threat_danger_color = Color(1, 0.2, 0.16, 1)
 
 [sub_resource type="Curve" id="Curve_d4ywq"]
 _data = [Vector2(0, 0.5), 0.0, -0.13285534, 0, 0, Vector2(1, 0), -1.0819256, 0.0, 0, 0]
@@ -103,6 +116,7 @@ material = SubResource("ShaderMaterial_qufua")
 scale = Vector2(2, 2)
 sprite_frames = ExtResource("3_qufua")
 animation = &"rotation"
+frame_progress = 0.013864258
 
 [node name="VisibleScreenEnablerComponent" parent="Collision/Sprite" unique_id=1920965672 instance=ExtResource("2_pnclo")]
 unique_name_in_owner = true

@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://l2m8c2o136a2"]
 
-[ext_resource type="Shader" uid="uid://d52fon5v10ot" path="res://Stages/UI/vignette.gdshader" id="1_nivf5"]
-[ext_resource type="Script" uid="uid://b4e6i35tkgje3" path="res://Stages/UI/life_vignette.gd" id="2_nruxu"]
+[ext_resource type="Shader" uid="uid://d52fon5v10ot" path="res://Utils/vignette.gdshader" id="1_nivf5"]
+[ext_resource type="Script" uid="uid://b4e6i35tkgje3" path="res://Utils/life_vignette.gd" id="2_nruxu"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_n77kx"]
 shader = ExtResource("1_nivf5")

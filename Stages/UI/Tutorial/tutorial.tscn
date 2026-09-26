@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://cx84vrdui5wih" path="res://Stages/UI/Tutorial/tutorial.gd" id="1_tut"]
 [ext_resource type="PackedScene" uid="uid://bvfq3qbl7klob" path="res://Stages/World/world_environment.tscn" id="2_env"]
-[ext_resource type="PackedScene" uid="uid://byiki3druigls" path="res://Stages/UI/ui_layer.tscn" id="3_ui"]
+[ext_resource type="PackedScene" uid="uid://byiki3druigls" path="res://Utils/ui_layer.tscn" id="3_ui"]
 [ext_resource type="PackedScene" uid="uid://470x1obeipdg" path="res://Entities/Player/player.tscn" id="4_player"]
 [ext_resource type="PackedScene" uid="uid://befachtfe40l2" path="res://Stages/World/SolarSystem/AsteroidBelt/base_background_layer.tscn" id="5_basebg"]
 [ext_resource type="PackedScene" uid="uid://bkljj71ppklsf" path="res://Stages/World/SolarSystem/AsteroidBelt/background_layer.tscn" id="6_bg"]

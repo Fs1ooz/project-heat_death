@@ -156,8 +156,8 @@ func _recharge(amount: float) -> void:
 var base_scale: Vector2 = Vector2.ONE
 
 
-var nearby_energy: Array = []
-var nearby_bodies: Array = []
+var nearby_energy: Array[Energy] = []
+var nearby_bodies: Array[CelestialBody] = []
 
 
 func _physics_process(delta: float) -> void:
@@ -292,7 +292,7 @@ func _activate_orbit() -> void:
 	orbit_rings.show_rings(attraction_radius, max_orbiting_bodies)
 	var current_count: int = get_current_orbiting_count()
 
-	for body in nearby_bodies:
+	for body: CelestialBody in nearby_bodies:
 		if current_count >= max_orbiting_bodies:
 			break
 		if not is_instance_valid(body):
@@ -321,7 +321,7 @@ func _deactivate_orbit() -> void:
 	_orbit_hold_time = 0.0
 	orbit_rings.hide_rings()
 	GlobalSignals.show_tip.emit("")
-	for body in nearby_bodies:
+	for body: CelestialBody in nearby_bodies:
 		if not is_instance_valid(body):
 			continue
 		if body is SmallBody:
@@ -349,7 +349,7 @@ func _do_gravity(delta: float) -> void:
 	var attraction_radius_cached: float = attraction_radius  # evita il path lookup del getter per ogni corpo
 	var sqrt_mass: float = sqrt(mass)
 
-	for body in nearby_bodies:
+	for body: CelestialBody in nearby_bodies:
 		if not is_instance_valid(body):
 			continue
 		if body is Ceres:  # ← skippa Ceres e futuri boss
@@ -459,7 +459,7 @@ func apply_entropy(delta: float) -> void:
 
 func get_current_orbiting_count() -> int:
 	var count: int = 0
-	for body in nearby_bodies:
+	for body: CelestialBody in nearby_bodies:
 		if not is_instance_valid(body):
 			continue
 		if body is SmallBody and body.orbit_target == self and body.orbit_state != SmallBody.OrbitState.FREE:
@@ -471,7 +471,7 @@ func get_current_orbiting_count() -> int:
 ## Usato da OrbitRings per nascondere il ring di uno slot quando è già occupato.
 func get_occupied_orbit_slots() -> Dictionary:
 	var slots: Dictionary = {}
-	for body in nearby_bodies:
+	for body: CelestialBody in nearby_bodies:
 		if not is_instance_valid(body):
 			continue
 		if body is SmallBody and body.orbit_target == self and body.orbit_state == SmallBody.OrbitState.ORBITING:

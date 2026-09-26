@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://b3df1x8sh2mp"]
 
-[ext_resource type="Script" uid="uid://c4gh2y9ti3nq" path="res://Stages/UI/damage_flash.gd" id="1_flash"]
+[ext_resource type="Script" uid="uid://cj4yvlyyymar2" path="res://Utils/damage_flash.gd" id="1_flash"]
 
 [node name="DamageFlash" type="ColorRect" unique_id=1111111111]
 anchors_preset = 15

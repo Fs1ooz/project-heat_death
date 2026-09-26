@@ -19,6 +19,14 @@ var bodies_in_gravity: Array[RigidBody2D] = []
 const GRAVITY_HZ: float = 60.0
 var _gravity_accum: float = 0.0
 
+# Minaccia: colore e battito dell'outline dicono al giocatore cosa succede se ci sbatte
+# (0 = lo ingoia o lo distrugge, 1 = colpo letale). Basta ricalcolarla poche volte al
+# secondo: è informazione, non animazione.
+const THREAT_HZ: float = 4.0
+var _threat_accum: float = 0.0
+var _threat: float = 0.0
+var _player: Player = null
+
 # Proprietà comuni
 @export var internal_energy: int = 1
 @export var game_energy: int = 50
@@ -63,6 +71,10 @@ func _ready() -> void:
 	# Fase casuale: sfasa i burst di gravità tra i corpi così il costo è distribuito sui tick
 	# (niente picco con tutti i corpi che ricalcolano sullo stesso frame).
 	_gravity_accum = randf() * (1.0 / GRAVITY_HZ)
+	if mat:
+		# Sfasa i battiti: senza offset per istanza tutti i corpi pulsano all'unisono
+		# e l'effetto diventa uno stroboscopio invece di un segnale leggibile.
+		mat.set_shader_parameter("pulse_phase", randf() * TAU)
 	EntropyManager.entropy_changed.connect(_on_entropy_changed)
 	# Il corpo viene spawnato di colpo a una posizione: col physics interpolation attivo va
 	# azzerata l'interpolazione, altrimenti "vola" dalla posizione precedente. Copre anche i
@@ -73,6 +85,12 @@ func _ready() -> void:
 func _physics_process(delta: float) -> void:
 	#print(celestial_bodies.size())
 	_last_velocity = linear_velocity
+	# Prima dell'uscita anticipata sotto: anche un corpo in orbita deve tenere aggiornato
+	# il proprio colore di minaccia, perché il player cresce mentre lo tiene agganciato.
+	_threat_accum += delta
+	if _threat_accum >= 1.0 / THREAT_HZ:
+		_threat_accum = 0.0
+		_update_threat()
 	# Un corpo in cattura/orbita non deve applicare gravità (strattonerebbe il player con
 	# un effetto fionda): l'orbita è gestita cinematicamente in SmallBody.
 	if self is SmallBody and (self as SmallBody).orbit_state != SmallBody.OrbitState.FREE:
@@ -220,6 +238,56 @@ func take_damage(damage: float) -> void:
 	flash(0.05)
 	if health <= 0:
 		die()
+
+# Aggiorna il livello di minaccia mostrato dall'outline. Throttled a THREAT_HZ.
+func _update_threat() -> void:
+	if not mat:
+		return
+	if _player == null or not is_instance_valid(_player):
+		_player = get_tree().get_first_node_in_group("player") as Player
+		if _player == null:
+			return
+	# Smorzato: la velocità relativa oscilla di continuo, senza lerp il colore sfarfalla.
+	_threat = lerpf(_threat, _compute_threat(_player), 0.35)
+	mat.set_shader_parameter("threat", _threat)
+
+
+# Ricalca le formule REALI dell'impatto, così il colore non può mentire:
+# - la soglia 8.0 (ingloba) e 4.0 (bulldozer) sono di player.gd::_handle_collision_resistance
+# - il danno al player è quello di _on_body_entered qui sopra
+# NB: distruggere il corpo NON protegge il player — in _on_body_entered i due danni si
+# applicano entrambi — quindi il colore lo decide solo quanto costa l'impatto a lui.
+func _compute_threat(player: Player) -> float:
+	if mass <= 0.0:
+		return 0.0
+
+	var player_ratio: float = player.mass / mass
+	if player_ratio >= 8.0:
+		return 0.0  # ci ingoia: nessun danno, anzi energia + 15% di cura
+
+	# Velocità con cui i due si incontrerebbero. Il pavimento a metà della velocità del
+	# player evita che un macigno lento sembri innocuo un attimo prima che ci si tuffi dentro.
+	var rel_speed: float = maxf(
+		(linear_velocity - player._last_velocity).length(),
+		player.speed * 0.5
+	)
+	var dmg_mult: float = 0.0075
+	var damage_to_player: float = (rel_speed * dmg_mult) * snappedf(mass / player.mass, dmg_mult)
+	# La curva (esponente < 1) allarga la fascia bassa: un colpo che costa un quinto della
+	# vita deve già leggersi come cautela, non come verde. Meglio sbagliare per eccesso.
+	var cost: float = clampf(damage_to_player / maxf(player.health, 1.0), 0.0, 1.0)
+	var threat: float = pow(cost, 0.7)
+
+	# Bulldozer: ci passa attraverso senza perdere velocità, quindi l'impatto è più gestibile.
+	if player_ratio >= 4.0:
+		threat *= 0.5
+	# Con uno strato di mantello carico il colpo lo assorbe lo scudo per intero
+	# (player.take_damage): mai letale, quindi al massimo ambra, niente rosso.
+	for layer: float in player.shield_layers:
+		if layer > 0.0:
+			return minf(threat, 0.6)
+	return threat
+
 
 func flash(duration: float) -> void:
 	if not mat:

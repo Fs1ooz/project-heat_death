@@ -3,7 +3,7 @@
 [ext_resource type="Script" uid="uid://cx41k1qt88o8g" path="res://Stages/World/SolarSystem/solar_system.gd" id="1_56jnl"]
 [ext_resource type="PackedScene" uid="uid://bvfq3qbl7klob" path="res://Stages/World/world_environment.tscn" id="2_3u0hu"]
 [ext_resource type="PackedScene" uid="uid://1qip86sh808" path="res://Utils/im_gui.tscn" id="2_lnrn1"]
-[ext_resource type="PackedScene" uid="uid://byiki3druigls" path="res://Stages/UI/ui_layer.tscn" id="4_l0eld"]
+[ext_resource type="PackedScene" uid="uid://byiki3druigls" path="res://Utils/ui_layer.tscn" id="4_l0eld"]
 [ext_resource type="PackedScene" uid="uid://befachtfe40l2" path="res://Stages/World/SolarSystem/AsteroidBelt/base_background_layer.tscn" id="5_qs46f"]
 [ext_resource type="PackedScene" uid="uid://bkljj71ppklsf" path="res://Stages/World/SolarSystem/AsteroidBelt/background_layer.tscn" id="6_bfis2"]
 [ext_resource type="PackedScene" uid="uid://dtfn8lijt6vxu" path="res://Stages/World/dust_layer.tscn" id="6_l0eld"]
